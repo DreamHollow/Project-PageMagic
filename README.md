@@ -1,5 +1,8 @@
 # PageMagic - Visual-Design Branch
 (Experimental) Web Page Generator
+
+Important note: SFML is NOT included with this project. You can get the SFML libraries from the SFML website.
+
 This is an experimental open-source HTML formatting program.
 This version of PageMagic has been modified to include window rendering, graphical output, and audio output.
 
