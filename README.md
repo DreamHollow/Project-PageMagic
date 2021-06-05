@@ -2,6 +2,9 @@
 (Experimental) Web Page Generator
 This is an experimental open-source HTML formatting program.
 
+It is unfinished. Compile and use this program at your own risk; some tags won't work properly, some functions might exhibit erratic behavior,
+and some options are disabled because of problematic implementation.
+
 I accidentally created the original VS Solution targeted towards 64-bit systems,
 so you may not be able to use this program without a 64-bit system.
 
