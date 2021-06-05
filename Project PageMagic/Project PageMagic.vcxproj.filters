@@ -29,6 +29,9 @@
     <None Include="README.md">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\SECURITY.md">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Page.h">
@@ -37,5 +40,10 @@
     <ClInclude Include="pch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="..\LICENSE.txt">
+      <Filter>Resource Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
