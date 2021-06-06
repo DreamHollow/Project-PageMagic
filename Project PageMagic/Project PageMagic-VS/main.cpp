@@ -7,8 +7,6 @@
 #include <SFML/Audio.hpp>
 #include "Page.h"
 
-// SFML can be problematic and is temporarily disabled.
-
 /* Heads up! If you are looking at the source code of this program, it's very important you understand this. 
 * I am going to be actively implementing SFML into the program for more dynamic web page creation.
 * This means some of the core code will be altered to accomodate the changes and the final version of PageMagic may be VERY different.
