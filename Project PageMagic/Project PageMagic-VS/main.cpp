@@ -1,10 +1,10 @@
 #include <iostream>
 #include <cctype>
 #include <algorithm>
-//#include <SFML/Graphics.hpp>
-//#include <SFML/System.hpp>
-//#include <SFML/Window.hpp>
-//#include <SFML/Audio.hpp>
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/Audio.hpp>
 #include "Page.h"
 
 // SFML can be problematic and is temporarily disabled.
