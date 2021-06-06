@@ -297,7 +297,7 @@ void Page::tag_begin() // Messed around with enum scopes until I found an approp
 	std::cout << "Please select the tag you would like to use by number." << std::endl;
 
 	std::cout << std::endl;
-}
+};
 
 void Page::editing_process()
 {
@@ -309,10 +309,9 @@ void Page::editing_process()
 	this->complete_string = this->html_tags.at(*p_tag) + this->tag_fill() + this->html_end.at(*p_tag);
 
 	std::cout << "Your completed tag is: " << this->complete_string << " !";
-	*global_point += 1;
 
 	std::cout << std::endl;
-}
+};
 
 // Don't be fooled by the name, this is just an elaborate function for modifying the META tag.
 void Page::meta_process()
@@ -387,13 +386,36 @@ void Page::declare(std::string local_file) // Declaration should always just emp
 		std::cout << "There was a problem with validating the file name. Please double check file parameters." << std::endl;
 		std::cout << std::endl;
 	}
+}
+
+// Designed to reduce clutter. This part is mostly visual anyway.
+void Page::title_sequence()
+{
+	std::cout << "Creating standard HTML5 tag header..." << std::endl;
+	std::cout << "Line numbers are not written to the document. They just show what lines have been processed." << std::endl;
+	std::cout << std::endl;
+
+	// This just shows the user what can't normally be seen, what's actually being written to file.
+	std::cout << "Mandatory Header: " << std::endl;
+	std::cout << "Line " << this->find_line() << ": "; // Pointer is already 1, so we let this be.
+	std::cout << "<!DOCTYPE html>" << std::endl;
+	*global_point += 1;
+	std::cout << "Line " << this->find_line() << ": ";
+	std::cout << "<html lang = 'en'>" << std::endl;
+	*global_point += 1;
+	std::cout << "Line " << this->find_line() << ": ";
+	std::cout << "<head>" << std::endl;
+	*global_point += 1;
+	std::cout << "Line " << this->find_line() << ": ";
+	std::cout << "<meta charset = 'utf-8'>" << std::endl;
+	std::cout << std::endl;
 };
 
 void Page::setup() // This function defines what happens with a file. Not to be confused with page_setup() which is more verbose.
 {
 	// Starts calling private functions for page initialization
 	this->page_setup();
-}
+};
 
 // Memory management for this program is a bit of a nightmare. I want to plug any leaks.
 void Page::memory_cleaner()
@@ -437,24 +459,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 	std::cout << "Writing to file: " << full_file << std::endl;
 
-	std::cout << "Creating standard HTML5 tag header..." << std::endl;
-	std::cout << "Line numbers are not written to the document. They just show what lines have been processed." << std::endl;
-	std::cout << std::endl;
-
-	// This just shows the user what can't normally be seen, what's actually being written to file.
-	std::cout << "Mandatory Header: " << std::endl;
-	std::cout << "Line " << this->find_line() << ": "; // Pointer is already 1, so we let this be.
-	std::cout << "<!DOCTYPE html>" << std::endl;
-	*global_point += 1;
-	std::cout << "Line " << this->find_line() << ": ";
-	std::cout << "<html lang = 'en'>" << std::endl;
-	*global_point += 1;
-	std::cout << "Line " << this->find_line() << ": ";
-	std::cout << "<head>" << std::endl;
-	*global_point += 1;
-	std::cout << "Line " << this->find_line() << ": ";
-	std::cout << "<meta charset = 'utf-8'>" << std::endl;
-	std::cout << std::endl;
+	title_sequence();
 
 	// File should be written with standard head tags. This is automatically configured for HTML5 in English.
 	// Lines are ACTUALLY written here but displayed earlier for reasons of convenience.
@@ -476,6 +481,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 	std::cout << "What would you like the title of this webpage to be?" << std::endl;
 	// This is no longer true! Try not to exceed 50 characters, though.
 	// std::cout << "Please use a single word title for now. The program has problems recording space bar input." << std::endl;
+
 	std::cout << "Page Title: ";
 
 	std::cin.ignore();
@@ -518,13 +524,9 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 	std::cout << "<body>" << std::endl;
 	std::cout << std::endl;
 
-	std::cout << "When you are finished, a matching </body> tag will be added to the end of the document." << std::endl;
-	std::cout << "The </html> tag will also be added automatically." << std::endl;
-	std::cout << "This will make it possible for the page to be visible in a web browser." << std::endl;
-	std::cout << std::endl;
-	std::cout << "The program will pause here to give you a minute to catch up." << std::endl;
-	system("pause"); // Give the user a chance to read what's going on.
+	this->page_explain(); // Shortens an explanation.
 
+	// While the user has not entered "n" as a response.
 	while (this->option != 'n')
 	{
 		std::cout << std::endl;
@@ -538,13 +540,20 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 			std::cout << "Please enter the tag number." << std::endl;
 			std::cin >> *p_tag;
 
-			// There will be a need for a lot of tag warnings so just use switch.
+			// These two are the only ones that are preformatted to be included besides the mandatory header
 			if (*p_tag == HEAD)
 			{
 				std::cout << std::endl;
 				std::cout << "Your page already has a preformatted <head> tag, are you sure about this?" << std::endl;
 				std::cout << std::endl;
 			}
+			else if (*p_tag == BODY)
+			{
+				std::cout << std::endl;
+				std::cout << "Your page already has a <body> tag and may encounter problems with your browser." << std::endl;
+				std::cout << std::endl;
+			}
+
 			std::cout << std::endl;
 			std::cout << "You entered: " << *p_tag << std::endl;
 			std::cout << "Adding the " << this->s_state(*p_tag) << " tag." << std::endl;
@@ -558,56 +567,49 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 				std::cout << std::endl;
 			}
 
+			// Begin tag specification.
+
 			// User is prompted to write out a string. This step will be skipped if a unique type is triggered.
 			if (*p_tag == HYPERLINK)
 			{
+				standard_tag = false;
+
 				this->hyperlink_process();
-
-				// This shouldn't be contained in the subroutine.
-				outfile << this->complete_hyperlink << std::endl;
-
-				// When you are finished tagging and entering text, clear all fields.
-				this->local_hyperlink.clear();
-				this->tag_grab.clear();
-				this->complete_hyperlink.clear();
-				// tag_filler cannot be cleared and therefore must be assigned again.
 			}
 			else if (*p_tag == BREAK)
 			{
+				standard_tag = false;
+
 				std::cout << "Entering this tag will be equivalent to pressing 'Enter' on the keyboard." << std::endl;
 				std::cout << "This means that PageMagic will insert the next tag slightly lower on the page." << std::endl;
 				std::cout << std::endl;
 
-				outfile << "<br>" << std::endl;
-				*global_point += 1;
+				this->complete_hyperlink = s_state(*p_tag);
 
 				std::cout << "Your new line (break) was added." << std::endl;
+				std::cout << "<br>";
+				std::cout << std::endl;
 			}
 			else if (*p_tag == HORZRULER)
 			{
+				standard_tag = false;
+
 				std::cout << "Horizontal rulers don't require additional information." << std::endl;
 				std::cout << "They generate long thin lines across an HTML page." << std::endl;
 				std::cout << std::endl;
 
-				outfile << "<hr>" << std::endl;
-				*global_point += 1;
-
-				std::cout << std::endl;
-				std::cout << "Your horizontal ruler was added." << std::endl;
+				this->complete_hyperlink = s_state(*p_tag);
 			}
 			else if (*p_tag == META)
 			{
+				standard_tag = false;
+
 				this->meta_process();
-
-				outfile << this->complete_hyperlink << std::endl;
-				*global_point += 1;
-
-				this->local_hyperlink.clear();
-				this->tag_grab.clear();
-				this->complete_hyperlink.clear();
 			}
 			else // Do a standard tagging process.
 			{
+				standard_tag = true;
+
 				if (this->page_debug == true)
 				{
 					std::cout << std::endl;
@@ -615,9 +617,31 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 				}
 
 				this->editing_process();
-
-				outfile << this->complete_string << std::endl;
 			}
+
+			if (standard_tag == true)
+			{
+				std::cout << std::endl;
+				std::cout << "You added " << complete_string;
+				std::cout << std::endl;
+
+				outfile << this->complete_string;
+			}
+			else
+			{
+				std::cout << std::endl;
+				std::cout << "You added " << complete_hyperlink;
+				std::cout << std::endl;
+
+				outfile << this->complete_hyperlink;
+			}
+
+			// File always writes the data when finished.
+			*global_point += 1;
+
+			this->local_hyperlink.clear();
+			this->tag_grab.clear();
+			this->complete_hyperlink.clear();
 
 			// Create a standardized function that can be used for most of the other tags. TODO
 
@@ -664,60 +688,15 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 	outfile.close(); // ALWAYS close the file
 };
 
-std::string Page::file_to_string(const std::string& file_name)
+void Page::page_explain()
 {
-	std::ifstream file_stream{ file_name };
-
-	if (file_stream.fail())
-	{
-		std::cout << "This file either does not exist or could not be opened." << std::endl;
-		std::cout << "The program will now shut down..." << std::endl;
-
-		file_stream.close();
-		exit(1);
-	}
-
-	std::ostringstream str_stream{};
-	file_stream >> str_stream.rdbuf();  // NOT str_stream << file_stream.rdbuf()
-
-	if (file_stream.fail() && !file_stream.eof()) // File read error.
-	{
-		std::cout << "This file could not be read. To prevent more problems, this program will shut down." << std::endl;
-
-		file_stream.close();
-		exit(1);
-	}
-
-	return str_stream.str();
-}
-
-/*
-void Page::open_file()
-{
-	extern std::string full_file; // This has no spaces so it's fine for a string.
-
-	std::cout << "Please enter the exact directory (folder) and file name to open it." << std::endl;
-	std::cout << "Apologies for the inconvenient loading system." << std::endl;
-	std::cout << "File path: ";
-	std::cin >> full_file;
+	std::cout << "When you are finished, a matching </body> tag will be added to the end of the document." << std::endl;
+	std::cout << "The </html> tag will also be added automatically." << std::endl;
+	std::cout << "This will make it possible for the page to be visible in a web browser." << std::endl;
 	std::cout << std::endl;
-
-	if (!full_file.empty())
-	{
-		file_to_string(full_file);
-
-		std::cout << std::endl;
-		std::cout << "--- End of file ---" << std::endl;
-	}
-	else
-	{
-		std::cout << "ERROR: File path cannot be NULL. A critical error has occured." << std::endl;
-		std::cout << std::endl;
-
-		exit(1);
-	}
-}
-*/
+	std::cout << "The program will pause here to give you a minute to catch up." << std::endl;
+	system("pause"); // Give the user a chance to read what's going on.
+};
 
 bool Page::create_file()
 {

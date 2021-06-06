@@ -24,7 +24,6 @@ public:
 	inline std::string const get_title() { return title_header; };
 	bool create_file();
 	// void open_file();
-	std::string file_to_string(const std::string& file_name);
 	void setup();
 	void memory_cleaner();
 
@@ -39,6 +38,7 @@ private:
 
 	// This tag is used all over the Page class for in-code debugging purposes. Switch to FALSE if you're not debugging.
 	bool page_debug;
+	bool standard_tag = true;
 
 	char file_search[500];
 	char option;
@@ -83,8 +83,10 @@ private:
 	inline int const find_line() { return *global_point; };
 	std::string s_state(int num);
 	void declare(std::string local_file);
+	void title_sequence();
 	void display_all();
 	void page_setup();
+	void page_explain();
 	void tag_begin();
 	void editing_process();
 	void meta_process();
