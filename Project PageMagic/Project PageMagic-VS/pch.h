@@ -10,5 +10,9 @@
 #include <array>
 #include <iterator>
 #include <memory>
+#include <SFML/Graphics.hpp>
+#include <SFML/System.hpp>
+#include <SFML/Window.hpp>
+#include <SFML/Audio.hpp>
 
 #endif

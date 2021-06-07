@@ -1,10 +1,6 @@
 #include <iostream>
 #include <cctype>
 #include <algorithm>
-#include <SFML/Graphics.hpp>
-#include <SFML/System.hpp>
-#include <SFML/Window.hpp>
-#include <SFML/Audio.hpp>
 #include "Page.h"
 
 /* Heads up! If you are looking at the source code of this program, it's very important you understand this. 
