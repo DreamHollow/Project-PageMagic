@@ -1,6 +1,3 @@
-#include <iostream>
-#include <cctype>
-#include <algorithm>
 #include "Page.h"
 
 /* Heads up! If you are looking at the source code of this program, it's very important you understand this. 
@@ -15,17 +12,52 @@ std::string full_file;
 int main()
 {
 	// Original page object.
-	Page Defacto;
+	// Page Defacto;
 
-	// Decided to use a smart pointer for better and more practical allocation.
+	// Decided to use smart pointers for better and more practical allocation.
 	std::unique_ptr<Page> MyPage(new Page());
+
+	// This will render a display but the program will have problems if it has no instructions.
+	sf::RenderWindow window;
+	window.create(sf::VideoMode(800,600), "Visual Display");
+
+	// This will constantly check for user interactions.
+	sf::Event event;
+
+	while (window.isOpen())
+	{
+		while (window.pollEvent(event)) // Looking for interaction data
+		{
+			switch (event.type)
+			{
+			case sf::Event::Closed: // Pressing the standard window close button.
+				window.close();
+				break;
+
+			case sf::Event::KeyPressed:
+				if (event.key.code == sf::Keyboard::Escape)
+				{
+					window.close();
+					break;
+				}
+			default:
+				// Do nothing.
+				break;
+			}
+		}
+	}
+
+	// ATTENTION:
+	// Because of the way this is set up right now, the program does NOT terminate here. It will run the console program until otherwise instructed.
+	// All of the functions will be moved over to the Display as the program's structure evolves.
 
 	// Still figuring out exceptions. In the meantime this boolean catches unintended breaks in loops or user inputs.
 	bool app_exit = false;
 
 	std::string decision;
 
-	/* I had a time of trying to get the program to do normal operating procedures through classes. I'm still mostly a newbie at C++ so go easy on me. */
+	// Begin console program parameters.
+
 	std::cout << "This program is designed to create webpages using C++." << std::endl;
 	std::cout << "It is currently a WIP and may be lacking features." << std::endl;
 
@@ -107,8 +139,6 @@ int main()
 		std::cout << "Program exit success." << std::endl;
 		std::cout << "Thank you for using PageMagic!";
 		std::cout << std::endl;
-
-		// I had an exit code here that was not necessary.
 	}
 
 	// The program had an unclean exit and errors occured.
@@ -118,12 +148,13 @@ int main()
 		std::cout << "An error occured. Please try again later." << std::endl;
 		std::cout << "Shutting down..." << std::endl;
 
-		// delete MyPage; // Using smart pointers now, this shouldn't be necessary.
+		// Window is forcefully closed because of an error.
+		window.close();
 		exit(1);
 	}
 
+	// Window closes without error.
+	window.close();
 	system("pause"); // So the user can actually read the goodbye screen.
-
-	// delete MyPage; // Keeping this as vestigial code
 	return 0;
 }
