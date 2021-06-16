@@ -1,4 +1,5 @@
 #include "Page.h"
+#include "Display.h"
 
 /* Heads up! If you are looking at the source code of this program, it's very important you understand this. 
 * I am going to be actively implementing SFML into the program for more dynamic web page creation.
@@ -11,40 +12,25 @@ std::string full_file;
 
 int main()
 {
+	// Using this boolean to determine event outcomes.
+	bool debug_state = true;
+
 	// Original page object.
 	// Page Defacto;
 
 	// Decided to use smart pointers for better and more practical allocation.
-	std::unique_ptr<Page> MyPage(new Page());
+	std::unique_ptr<Page> MyPage(new Page()); // Generate heap based pointer
+	std::unique_ptr<Display> MyDisplay(new Display()); // Same with this
 
-	// This will render a display but the program will have problems if it has no instructions.
-	sf::RenderWindow window;
-	window.create(sf::VideoMode(800,600), "Visual Display");
+	// I will be creating options to adjust this resolution later.
+	// sf::VideoMode currentMode = sf::VideoMode::getDesktopMode();
+	// window.create(sf::VideoMode(currentMode), "Visual Display");
 
-	// This will constantly check for user interactions.
-	sf::Event event;
-
-	while (window.isOpen())
+	// While the user has made no effort to close the visual display.
+	while (MyDisplay->running())
 	{
-		while (window.pollEvent(event)) // Looking for interaction data
-		{
-			switch (event.type)
-			{
-			case sf::Event::Closed: // Pressing the standard window close button.
-				window.close();
-				break;
-
-			case sf::Event::KeyPressed:
-				if (event.key.code == sf::Keyboard::Escape)
-				{
-					window.close();
-					break;
-				}
-			default:
-				// Do nothing.
-				break;
-			}
-		}
+		MyDisplay->update();
+		MyDisplay->render();
 	}
 
 	// ATTENTION:
@@ -149,12 +135,10 @@ int main()
 		std::cout << "Shutting down..." << std::endl;
 
 		// Window is forcefully closed because of an error.
-		window.close();
 		exit(1);
 	}
 
 	// Window closes without error.
-	window.close();
 	system("pause"); // So the user can actually read the goodbye screen.
 	return 0;
-}
+};
