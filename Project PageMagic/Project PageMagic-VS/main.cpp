@@ -1,11 +1,4 @@
 #include "Page.h"
-#include "Display.h"
-
-/* Heads up! If you are looking at the source code of this program, it's very important you understand this. 
-* I am going to be actively implementing SFML into the program for more dynamic web page creation.
-* This means some of the core code will be altered to accomodate the changes and the final version of PageMagic may be VERY different.
-* All of the data for the visual version of this program will be pushed to an alternate branch. When it's being worked on, look for it there.
-* Make no mistake; when the visual version is stable it will likely supercede this existing console version. */
 
 // Global variables are usually VERY BAD but in this case it's considered useful.
 std::string full_file;
@@ -20,22 +13,6 @@ int main()
 
 	// Decided to use smart pointers for better and more practical allocation.
 	std::unique_ptr<Page> MyPage(new Page()); // Generate heap based pointer
-	std::unique_ptr<Display> MyDisplay(new Display()); // Same with this
-
-	// I will be creating options to adjust this resolution later.
-	// sf::VideoMode currentMode = sf::VideoMode::getDesktopMode();
-	// window.create(sf::VideoMode(currentMode), "Visual Display");
-
-	// While the user has made no effort to close the visual display.
-	while (MyDisplay->running())
-	{
-		MyDisplay->update();
-		MyDisplay->render();
-	}
-
-	// ATTENTION:
-	// Because of the way this is set up right now, the program does NOT terminate here. It will run the console program until otherwise instructed.
-	// All of the functions will be moved over to the Display as the program's structure evolves.
 
 	// Still figuring out exceptions. In the meantime this boolean catches unintended breaks in loops or user inputs.
 	bool app_exit = false;
