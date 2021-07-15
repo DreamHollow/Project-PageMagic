@@ -8,9 +8,6 @@ int main()
 	// Using this boolean to determine event outcomes.
 	bool debug_state = true;
 
-	// Original page object.
-	// Page Defacto;
-
 	// Decided to use smart pointers for better and more practical allocation.
 	std::unique_ptr<Page> MyPage(new Page()); // Generate heap based pointer
 
@@ -41,12 +38,13 @@ int main()
 		int prompt{}; // Initialized to 0
 		// Create a new standard HTML5 webpage.
 		std::cout << "Would you like to create a new webpage or edit an old one?" << std::endl;
+		std::cout << std::endl; // Create a line break for design sake.
 		std::cout << "1. Create one." << std::endl;
 		std::cout << "2. View a previous HTML document (Web Page)." << std::endl;
 		std::cout << "3. End program." << std::endl;
 
 		std::cout << "Your choice: ";
-		std::cin >> prompt;
+		std::cin >> prompt; // Prompt and decision are not the same; prompt actually starts file manipulation.
 		std::cout << std::endl;
 
 		switch (prompt)
@@ -64,6 +62,7 @@ int main()
 		case 2:
 			std::cout << "This feature is currently disabled. It will be re-enabled when functionality is restored. Thank you." << std::endl;
 
+			// When this feature is successfully implemented, it should be able to read created files.
 			// MyPage->open_file();
 
 			// I'm not interested in having this menu loop.

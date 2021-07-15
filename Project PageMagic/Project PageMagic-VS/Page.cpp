@@ -10,8 +10,8 @@ Page::Page()
 	this->global_line = 1;
 	global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
 
-	this->tagger = 0;
-	this->p_tag = &tagger; // I'm a little happy-go-lucky with pointers here, sorry.
+	this->tagger = 0; // The actual tagging variable being used.
+	this->tag_pointer = &tagger; // The tag pointer used to determine which tag is edited.
 
 	this->option = 'a'; // Initialized to junk, is set during function.
 
@@ -306,7 +306,7 @@ void Page::editing_process()
 	std::cin.ignore();
 	std::cin.getline(this->tag_filler, 500);
 
-	this->complete_string = this->html_tags.at(*p_tag) + this->tag_fill() + this->html_end.at(*p_tag);
+	this->complete_string = this->html_tags.at(*tag_pointer) + this->tag_fill() + this->html_end.at(*tag_pointer);
 
 	std::cout << "Your completed tag is: " << this->complete_string << " !";
 
@@ -363,7 +363,7 @@ void Page::hyperlink_process()
 	std::cin.ignore();
 	std::cin.getline(tag_filler, 500);
 
-	this->complete_hyperlink = this->complete_hyperlink + this->tag_fill() + this->html_end.at(*p_tag);
+	this->complete_hyperlink = this->complete_hyperlink + this->tag_fill() + this->html_end.at(*tag_pointer);
 
 	std::cout << "Your completed tag is: " << complete_hyperlink << " !";
 	*global_point += 1;
@@ -532,22 +532,22 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 		std::cout << std::endl;
 		std::cout << "Would you like to add another tag to your webpage?" << std::endl;
 		std::cout << "Type y for yes, n for no." << std::endl;
-		std::cin >> option;
+		std::cin >> option; // Initialized to junk unless the user enters something.
 
 		if (this->option == 'y')
 		{
 			// Ask for a tag number - start a switch statement
 			std::cout << "Please enter the tag number." << std::endl;
-			std::cin >> *p_tag;
+			std::cin >> *tag_pointer;
 
 			// These two are the only ones that are preformatted to be included besides the mandatory header
-			if (*p_tag == HEAD)
+			if (*tag_pointer == HEAD)
 			{
 				std::cout << std::endl;
 				std::cout << "Your page already has a preformatted <head> tag, are you sure about this?" << std::endl;
 				std::cout << std::endl;
 			}
-			else if (*p_tag == BODY)
+			else if (*tag_pointer == BODY)
 			{
 				std::cout << std::endl;
 				std::cout << "Your page already has a <body> tag and may encounter problems with your browser." << std::endl;
@@ -555,10 +555,10 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 			}
 
 			std::cout << std::endl;
-			std::cout << "You entered: " << *p_tag << std::endl;
-			std::cout << "Adding the " << this->s_state(*p_tag) << " tag." << std::endl;
+			std::cout << "You entered: " << *tag_pointer << std::endl;
+			std::cout << "Adding the " << this->s_state(*tag_pointer) << " tag." << std::endl;
 
-			this->tag_grab = this->s_state(*p_tag); // Direct assignment. Seems to work for the purpose of this program.
+			this->tag_grab = this->s_state(*tag_pointer); // Direct assignment. Seems to work for the purpose of this program.
 
 			if (this->page_debug == true)
 			{
@@ -570,13 +570,13 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 			// Begin tag specification.
 
 			// User is prompted to write out a string. This step will be skipped if a unique type is triggered.
-			if (*p_tag == HYPERLINK)
+			if (*tag_pointer == HYPERLINK)
 			{
 				standard_tag = false;
 
 				this->hyperlink_process();
 			}
-			else if (*p_tag == BREAK)
+			else if (*tag_pointer == BREAK)
 			{
 				standard_tag = false;
 
@@ -584,13 +584,13 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 				std::cout << "This means that PageMagic will insert the next tag slightly lower on the page." << std::endl;
 				std::cout << std::endl;
 
-				this->complete_hyperlink = s_state(*p_tag);
+				this->complete_hyperlink = s_state(*tag_pointer);
 
 				std::cout << "Your new line (break) was added." << std::endl;
 				std::cout << "<br>";
 				std::cout << std::endl;
 			}
-			else if (*p_tag == HORZRULER)
+			else if (*tag_pointer == HORZRULER)
 			{
 				standard_tag = false;
 
@@ -598,9 +598,9 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 				std::cout << "They generate long thin lines across an HTML page." << std::endl;
 				std::cout << std::endl;
 
-				this->complete_hyperlink = s_state(*p_tag);
+				this->complete_hyperlink = s_state(*tag_pointer);
 			}
-			else if (*p_tag == META)
+			else if (*tag_pointer == META)
 			{
 				standard_tag = false;
 
@@ -662,6 +662,8 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 		// Once this loop is broken, the Page object exits after program finishes deploying the full HTML.
 	};
 
+	// All of this is just finalization and finishing touches to the document.
+
 	std::cout << "All done with tagging! Finishing document cleanup..." << std::endl;
 
 	std::cout << "Writing body end tag..." << std::endl;
@@ -688,6 +690,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 	outfile.close(); // ALWAYS close the file
 };
 
+// Doesn't actually do anything, just explains what's going on for the user.
 void Page::page_explain()
 {
 	std::cout << "When you are finished, a matching </body> tag will be added to the end of the document." << std::endl;
@@ -698,13 +701,10 @@ void Page::page_explain()
 	system("pause"); // Give the user a chance to read what's going on.
 };
 
+// Returns true when successful and false when not.
 bool Page::create_file()
 {
 	extern std::string full_file;
-
-	// fflush(stdin);
-	// fflush(stdout);
-	// std::cout << "Cleaning the file buffer..." << std::endl;
 
 	std::cout << "Please enter the name of the file you are trying to create." << std::endl;
 	std::cout << "Filename: ";

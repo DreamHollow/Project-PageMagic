@@ -3,3 +3,23 @@
 ################################################################################
 
 /Project PageMagic/.vs/Project PageMagic/v15/ipch/AutoPCH/7248913ff89e80d7/MAIN.ipch
+/Project PageMagic/.vs/Project PageMagic/v15/ipch/AutoPCH/914ea9f41b9daf/PCH.ipch
+/Project PageMagic/.vs/Project PageMagic/v15/ipch/AutoPCH/a17d1863e1b95b87/PCH.ipch
+*.ipch
+/Project PageMagic/.vs/Project PageMagic/v15/Solution.VC.db
+/Project PageMagic/.vs/Project PageMagic/v15/Browse.VC.opendb
+/Project PageMagic/.vs/Project PageMagic/v15/Browse.VC.db
+/Project PageMagic/.vs/Project PageMagic/v15/.suo
+/Project PageMagic/Project PageMagic-VS/Project PageMagic-VS.vcxproj
+/Project PageMagic/Project PageMagic-VS/Project PageMagic-VS.vcxproj.filters
+/Project PageMagic/Project PageMagic-VS/Project PageMagic-VS.vcxproj.user
+/Project PageMagic/Project PageMagic.sln
+/Project PageMagic/Project PageMagic-VS/x64/Debug/Project PageMagic.Build.CppClean.log
+/Project PageMagic/Project PageMagic-VS/x64/Debug/Project PageMagic-VS.log
+*.tlog
+*.obj
+*.idb
+*.pdb
+*.html
+/Project PageMagic/x64/Debug/Project PageMagic.exe
+/Project PageMagic/x64/Debug/Project PageMagic.ilk

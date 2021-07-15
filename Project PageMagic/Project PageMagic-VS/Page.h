@@ -31,7 +31,7 @@ private:
 	// Variables
 	// Tagger is initialized in constructor.
 	int tagger;
-	int* p_tag = nullptr;
+	int* tag_pointer = nullptr;
 
 	int temp;
 	int* t_point = nullptr;
