@@ -3,12 +3,12 @@
 Page::Page()
 {
 	this->temp = 0;
-	t_point = &temp;
+	this->t_point = &temp;
 
 	this->page_debug = false;
 
 	this->global_line = 1;
-	global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
+	this->global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
 
 	this->tagger = 0; // The actual tagging variable being used.
 	this->tag_pointer = &tagger; // The tag pointer used to determine which tag is edited.
@@ -21,7 +21,7 @@ Page::Page()
 Page::~Page()
 {
 	// I feel better having this function do some general cleanup on exit.
-	memory_cleaner();
+	this->memory_cleaner();
 };
 
 void Page::initialize_tags()
@@ -247,17 +247,18 @@ void Page::initialize_tags()
 	html_end.push_back("</wbr>"); // 105
 };
 
+// s_state or basically string_state
 std::string Page::s_state(int num)
 {
 	return this->html_tags.at(num); // Return the HTML tag at the appropriate number.
 };
 
-// Exists purely for debugging.
+// Originally created for debugging but now main function for displaying tags.
 void Page::display_all()
 {
 	// None of these variables need to be used beyond the scope of this function.
 
-	if (t_point == nullptr)
+	if (this->t_point == nullptr)
 	{
 		std::cout << "Error, no memory could be allocated to this pointer!";
 		std::cout << std::endl;
@@ -540,18 +541,421 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 			std::cout << "Please enter the tag number." << std::endl;
 			std::cin >> *tag_pointer;
 
-			// These two are the only ones that are preformatted to be included besides the mandatory header
-			if (*tag_pointer == HEAD)
+			// Add functionality for TABLE, BUTTON, and so many others -- TODO
+			// Finally added a proper switch statement to deal with outlier tags without simple modifications; this was a lot of work.
+			switch (*tag_pointer)
 			{
-				std::cout << std::endl;
-				std::cout << "Your page already has a preformatted <head> tag, are you sure about this?" << std::endl;
-				std::cout << std::endl;
-			}
-			else if (*tag_pointer == BODY)
-			{
+			// Allows HTML commenting
+			case COMMENT:
+				break;
+
+			// Creates a web page link -- the actual tag is <a> which is why it's high on the list
+			case HYPERLINK:
+				standard_tag = false;
+
+				this->hyperlink_process();
+				break;
+
+			case ABBREVIATE:
+				break;
+
+			case ADDRESS:
+				break;
+
+			case AREA:
+				break;
+
+			// Functions a lot like <div> by dividing content to be seen as isolated from the normal page
+			case ARTICLE:
+				break;
+
+			case ASIDE:
+				break;
+
+			// Provides audio via a source
+			case AUDIO:
+				break;
+
+			case BDI:
+				break;
+
+			case BDO:
+				break;
+
+			// Creates a huge formatted quote based on the string it's given
+			case BLOCKQUOTE:
+				break;
+
+			// Creates a body tag where the bulk of most content should go; not relevant as it's already present
+			case BODY:
 				std::cout << std::endl;
 				std::cout << "Your page already has a <body> tag and may encounter problems with your browser." << std::endl;
 				std::cout << std::endl;
+				break;
+
+			// Creates a line break, not the same as a horizontal ruler
+			case BREAK:
+				standard_tag = false;
+
+				std::cout << "Entering this tag will be equivalent to pressing 'Enter' on the keyboard." << std::endl;
+				std::cout << "This means that PageMagic will insert the next tag slightly lower on the page." << std::endl;
+				std::cout << std::endl;
+
+				this->complete_hyperlink = s_state(*tag_pointer);
+
+				std::cout << "Your new line (break) was added." << std::endl;
+				std::cout << "<br>";
+				std::cout << std::endl;
+				break; // Not the same kind of break.
+
+			// Creates a functional button; should be paired with other tags
+			case BUTTON:
+				break;
+
+			case CANVAS:
+				break;
+
+			case CAPTION:
+				break;
+
+			case CITE:
+				break;
+
+			// Special HTML tag that isolates and displays code snippets
+			case CODE:
+				break;
+
+			case COLUMN:
+				break;
+
+			case COLUMNGROUP:
+				break;
+
+			case DATA:
+				break;
+
+			case DATALIST:
+				break;
+
+			case DESCRIPTLIST:
+				break;
+
+			// Text that is omitted or intentionally altered to display that it is not relevant
+			case DELETED:
+				break;
+
+			case DETAILS:
+				break;
+
+			case DEFINED:
+				break;
+
+			case DIALOG:
+				break;
+
+			// Used to divide content for special purposes
+			case DIV:
+				break;
+
+			case DESCLIST:
+				break;
+
+			case DESCTERM:
+				break;
+
+			case EMPHASIZE:
+				break;
+
+			// Creates embedded content
+			case EMBED:
+				break;
+
+			case FIELDSET:
+				break;
+
+			case FIGCAPTION:
+				break;
+
+			case FIGURE:
+				break;
+
+			// Creates a specially formatted text at the bottom of the document
+			case FOOTER:
+				break;
+
+			case FORM:
+				break;
+
+			// Header One
+			case H1:
+				break;
+
+			// Header Two
+			case H2:
+				break;
+
+			// Header Three
+			case H3:
+				break;
+
+			// Header Four
+			case H4:
+				break;
+
+			// Header Five
+			case H5:
+				break;
+
+			// Header Six
+			case H6:
+				break;
+
+			// Contains page information and attributes including the <meta> tag
+			case HEAD:
+				std::cout << std::endl;
+				std::cout << "Your page already has a preformatted <head> tag, are you sure about this?" << std::endl;
+				std::cout << std::endl;
+				break;
+
+			case HEADER:
+				break;
+
+			// Creates a huge line across the entire HTML document
+			case HORZRULER:
+				standard_tag = false;
+
+				std::cout << "Horizontal rulers don't require additional information." << std::endl;
+				std::cout << "They generate long thin lines across an HTML page." << std::endl;
+				std::cout << std::endl;
+
+				this->complete_hyperlink = s_state(*tag_pointer);
+				break;
+
+			// The root tag of the html document
+			case HTMLROOT: // This is automatically provided by the program and should never be used twice
+				break;
+
+			case ITALICS:
+				break;
+
+			case IFRAME:
+				break;
+
+			// Creates an image linked to an image source
+			case IMG:
+				break;
+
+			case INPUT:
+				break;
+
+			case INS:
+				break;
+
+			case KEYBOARD:
+				break;
+
+			case LABEL:
+				break;
+
+			case LEGEND:
+				break;
+
+			case LISTITEM:
+				break;
+
+			case LINK:
+				break;
+
+			case MAIN:
+				break;
+
+			case IMGMAP:
+				break;
+
+			case MARK:
+				break;
+
+			// Sets information for page display or attributes
+			case META:
+				standard_tag = false;
+
+				this->meta_process();
+				break;
+
+			case METER:
+				break;
+
+			// Object usually formatted for user navigation
+			case NAV:
+				break;
+
+			// The web page displays this message on a web browser when JavaScript is disabled
+			case NOSCRIPT:
+				break;
+
+			case OBJECT:
+				break;
+
+			// Creates an ordered list that displays numbers
+			case ORDERLIST:
+				break;
+
+			case OPTGROUP:
+				break;
+
+			case OPTION:
+				break;
+
+			case OUTPUT:
+				break;
+
+			// Very common tag used to denote a paragraph of text; should really be paired with other functional tags
+			case PARAGRAPH:
+				break;
+
+			case PARAMETER:
+				break;
+
+			// Similar functionality to IMG
+			case PICTURE:
+				break;
+
+			case PREFORMAT:
+				break;
+
+			// Used to create progress bars and such
+			case PROGRESS:
+				break;
+
+			// Creates a small and specially formatted short quote string
+			case SHORTQUOTE:
+				break;
+
+			// If Ruby is not present on this page but is relevant to the web page itself, this tag becomes relevant
+			case NORUBY:
+				break;
+
+			// Creates text with a line straight through it
+			case STRIKEOUT:
+				break;
+
+			case SAMPLE:
+				break;
+
+			// Allows for custom JavaScript or other programming elements
+			case SCRIPT:
+				break;
+
+			// Creates a section of relevant data, images, video, or text
+			case SECTION:
+				break;
+
+			case SELECT:
+				break;
+
+			// Formats text to be small
+			case SMALL:
+				break;
+
+			// Creates a linked source object
+			case SOURCE:
+				break;
+
+			case SPAN:
+				break;
+
+			// Creates specially formatted bold text
+			case STRONGTEXT:
+				break;
+
+			// Used for custom CSS
+			case STYLE:
+				break;
+
+			// Forces text to look small
+			case SUBSCRIPT:
+				break;
+
+			// Creates a summary text object
+			case SUMMARY:
+				break;
+
+			// Forces text to look like an exponent
+			case SUPERSCRIPT:
+				break;
+
+			// SVG is a type of canvas object
+			case SVG:
+				break;
+
+			// Creates a table. Because this is a complex tag, requires more data
+			case TABLE:
+				break;
+
+			// Table body, should be coupled with TABLE
+			case TBODY:
+				break;
+
+			// Individual table cell, should be coupled with TABLE and others
+			case TABLECELL:
+				break;
+
+			case TEMPLATE:
+				break;
+
+			case TEXTAREA:
+				break;
+
+			// Table footer, should be coupled with TABLE
+			case TABLEFOOT:
+				break;
+
+			// Table header; should be coupled with TABLE
+			case TABLEHEAD:
+				break;
+
+
+			case THEADCONT:
+				break;
+
+			// Creates a time object for HTML page
+			case TIME:
+				standard_tag = true;
+
+				break;
+
+			case TITLE: // This is unnecessary, the user is prompted during page_setup, but included for stability
+				break;
+
+			// Creates and fills a table row with relevant information
+			case TABLEROW: // This should be coupled with TABLE
+				break;
+
+			case TRACK:
+				break;
+
+			// Creates an unordered list
+			case UNORDERLIST:
+				break;
+
+			case VARIABLE:
+				break;
+
+			// Links a video via a source
+			case VIDEO:
+				break;
+
+			// Creates a line break; NOT the same as <hr>
+			case WEBLINEBREAK:
+				break;
+
+			case XEND: // Don't actually use this.
+				break;
+
+			default:
+				std::cout << std::endl;
+				std::cout << "This tag number was not recognized, please try again." << std::endl;
+				break;
 			}
 
 			std::cout << std::endl;
@@ -567,59 +971,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 				std::cout << std::endl;
 			}
 
-			// Begin tag specification.
-
-			// User is prompted to write out a string. This step will be skipped if a unique type is triggered.
-			if (*tag_pointer == HYPERLINK)
-			{
-				standard_tag = false;
-
-				this->hyperlink_process();
-			}
-			else if (*tag_pointer == BREAK)
-			{
-				standard_tag = false;
-
-				std::cout << "Entering this tag will be equivalent to pressing 'Enter' on the keyboard." << std::endl;
-				std::cout << "This means that PageMagic will insert the next tag slightly lower on the page." << std::endl;
-				std::cout << std::endl;
-
-				this->complete_hyperlink = s_state(*tag_pointer);
-
-				std::cout << "Your new line (break) was added." << std::endl;
-				std::cout << "<br>";
-				std::cout << std::endl;
-			}
-			else if (*tag_pointer == HORZRULER)
-			{
-				standard_tag = false;
-
-				std::cout << "Horizontal rulers don't require additional information." << std::endl;
-				std::cout << "They generate long thin lines across an HTML page." << std::endl;
-				std::cout << std::endl;
-
-				this->complete_hyperlink = s_state(*tag_pointer);
-			}
-			else if (*tag_pointer == META)
-			{
-				standard_tag = false;
-
-				this->meta_process();
-			}
-			else // Do a standard tagging process.
-			{
-				standard_tag = true;
-
-				if (this->page_debug == true)
-				{
-					std::cout << std::endl;
-					std::cout << "DEBUG: Encountered else statement for standard tags." << std::endl;
-				}
-
-				this->editing_process();
-			}
-
-			if (standard_tag == true)
+			if (standard_tag == true) // Use the standard tag output to HTML
 			{
 				std::cout << std::endl;
 				std::cout << "You added " << complete_string;
@@ -627,7 +979,8 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 				outfile << this->complete_string;
 			}
-			else
+
+			else if (standard_tag == false) // Use the hyperlink style tag output to HTML
 			{
 				std::cout << std::endl;
 				std::cout << "You added " << complete_hyperlink;
