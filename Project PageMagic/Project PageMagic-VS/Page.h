@@ -11,9 +11,6 @@ class Page
 public:
 	Page();
 	virtual ~Page();
-
-	// Templates
-	// template <typename T, std::size_t N> T* end_(T(&arr)[N]) { return arr + N; };
 	
 	// Variables
 	std::string decision;
@@ -28,6 +25,9 @@ public:
 	void memory_cleaner();
 
 private:
+	// Pointers
+	std::unique_ptr<Page> MyPage;
+
 	// Variables
 	// Tagger is initialized in constructor.
 	int tagger;

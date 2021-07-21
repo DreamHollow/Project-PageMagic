@@ -7,10 +7,7 @@ int main()
 {
 	// Using this boolean to determine event outcomes.
 	bool debug_state = true;
-
-	// Decided to use smart pointers for better and more practical allocation.
-	std::unique_ptr<Page> MyPage(new Page()); // Generate heap based pointer
-
+	
 	// Still figuring out exceptions. In the meantime this boolean catches unintended breaks in loops or user inputs.
 	bool app_exit = false;
 
@@ -50,11 +47,16 @@ int main()
 		switch (prompt)
 		{
 		case 1:
-			// Create a new file.
-			MyPage->create_file();
+			// Unique pointer object remains in it's own scope. This creates safer exception handling. (I'm still figuring out smart pointers.)
+			{
+				std::unique_ptr<Page> MyPage = std::make_unique<Page>();
 
-			// Generate standard HTML layouts.
-			MyPage->setup();
+				// Create a new file.
+				MyPage->create_file();
+
+				// Generate standard HTML layouts.
+				MyPage->setup();
+			}
 
 			app_exit = true; // If the file was created and modified succesfully, it should return this.
 
@@ -76,7 +78,8 @@ int main()
 
 			break;
 		default:
-			std::cout << "This choice is not supported." << std::endl;
+			std::cout << "Either you typed in letters or you made an invalid number choice." << std::endl;
+			std::cout << "This program cannot continue without valid input, forcing program halt." << std::endl;
 
 			app_exit = false; // The user made an invalid choice.
 			break;
@@ -86,7 +89,7 @@ int main()
 	{
 		app_exit = true;
 	}
-	else // If the answer isn't yes OR no
+	else // If the answer isn't yes OR no; catches numbers, too.
 	{
 		std::cout << "Sorry," << std::endl;
 		std::cout << "This is an invalid response." << std::endl;
@@ -104,14 +107,14 @@ int main()
 	}
 
 	// The program had an unclean exit and errors occured.
-	else
+	else if(app_exit == false)
 	{
 		std::cout << std::endl;
 		std::cout << "An error occured. Please try again later." << std::endl;
 		std::cout << "Shutting down..." << std::endl;
 
 		// Window is forcefully closed because of an error.
-		exit(1);
+		return 1; // Use RETURN, not EXIT - exit is unsafe compared to returning a value
 	}
 
 	// Window closes without error.

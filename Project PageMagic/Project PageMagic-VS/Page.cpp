@@ -5,7 +5,7 @@ Page::Page()
 	this->temp = 0;
 	this->t_point = &temp;
 
-	this->page_debug = false;
+	this->page_debug = true;
 
 	this->global_line = 1;
 	this->global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
@@ -20,6 +20,13 @@ Page::Page()
 
 Page::~Page()
 {
+	if (page_debug == true)
+	{
+		std::cout << std::endl;
+		std::cout << "Deconstructor was called; left the scope of Page object." << std::endl;
+		std::cout << std::endl;
+	}
+
 	// I feel better having this function do some general cleanup on exit.
 	this->memory_cleaner();
 };
@@ -422,6 +429,7 @@ void Page::setup() // This function defines what happens with a file. Not to be 
 void Page::memory_cleaner()
 {
 	// I'll be honest with you, memory management in C++ is not my strong suit.
+	// This function just wipes clean the vectors and file information regardless of general object deletion.
 
 	this->html_tags.clear(); // Delete all HTML tags on exit, just to be sure.
 	this->html_end.clear();
@@ -429,13 +437,19 @@ void Page::memory_cleaner()
 	if (this->page_debug == true)
 	{
 		std::cout << std::endl;
-		std::cout << "Page object being deconstructed..." << std::endl;
+		std::cout << "Vectors wiped..." << std::endl;
 	}
 
 	// If the full_file string still holds information, clear it.
 	if (!full_file.empty())
 	{
 		full_file.clear();
+
+		if (this->page_debug == true)
+		{
+			std::cout << std::endl;
+			std::cout << "File information cleared..." << std::endl;
+		}
 	}
 };
 
