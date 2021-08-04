@@ -11,7 +11,7 @@ int main()
 	// Still figuring out exceptions. In the meantime this boolean catches unintended breaks in loops or user inputs.
 	bool app_exit = false;
 
-	std::string decision;
+	std::string decision; // Just a short string, not meant to be anything impressive.
 
 	// Begin console program parameters.
 
@@ -24,7 +24,7 @@ int main()
 	std::cout << "Your answer: ";
 	std::cin >> decision;
 
-	std::transform(decision.begin(), decision.end(), decision.begin(), [](unsigned char c) { return std::tolower(c); }); // String is transformed to lower case.
+	std::transform(decision.begin(), decision.end(), decision.begin(), [](unsigned char c) { return std::tolower(c); }); // String is transformed to lower case to catch outliers.
 
 	std::cout << std::endl;
 	std::cout << "You responded: " << decision << std::endl;
@@ -32,7 +32,7 @@ int main()
 
 	if(decision == "yes")
 	{
-		int prompt{}; // Initialized to 0
+		int prompt{};
 		// Create a new standard HTML5 webpage.
 		std::cout << "Would you like to create a new webpage or edit an old one?" << std::endl;
 		std::cout << std::endl; // Create a line break for design sake.
@@ -58,7 +58,7 @@ int main()
 				MyPage->setup();
 			}
 
-			app_exit = true; // If the file was created and modified succesfully, it should return this.
+			app_exit = true; // If the file was created and modified successfully, it should return this.
 
 			break;
 		case 2:
@@ -81,7 +81,7 @@ int main()
 			std::cout << "Either you typed in letters or you made an invalid number choice." << std::endl;
 			std::cout << "This program cannot continue without valid input, forcing program halt." << std::endl;
 
-			app_exit = false; // The user made an invalid choice.
+			app_exit = false; // The user made an invalid choice, so the exit is flagged as an error.
 			break;
 		}
 	}

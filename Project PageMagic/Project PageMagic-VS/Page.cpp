@@ -5,7 +5,7 @@ Page::Page()
 	this->temp = 0;
 	this->t_point = &temp;
 
-	this->page_debug = true;
+	this->page_debug = false;
 
 	this->global_line = 1;
 	this->global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
@@ -254,7 +254,7 @@ void Page::initialize_tags()
 	html_end.push_back("</wbr>"); // 105
 };
 
-// s_state or basically string_state
+// s_state just tells the program what to look at out of all the HTML tags that are available. It's very useful.
 std::string Page::s_state(int num)
 {
 	return this->html_tags.at(num); // Return the HTML tag at the appropriate number.
@@ -277,7 +277,7 @@ void Page::display_all()
 	std::cout << "The number displayed on the left is the number you will have to enter to use a tag," << std::endl;
 	std::cout << "while the tag you will use appears to the right." << std::endl;
 	std::cout << std::endl;
-	std::cout << "Here are the available numbers - tags: " << std::endl;
+	std::cout << "Here are the available tags and their numbers: " << std::endl;
 	std::cout << std::endl;
 
 	for (auto i = html_tags.begin(); i != html_tags.end(); i++)
@@ -311,8 +311,9 @@ void Page::editing_process()
 {
 	std::cout << std::endl;
 	std::cout << "Write a sentence to attach to your tag: ";
+
 	std::cin.ignore();
-	std::cin.getline(this->tag_filler, 500);
+	std::getline(std::cin, this->tag_filler);
 
 	this->complete_string = this->html_tags.at(*tag_pointer) + this->tag_fill() + this->html_end.at(*tag_pointer);
 
@@ -369,7 +370,7 @@ void Page::hyperlink_process()
 	std::cout << "Write a sentence to attach to your tag: ";
 
 	std::cin.ignore();
-	std::cin.getline(tag_filler, 500);
+	std::getline(std::cin, tag_filler);
 
 	this->complete_hyperlink = this->complete_hyperlink + this->tag_fill() + this->html_end.at(*tag_pointer);
 
@@ -500,7 +501,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 	std::cout << "Page Title: ";
 
 	std::cin.ignore();
-	std::cin.getline(this->title_header, 50);
+	std::getline(std::cin, this->title_header);
 
 	if (this->title_header == "")
 	{

@@ -3,6 +3,7 @@
 #define PAGE_H
 
 #include "pch.h"
+#include <string> // Including this seperate because it doesn't play nice with PCH
 
 extern std::string full_file;
 
@@ -40,17 +41,18 @@ private:
 	bool page_debug;
 	bool standard_tag = true;
 
-	char file_search[500];
-	char option;
+	char option; // This is the only non-string input
 	std::string filetype{ ".html" };
 	std::string f_name;
-	char title_header[100] = "Untitled"; // Default title for created pages.
+	std::string title_header = "Untitled"; // Default title for created pages.
 	std::vector<std::string> html_tags; // All beginning tags are here.
 	std::vector<std::string> html_end;
 	std::string tag_grab;
 
+	// Variable tagging went through EXTENSIVE rewriting and char arrays will no longer be used. The string system should be safe enough for this.
+
 	// Tagging Variables
-	char tag_filler[500]; // Stored in the stack
+	std::string tag_filler;
 	// std::string local_string;
 	std::string complete_string;
 
