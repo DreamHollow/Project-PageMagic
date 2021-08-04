@@ -11,5 +11,6 @@
 #include <array>
 #include <iterator>
 #include <memory>
+#include <windows.h>
 
 #endif

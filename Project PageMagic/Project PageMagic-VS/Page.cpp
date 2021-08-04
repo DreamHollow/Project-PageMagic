@@ -562,6 +562,12 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 			{
 			// Allows HTML commenting
 			case COMMENT:
+				standard_tag = true;
+
+				std::cout << "Whatever you write in the following comment will only be visible if you open the HTML page in a text editor." << std::endl;
+				std::cout << "The comment will not be visible on the web page." << std::endl;
+
+				this->editing_process();
 				break;
 
 			// Creates a web page link -- the actual tag is <a> which is why it's high on the list
@@ -574,6 +580,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 			case ABBREVIATE:
 				break;
 
+			// Formats an address (not a URL, an actual home or business address)
 			case ADDRESS:
 				break;
 
@@ -599,12 +606,14 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Creates a huge formatted quote based on the string it's given
 			case BLOCKQUOTE:
+
 				break;
 
 			// Creates a body tag where the bulk of most content should go; not relevant as it's already present
 			case BODY:
 				std::cout << std::endl;
 				std::cout << "Your page already has a <body> tag and may encounter problems with your browser." << std::endl;
+				std::cout << "For this reason, a second <body> tag was not added. Thank you." << std::endl;
 				std::cout << std::endl;
 				break;
 
@@ -621,7 +630,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 				std::cout << "Your new line (break) was added." << std::endl;
 				std::cout << "<br>";
 				std::cout << std::endl;
-				break; // Not the same kind of break.
+				break;
 
 			// Creates a functional button; should be paired with other tags
 			case BUTTON:
@@ -728,7 +737,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 			// Contains page information and attributes including the <meta> tag
 			case HEAD:
 				std::cout << std::endl;
-				std::cout << "Your page already has a preformatted <head> tag, are you sure about this?" << std::endl;
+				std::cout << "Your page already has a preformatted <head> tag. Because of this, the <head> tag was not added." << std::endl;
 				std::cout << std::endl;
 				break;
 
@@ -748,9 +757,20 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// The root tag of the html document
 			case HTMLROOT: // This is automatically provided by the program and should never be used twice
+				std::cout << "The <html> tag should never be added a second time in a webpage document." << std::endl;
+				std::cout << "It is a root tag that is meant to be used before any HTML is written to the page." << std::endl;
+				std::cout << "Because of this, the <html> tag was not added." << std::endl;
+				std::cout << std::endl;
+
 				break;
 
 			case ITALICS:
+				standard_tag = true;
+
+				std::cout << "This sentence will be italicized and appear with italics formatting when displayed in a web browser." << std::endl;
+				std::cout << std::endl;
+
+				editing_process();
 				break;
 
 			case IFRAME:
@@ -889,6 +909,13 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Forces text to look small
 			case SUBSCRIPT:
+				standard_tag = true;
+
+				std::cout << "This sentence will be formatted into subscript, which makes it appear much smaller." << std::endl;
+				std::cout << "In most cases, this also means the text will appear aligned to the bottom area of where it would normally be." << std::endl;
+				std::cout << std::endl;
+
+				editing_process();
 				break;
 
 			// Creates a summary text object
@@ -897,6 +924,13 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Forces text to look like an exponent
 			case SUPERSCRIPT:
+				standard_tag = true;
+
+				std::cout << "This sentence will be formatted into superscript, which makes it appear much smaller." << std::endl;
+				std::cout << "In most cases, this also means the text will appear aligned to the top area of where it would normally be." << std::endl;
+				std::cout << std::endl;
+
+				editing_process();
 				break;
 
 			// SVG is a type of canvas object
@@ -940,6 +974,8 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 				break;
 
 			case TITLE: // This is unnecessary, the user is prompted during page_setup, but included for stability
+				std::cout << "There is no need to add a <title> tag, because it was assigned during document creation." << std::endl;
+				std::cout << "The <title> tag was not added." << std::endl;
 				break;
 
 			// Creates and fills a table row with relevant information
@@ -986,7 +1022,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 				std::cout << std::endl;
 			}
 
-			if (standard_tag == true) // Use the standard tag output to HTML
+			if (this->standard_tag == true) // Use the standard tag output to HTML
 			{
 				std::cout << std::endl;
 				std::cout << "You added " << complete_string;
@@ -995,7 +1031,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 				outfile << this->complete_string;
 			}
 
-			else if (standard_tag == false) // Use the hyperlink style tag output to HTML
+			else if (this->standard_tag == false) // Use the hyperlink style tag output to HTML
 			{
 				std::cout << std::endl;
 				std::cout << "You added " << complete_hyperlink;
