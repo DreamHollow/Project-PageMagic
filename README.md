@@ -7,7 +7,6 @@ PageMagic is a console-based program which means that you won't see the actual o
 The program does however show you step-by-step what you should expect to see in your HTML file, though it can only display text.
 
 I created the original PageMagic to target 64-bit systems. Because of this, it probably won't run well on a 32-bit system.
-However, it will use MUCH less memory.
 
 I learned a lot from this project. I feel confident it helped me become a better developer.
 
@@ -19,8 +18,6 @@ Users might get a warning if using tags that are deprecated. Right now, I don't 
 It lacks a number of CSS tags because I didn't realize how many there actually were. Sorry about that.
 The program also uses INLINE CSS because it saves me the headache of creating an entirely seperate CSS stylesheets editor.
 This program is NOT a JavaScript editor but these features may be implemented with time.
-
-The previous version of this program used only the console. This version will provide a graphical UI and/or display elements to demonstrate what changes have been made.
 
 Some of the tags are rarely used by anyone in web development. I cannot teach you what they do, only provide you access to them.
 
