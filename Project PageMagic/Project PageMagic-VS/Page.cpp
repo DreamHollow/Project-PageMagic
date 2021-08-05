@@ -31,6 +31,34 @@ Page::~Page()
 	this->memory_cleaner();
 };
 
+//// Very important subfunction, determines if a reference is valid before use, make SURE there's a memory address this can point to
+//bool Page::valid_ref(int &ref_address)
+//{
+//	if (ref_address != NULL)
+//	{
+//		if (page_debug == true)
+//		{
+//			std::cout << std::endl;
+//			std::cout << "Reference found." << std::endl;
+//			std::cout << "Direct reference 1: " << &ref_address;
+//			std::cout << std::endl;
+//		}
+//
+//		return true;
+//	}
+//	else
+//	{
+//		if (page_debug == true)
+//		{
+//			std::cout << std::endl;
+//			std::cout << "Error: Reference not found!! Current reference is NULL.";
+//			std::cout << std::endl;
+//		}
+//
+//		return false;
+//	}
+//};
+
 void Page::initialize_tags()
 {
 
@@ -322,6 +350,7 @@ void Page::editing_process()
 	std::cin.ignore();
 	std::getline(std::cin, this->tag_filler);
 
+	// Use pointers here, not references.
 	this->complete_string = this->html_tags.at(*tag_pointer) + this->tag_fill() + this->html_end.at(*tag_pointer);
 
 	std::cout << "Your completed tag is: " << this->complete_string << " !";
@@ -564,7 +593,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 			// Add functionality for TABLE, BUTTON, and so many others -- TODO
 			// Finally added a proper switch statement to deal with outlier tags without simple modifications; this was a lot of work.
-			switch (*tag_pointer)
+			switch (*tag_pointer) // This should just refer directly to tagger, which is the real variable here
 			{
 			// Allows HTML commenting
 			case COMMENT:

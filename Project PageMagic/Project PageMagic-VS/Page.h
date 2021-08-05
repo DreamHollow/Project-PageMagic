@@ -34,10 +34,14 @@ private:
 	int tagger;
 	int* tag_pointer = nullptr;
 
+	// Don't use this reference right now, it was incorrectly defined, I think
+
+	// int &tag_pos = tagger; // Instead of using pointer, mostly use this (except with loop iteration). MUST be initialized to a location. This is a direct memory address.
+
 	int temp;
 	int* t_point = nullptr;
 
-	int err_code{};
+	int err_code{}; // This will become a much more elaborate part of handling program errors and exceptions - TODO
 
 	// This tag is used all over the Page class for in-code debugging purposes. Switch to FALSE if you're not debugging.
 	bool page_debug;
@@ -83,6 +87,7 @@ private:
 	};
 
 	// Methods
+	// bool valid_ref(int &ref_address);
 	void initialize_tags();
 	inline int const find_line() { return *global_point; };
 	std::string s_state(int num);
