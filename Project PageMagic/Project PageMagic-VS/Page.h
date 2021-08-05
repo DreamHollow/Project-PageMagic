@@ -26,7 +26,7 @@ public:
 	void memory_cleaner();
 
 private:
-	// Pointers
+	// Pointers / Memory Objects
 	std::unique_ptr<Page> MyPage;
 
 	// Variables
@@ -40,6 +40,7 @@ private:
 	// This tag is used all over the Page class for in-code debugging purposes. Switch to FALSE if you're not debugging.
 	bool page_debug;
 	bool standard_tag = true;
+	bool ignore_tag = false;
 
 	char option; // This is the only non-string input
 	std::string filetype{ ".html" };

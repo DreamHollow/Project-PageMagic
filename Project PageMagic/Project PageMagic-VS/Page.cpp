@@ -5,7 +5,7 @@ Page::Page()
 	this->temp = 0;
 	this->t_point = &temp;
 
-	this->page_debug = false;
+	this->page_debug = true;
 
 	this->global_line = 1;
 	this->global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
@@ -142,6 +142,7 @@ void Page::initialize_tags()
 	html_tags.push_back("<var>"); // 103
 	html_tags.push_back("<video>"); // 104
 	html_tags.push_back("<wbr>"); // 105
+	html_tags.push_back("NULL"); // 106, used for invalid tags
 
 
 
@@ -252,6 +253,7 @@ void Page::initialize_tags()
 	html_end.push_back("</var>"); // 103
 	html_end.push_back("</video>"); // 104
 	html_end.push_back("</wbr>"); // 105
+	html_end.push_back("NULL"); // 106
 };
 
 // s_state just tells the program what to look at out of all the HTML tags that are available. It's very useful.
@@ -265,12 +267,14 @@ void Page::display_all()
 {
 	// None of these variables need to be used beyond the scope of this function.
 
-	if (this->t_point == nullptr)
+	if (this->t_point == nullptr || t_point == NULL)
 	{
 		std::cout << "Error, no memory could be allocated to this pointer!";
 		std::cout << std::endl;
 
-		exit(1);
+		delete t_point; // Delete the pointer causing the problem.
+
+		exit(1); // This needs a cleaner exit. - TODO
 	}
 	
 	std::cout << "To add a tag to your HTML file, you must enter a number." << std::endl;
@@ -345,8 +349,6 @@ void Page::meta_process()
 
 void Page::hyperlink_process()
 {
-	
-
 	std::cout << "This tag requires additional editing." << std::endl;
 	std::cout << "Hyperlinks will be formatted automatically by the program, but they require a website URL." << std::endl;
 	std::cout << std::endl;
@@ -611,10 +613,16 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Creates a body tag where the bulk of most content should go; not relevant as it's already present
 			case BODY:
-				std::cout << std::endl;
+				this->standard_tag = true;
+
 				std::cout << "Your page already has a <body> tag and may encounter problems with your browser." << std::endl;
 				std::cout << "For this reason, a second <body> tag was not added. Thank you." << std::endl;
 				std::cout << std::endl;
+
+				// this->complete_string = s_state(XEND);
+
+				this->ignore_tag = true;
+
 				break;
 
 			// Creates a line break, not the same as a horizontal ruler
@@ -736,9 +744,15 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Contains page information and attributes including the <meta> tag
 			case HEAD:
-				std::cout << std::endl;
+				this->standard_tag = true;
+
 				std::cout << "Your page already has a preformatted <head> tag. Because of this, the <head> tag was not added." << std::endl;
 				std::cout << std::endl;
+
+				// this->complete_string = s_state(XEND);
+
+				this->ignore_tag = true;
+
 				break;
 
 			case HEADER:
@@ -757,10 +771,16 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// The root tag of the html document
 			case HTMLROOT: // This is automatically provided by the program and should never be used twice
+				this->standard_tag = true;
+
 				std::cout << "The <html> tag should never be added a second time in a webpage document." << std::endl;
 				std::cout << "It is a root tag that is meant to be used before any HTML is written to the page." << std::endl;
 				std::cout << "Because of this, the <html> tag was not added." << std::endl;
 				std::cout << std::endl;
+
+				// this->complete_string = s_state(XEND);
+
+				this->ignore_tag = true;
 
 				break;
 
@@ -868,6 +888,9 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// If Ruby is not present on this page but is relevant to the web page itself, this tag becomes relevant
 			case NORUBY:
+				std::cout << "Putting this tag in your HTML document show text that will display if a user's browser doesn't support Ruby annotations." << std::endl;
+				std::cout << std::endl;
+
 				break;
 
 			// Creates text with a line straight through it
@@ -896,6 +919,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 			case SOURCE:
 				break;
 
+			// Functions sort of like <div> or <style> but shorter
 			case SPAN:
 				break;
 
@@ -905,6 +929,8 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Used for custom CSS
 			case STYLE:
+				// This tag is mostly functionally useless without something to actually attach it to. This needs to be pairable with other tags. - TODO
+
 				break;
 
 			// Forces text to look small
@@ -974,8 +1000,15 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 				break;
 
 			case TITLE: // This is unnecessary, the user is prompted during page_setup, but included for stability
+				this->standard_tag = true;
+
 				std::cout << "There is no need to add a <title> tag, because it was assigned during document creation." << std::endl;
 				std::cout << "The <title> tag was not added." << std::endl;
+
+				// this->complete_string = s_state(XEND);
+
+				this->ignore_tag = true;
+
 				break;
 
 			// Creates and fills a table row with relevant information
@@ -987,6 +1020,9 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Creates an unordered list
 			case UNORDERLIST:
+				// This needs to be paired with actual list elements at some point. It's useless without them. - TODO
+
+
 				break;
 
 			case VARIABLE:
@@ -1000,7 +1036,16 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 			case WEBLINEBREAK:
 				break;
 
-			case XEND: // Don't actually use this.
+			case XEND: // Don't actually use this. This tag helps with program functionality.
+				this->standard_tag = true;
+
+				std::cout << "This tag is filler and is not used on HTML pages." << std::endl;
+				std::cout << "It is included in the tag list to prevent program errors." << std::endl;
+				std::cout << std::endl;
+				std::cout << "Thank you for your understanding." << std::endl;
+
+				this->ignore_tag = true;
+
 				break;
 
 			default:
@@ -1011,7 +1056,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			std::cout << std::endl;
 			std::cout << "You entered: " << *tag_pointer << std::endl;
-			std::cout << "Adding the " << this->s_state(*tag_pointer) << " tag." << std::endl;
+			std::cout << "Adding the " << this->s_state(*tag_pointer) << " tag if applicable." << std::endl;
 
 			this->tag_grab = this->s_state(*tag_pointer); // Direct assignment. Seems to work for the purpose of this program.
 
@@ -1022,13 +1067,42 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 				std::cout << std::endl;
 			}
 
+			if (this->ignore_tag == true) // This is a rare sequence reserved for tags that don't belong in documents
+			{
+				*tag_pointer = XEND; // The tag is forcefully changed to NULL
+
+				std::cout << std::endl;
+				std::cout << "This tag is not valid to be used on this document." << std::endl;
+				std::cout << "The program has ignored your tag input to either: save on resources, prevent errors, or clean up your document." << std::endl;
+				std::cout << "Thank you for your understanding." << std::endl;
+
+				*global_point -= 1; // Removes a line because this could not execute, that way it still breaks even at 0.
+
+				this->ignore_tag = false; // Set to false afterward so the next tag can be valid.
+			}
+
 			if (this->standard_tag == true) // Use the standard tag output to HTML
 			{
 				std::cout << std::endl;
-				std::cout << "You added " << complete_string;
+				std::cout << "The last line you added was: " << complete_string;
 				std::cout << std::endl;
 
-				outfile << this->complete_string;
+				if (*tag_pointer != XEND) // If the tag is a valid tag and not filler
+				{
+					outfile << this->complete_string;
+				}
+				else
+				{
+					if (this->page_debug == true)
+					{
+						std::cout << "The tag position was XEND / NULL and was ignored.";
+					}
+
+					std::cout << std::endl;
+					std::cout << "Invalid entry." << std::endl;
+					std::cout << "Skipping tag..." << std::endl;
+					std::cout << std::endl;
+				}
 			}
 
 			else if (this->standard_tag == false) // Use the hyperlink style tag output to HTML
@@ -1083,9 +1157,9 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 	std::cout << "</html>" << std::endl;
 
 	outfile << std::endl;
-	outfile << "</html>"; // Root HTML tag is closed. Always.
+	outfile << "</html>";
 
-	*global_point = *global_point + 2; // For debugging purposes.
+	*global_point = *global_point + 2; // Writing the end tags counts as more lines
 
 	std::cout << std::endl;
 	std::cout << "Lines wrapped up at " << find_line() << ".";

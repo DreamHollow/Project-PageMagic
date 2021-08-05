@@ -13,8 +13,6 @@ int main()
 
 	std::string decision; // Just a short string, not meant to be anything impressive.
 
-	// Begin console program parameters.
-
 	std::cout << "This program is designed to create webpages using C++." << std::endl;
 	std::cout << "It is currently a WIP and may be lacking features." << std::endl;
 
