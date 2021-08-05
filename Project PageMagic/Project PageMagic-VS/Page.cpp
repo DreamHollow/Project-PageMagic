@@ -5,7 +5,7 @@ Page::Page()
 	this->temp = 0;
 	this->t_point = &temp;
 
-	this->page_debug = false;
+	this->page_debug = true;
 
 	this->global_line = 1;
 	this->global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
@@ -298,7 +298,7 @@ int Page::display_all()
 		std::cout << "The tag display function encountered some problems and must be terminated." << std::endl;
 		std::cout << std::endl;
 
-		delete t_point; // Delete the pointer causing the problem.
+		// Don't delete the pointer, just return an error. Deleting raw pointers is bad.
 
 		return 1;
 	}
@@ -314,7 +314,7 @@ int Page::display_all()
 	{
 		std::cout << this->html_tags.at(*t_point) << " is assigned to number " << *t_point << std::endl; // The tag and pointer should match one to one.
 
-		*t_point += 1;
+		t_ref += 1; // This reference is safe to use in this manner
 	}
 
 	return 0;
@@ -408,7 +408,7 @@ void Page::hyperlink_process()
 	this->complete_hyperlink = this->complete_hyperlink + this->tag_fill() + this->html_end.at(*tag_pointer);
 
 	std::cout << "Your completed tag is: " << complete_hyperlink << " !";
-	*global_point += 1;
+	global_ref += 1;
 };
 
 // This was originally used for character arrays but now returns strings in general
@@ -441,13 +441,13 @@ void Page::title_sequence()
 	std::cout << "Mandatory Header: " << std::endl;
 	std::cout << "Line " << this->find_line() << ": "; // Pointer is already 1, so we let this be.
 	std::cout << "<!DOCTYPE html>" << std::endl;
-	*global_point += 1;
+	global_ref += 1;
 	std::cout << "Line " << this->find_line() << ": ";
 	std::cout << "<html lang = 'en'>" << std::endl;
-	*global_point += 1;
+	global_ref += 1;
 	std::cout << "Line " << this->find_line() << ": ";
 	std::cout << "<head>" << std::endl;
-	*global_point += 1;
+	global_ref += 1;
 	std::cout << "Line " << this->find_line() << ": ";
 	std::cout << "<meta charset = 'utf-8'>" << std::endl;
 	std::cout << std::endl;
@@ -554,7 +554,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 	std::cout << "Your output was recorded as " << this->get_title() << std::endl;
 
 	outfile << "<title>" << this->title_header << "</title>" << std::endl;
-	*global_point += 1; // Another line written in. This one closes on it's own.
+	global_ref += 1; // Another line written in. This one closes on it's own.
 
 	system("pause"); // Pause to allow the user to read what's happening.
 
@@ -570,7 +570,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 	std::cout << "The <head> tag of your HTML document has already been created. Creating a <body> tag..." << std::endl;
 
 	outfile << "<body>" << std::endl;
-	*global_point += 1;
+	global_ref += 1;
 
 	std::cout << "<body>" << std::endl;
 	std::cout << std::endl;
@@ -1109,7 +1109,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 				std::cout << "The program has ignored your tag input to either: save on resources, prevent errors, or clean up your document." << std::endl;
 				std::cout << "Thank you for your understanding." << std::endl;
 
-				*global_point -= 1; // Removes a line because this could not execute, that way it still breaks even at 0.
+				*global_point -= 1; // Removes a line because this could not execute, that way it still breaks even at 0. Do not use ref for this, just in case.
 
 				this->ignore_tag = false; // Set to false afterward so the next tag can be valid.
 			}
@@ -1148,7 +1148,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			}
 
 			// File always writes the data when finished.
-			*global_point += 1;
+			global_ref += 1;
 
 			this->local_hyperlink.clear();
 			this->tag_grab.clear();
@@ -1192,7 +1192,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 	outfile << std::endl;
 	outfile << "</html>";
 
-	*global_point = *global_point + 2; // Writing the end tags counts as more lines
+	global_ref += 2; // Writing the end tags counts as more lines
 
 	std::cout << std::endl;
 	std::cout << "Lines wrapped up at " << find_line() << ".";

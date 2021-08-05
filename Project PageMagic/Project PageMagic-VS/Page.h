@@ -17,6 +17,7 @@ public:
 	std::string decision;
 	int global_line = 0;
 	int* global_point = nullptr;
+	int &global_ref = global_line;
 
 	// Methods
 	inline std::string const get_title() { return title_header; };
@@ -40,6 +41,7 @@ private:
 
 	int temp;
 	int* t_point = nullptr;
+	int &t_ref = temp;
 
 	int err_code{}; // This will become a much more elaborate part of handling program errors and exceptions - TODO
 
