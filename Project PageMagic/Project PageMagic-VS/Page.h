@@ -37,6 +37,8 @@ private:
 	int temp;
 	int* t_point = nullptr;
 
+	int err_code{};
+
 	// This tag is used all over the Page class for in-code debugging purposes. Switch to FALSE if you're not debugging.
 	bool page_debug;
 	bool standard_tag = true;
@@ -54,7 +56,6 @@ private:
 
 	// Tagging Variables
 	std::string tag_filler;
-	// std::string local_string;
 	std::string complete_string;
 
 	// Tagging Hyperlinks etc.
@@ -87,10 +88,10 @@ private:
 	std::string s_state(int num);
 	void declare(std::string local_file);
 	void title_sequence();
-	void display_all();
-	void page_setup();
+	int display_all();
+	int page_setup();
 	void page_explain();
-	void tag_begin();
+	int tag_begin();
 	void editing_process();
 	void meta_process();
 	void hyperlink_process();

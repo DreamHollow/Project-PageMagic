@@ -5,7 +5,7 @@ Page::Page()
 	this->temp = 0;
 	this->t_point = &temp;
 
-	this->page_debug = true;
+	this->page_debug = false;
 
 	this->global_line = 1;
 	this->global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
@@ -262,19 +262,17 @@ std::string Page::s_state(int num)
 	return this->html_tags.at(num); // Return the HTML tag at the appropriate number.
 };
 
-// Originally created for debugging but now main function for displaying tags.
-void Page::display_all()
+int Page::display_all()
 {
-	// None of these variables need to be used beyond the scope of this function.
-
-	if (this->t_point == nullptr || t_point == NULL)
+	if (this->t_point == nullptr || t_point == NULL) // Covering all bases here
 	{
 		std::cout << "Error, no memory could be allocated to this pointer!";
+		std::cout << "The tag display function encountered some problems and must be terminated." << std::endl;
 		std::cout << std::endl;
 
 		delete t_point; // Delete the pointer causing the problem.
 
-		exit(1); // This needs a cleaner exit. - TODO
+		return 1;
 	}
 	
 	std::cout << "To add a tag to your HTML file, you must enter a number." << std::endl;
@@ -290,9 +288,11 @@ void Page::display_all()
 
 		*t_point += 1;
 	}
+
+	return 0;
 };
 
-void Page::tag_begin() // Messed around with enum scopes until I found an appropriate one.
+int Page::tag_begin() // Messed around with enum scopes until I found an appropriate one.
 {
 	std::cout << std::endl;
 	std::cout << "Tag availability will vary greatly on different stages of the project." << std::endl;
@@ -300,17 +300,20 @@ void Page::tag_begin() // Messed around with enum scopes until I found an approp
 	std::cout << "You will be given a list of available tags." << std::endl;
 
 	std::cout << std::endl;
-	std::cout << "You are on line " << find_line() << " of the HTML Document." << std::endl;
+	std::cout << "You are on line " << this->find_line() << " of the HTML Document." << std::endl;
 	std::cout << "Once you choose a tag, you will be asked to fill out other parameters." << std::endl;
 	std::cout << std::endl;
 
-	display_all();
+	display_all(); // If display returns an error, do not continue program as normal - TODO
 
 	std::cout << "Please select the tag you would like to use by number." << std::endl;
 
 	std::cout << std::endl;
+
+	return 0;
 };
 
+// This could be reconfigured as a string return type but I like this setup better.
 void Page::editing_process()
 {
 	std::cout << std::endl;
@@ -356,7 +359,6 @@ void Page::hyperlink_process()
 	std::cout << "<a href= '";
 	this->tag_grab = "<a href='";
 
-	// No spaces should be necessary here so a regular string should work fine.
 	std::cin >> this->local_hyperlink;
 
 	this->complete_hyperlink = this->tag_grab + this->local_hyperlink + this->link_end;
@@ -372,7 +374,7 @@ void Page::hyperlink_process()
 	std::cout << "Write a sentence to attach to your tag: ";
 
 	std::cin.ignore();
-	std::getline(std::cin, tag_filler);
+	std::getline(std::cin, this->tag_filler);
 
 	this->complete_hyperlink = this->complete_hyperlink + this->tag_fill() + this->html_end.at(*tag_pointer);
 
@@ -380,10 +382,10 @@ void Page::hyperlink_process()
 	*global_point += 1;
 };
 
-// Returns the tag_filler as a string
-std::string Page::tag_fill() // This function is called when a tag needs filler.
+// This was originally used for character arrays but now returns strings in general
+std::string Page::tag_fill()
 {
-	return this->tag_filler; // Return the string to be implemented as filler.
+	return this->tag_filler; // Show what the user typed as full string
 };
 
 void Page::declare(std::string local_file) // Declaration should always just emphasize that a file exists and is accessible.
@@ -422,19 +424,21 @@ void Page::title_sequence()
 	std::cout << std::endl;
 };
 
-void Page::setup() // This function defines what happens with a file. Not to be confused with page_setup() which is more verbose.
+// This function technically serves no purpose, but I'm keeping it as-is so I don't break the program flow.
+void Page::setup()
 {
-	// Starts calling private functions for page initialization
 	this->page_setup();
+
+	// Other functions were intended to be run after the intial page_setup but were later removed
 };
 
-// Memory management for this program is a bit of a nightmare. I want to plug any leaks.
+// Memory management can be tricky. This function is fine as void return type.
 void Page::memory_cleaner()
 {
 	// I'll be honest with you, memory management in C++ is not my strong suit.
 	// This function just wipes clean the vectors and file information regardless of general object deletion.
 
-	this->html_tags.clear(); // Delete all HTML tags on exit, just to be sure.
+	this->html_tags.clear();
 	this->html_end.clear();
 
 	if (this->page_debug == true)
@@ -457,7 +461,7 @@ void Page::memory_cleaner()
 };
 
 // It was too difficult to set up private functions within this one so it's all lumped in together.
-void Page::page_setup() // Tags the beginning of an HTML document with proper heading.
+int Page::page_setup() // Tags the beginning of an HTML document with proper heading.
 {
 	// Tried some exception handling here.
 	std::fstream outfile;
@@ -477,7 +481,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 	std::cout << "Writing to file: " << full_file << std::endl;
 
-	title_sequence();
+	this->title_sequence();
 
 	// File should be written with standard head tags. This is automatically configured for HTML5 in English.
 	// Lines are ACTUALLY written here but displayed earlier for reasons of convenience.
@@ -513,7 +517,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 		std::cout << std::endl;
 		std::cout << "The program connot successfully continue this operation. Please try again later." << std::endl;
 
-		exit(1);
+		return 1;
 	}
 
 	std::cout << std::endl;
@@ -564,7 +568,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 			{
 			// Allows HTML commenting
 			case COMMENT:
-				standard_tag = true;
+				this->standard_tag = true;
 
 				std::cout << "Whatever you write in the following comment will only be visible if you open the HTML page in a text editor." << std::endl;
 				std::cout << "The comment will not be visible on the web page." << std::endl;
@@ -574,7 +578,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Creates a web page link -- the actual tag is <a> which is why it's high on the list
 			case HYPERLINK:
-				standard_tag = false;
+				this->standard_tag = false;
 
 				this->hyperlink_process();
 				break;
@@ -627,7 +631,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Creates a line break, not the same as a horizontal ruler
 			case BREAK:
-				standard_tag = false;
+				this->standard_tag = false;
 
 				std::cout << "Entering this tag will be equivalent to pressing 'Enter' on the keyboard." << std::endl;
 				std::cout << "This means that PageMagic will insert the next tag slightly lower on the page." << std::endl;
@@ -760,7 +764,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Creates a huge line across the entire HTML document
 			case HORZRULER:
-				standard_tag = false;
+				this->standard_tag = false;
 
 				std::cout << "Horizontal rulers don't require additional information." << std::endl;
 				std::cout << "They generate long thin lines across an HTML page." << std::endl;
@@ -785,7 +789,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 				break;
 
 			case ITALICS:
-				standard_tag = true;
+				this->standard_tag = true;
 
 				std::cout << "This sentence will be italicized and appear with italics formatting when displayed in a web browser." << std::endl;
 				std::cout << std::endl;
@@ -832,7 +836,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Sets information for page display or attributes
 			case META:
-				standard_tag = false;
+				this->standard_tag = false;
 
 				this->meta_process();
 				break;
@@ -935,13 +939,13 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Forces text to look small
 			case SUBSCRIPT:
-				standard_tag = true;
+				this->standard_tag = true;
 
 				std::cout << "This sentence will be formatted into subscript, which makes it appear much smaller." << std::endl;
 				std::cout << "In most cases, this also means the text will appear aligned to the bottom area of where it would normally be." << std::endl;
 				std::cout << std::endl;
 
-				editing_process();
+				this->editing_process();
 				break;
 
 			// Creates a summary text object
@@ -950,13 +954,13 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Forces text to look like an exponent
 			case SUPERSCRIPT:
-				standard_tag = true;
+				this->standard_tag = true;
 
 				std::cout << "This sentence will be formatted into superscript, which makes it appear much smaller." << std::endl;
 				std::cout << "In most cases, this also means the text will appear aligned to the top area of where it would normally be." << std::endl;
 				std::cout << std::endl;
 
-				editing_process();
+				this->editing_process();
 				break;
 
 			// SVG is a type of canvas object
@@ -995,7 +999,7 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 
 			// Creates a time object for HTML page
 			case TIME:
-				standard_tag = true;
+				this->standard_tag = true;
 
 				break;
 
@@ -1166,6 +1170,8 @@ void Page::page_setup() // Tags the beginning of an HTML document with proper he
 	std::cout << std::endl;
 
 	outfile.close(); // ALWAYS close the file
+
+	return 0;
 };
 
 // Doesn't actually do anything, just explains what's going on for the user.
