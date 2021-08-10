@@ -49,14 +49,27 @@ int main()
 			{
 				std::unique_ptr<Page> MyPage = std::make_unique<Page>();
 
-				// Create a new file.
-				MyPage->create_file();
+				// Set this variable to true until an event terminates it
+				MyPage->is_running = true;
 
-				// Generate standard HTML layouts.
-				MyPage->setup();
+				while (MyPage->is_running == true && MyPage->err_code == 0)
+				{
+					// Create a new file.
+					MyPage->create_file();
+
+					MyPage->setup();
+					
+					// Terminate the loop here or it will run forever
+					MyPage->is_running = false;
+				}
+
+				app_exit = true;
+
+				if (MyPage->err_code != 0)
+				{
+					app_exit = false;
+				}
 			}
-
-			app_exit = true; // If the file was created and modified successfully, it should return this.
 
 			break;
 		case 2:

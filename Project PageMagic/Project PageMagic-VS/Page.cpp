@@ -5,7 +5,7 @@ Page::Page()
 	this->temp = 0;
 	this->t_point = &temp;
 
-	this->page_debug = true;
+	this->page_debug = false;
 
 	this->global_line = 1;
 	this->global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
@@ -30,34 +30,6 @@ Page::~Page()
 	// I feel better having this function do some general cleanup on exit.
 	this->memory_cleaner();
 };
-
-//// Very important subfunction, determines if a reference is valid before use, make SURE there's a memory address this can point to
-//bool Page::valid_ref(int &ref_address)
-//{
-//	if (ref_address != NULL)
-//	{
-//		if (page_debug == true)
-//		{
-//			std::cout << std::endl;
-//			std::cout << "Reference found." << std::endl;
-//			std::cout << "Direct reference 1: " << &ref_address;
-//			std::cout << std::endl;
-//		}
-//
-//		return true;
-//	}
-//	else
-//	{
-//		if (page_debug == true)
-//		{
-//			std::cout << std::endl;
-//			std::cout << "Error: Reference not found!! Current reference is NULL.";
-//			std::cout << std::endl;
-//		}
-//
-//		return false;
-//	}
-//};
 
 void Page::initialize_tags()
 {
@@ -300,6 +272,7 @@ int Page::display_all()
 
 		// Don't delete the pointer, just return an error. Deleting raw pointers is bad.
 
+		err_code = 1;
 		return 1;
 	}
 	
@@ -503,9 +476,12 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			throw "Error opening file!";
 		}
 	}
-	catch(const char* cstr) // Display exception message.
+	catch(const char* cstr) // If the file can't actually open, it should cut off here.
 	{
 		std::cerr << cstr << std::endl;
+
+		err_code = 1;
+		return 1;
 	}
 
 	std::cout << "Writing to file: " << full_file << std::endl;
@@ -541,11 +517,13 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 	if (this->title_header == "")
 	{
 		std::cout << std::endl;
-		std::cout << "There was an error and no input was detected." << std::endl;
+		std::cout << "There was an error and no input was detected!" << std::endl;
+		std::cout << std::endl;
 		std::cout << "Reminder: This program is experimental and some bugs may still be present." << std::endl;
 		std::cout << std::endl;
 		std::cout << "The program connot successfully continue this operation. Please try again later." << std::endl;
 
+		err_code = 1;
 		return 1;
 	}
 
@@ -590,6 +568,14 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			// Ask for a tag number - start a switch statement
 			std::cout << "Please enter the tag number." << std::endl;
 			std::cin >> *tag_pointer;
+
+			if (*tag_pointer < 0 || *tag_pointer > XEND)
+			{
+				std::cout << "This input is strictly not allowed. Tag is set to invalid." << std::endl;
+				std::cout << std::endl;
+
+				*tag_pointer = XEND;
+			}
 
 			// Add functionality for TABLE, BUTTON, and so many others -- TODO
 			// Finally added a proper switch statement to deal with outlier tags without simple modifications; this was a lot of work.

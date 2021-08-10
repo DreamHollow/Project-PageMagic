@@ -5,6 +5,7 @@
 #include "pch.h"
 #include <string> // Including this seperate because it doesn't play nice with PCH
 
+// I do not recommend doing this often, but in this case I was using full_file as a global.
 extern std::string full_file;
 
 class Page
@@ -16,34 +17,28 @@ public:
 	// Variables
 	std::string decision;
 	int global_line = 0;
-	int* global_point = nullptr;
-	int &global_ref = global_line;
+	bool is_running = false;
+	int err_code = 0; // Should be 0 by default to interpret non-error
 
 	// Methods
 	inline std::string const get_title() { return title_header; };
 	bool create_file();
-	// void open_file();
 	void setup();
-	void memory_cleaner();
 
 private:
 	// Pointers / Memory Objects
 	std::unique_ptr<Page> MyPage;
+	int* global_point = nullptr;
+	int* tag_pointer = nullptr;
+	int* t_point = nullptr;
 
 	// Variables
-	// Tagger is initialized in constructor.
 	int tagger;
-	int* tag_pointer = nullptr;
-
-	// Don't use this reference right now, it was incorrectly defined, I think
-
-	// int &tag_pos = tagger; // Instead of using pointer, mostly use this (except with loop iteration). MUST be initialized to a location. This is a direct memory address.
-
 	int temp;
-	int* t_point = nullptr;
-	int &t_ref = temp;
 
-	int err_code{}; // This will become a much more elaborate part of handling program errors and exceptions - TODO
+	// Assign Once Only
+	int &global_ref = global_line;
+	int &t_ref = temp;
 
 	// This tag is used all over the Page class for in-code debugging purposes. Switch to FALSE if you're not debugging.
 	bool page_debug;
@@ -103,6 +98,7 @@ private:
 	void meta_process();
 	void hyperlink_process();
 	std::string tag_fill();
+	void memory_cleaner();
 };
 
 #endif
