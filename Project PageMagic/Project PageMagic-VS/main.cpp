@@ -2,6 +2,29 @@
 
 // Global variables are usually VERY BAD but in this case it's considered useful.
 std::string full_file;
+bool program_debug = true;
+int err_code{};
+
+void error_message()
+{
+	if (program_debug == true && err_code != 0)
+	{
+		std::cout << "During program runtime, the program returned this error: ";
+		if (err_code == 1)
+		{
+			std::cout << std::endl;
+			std::cout << "[Standard program error. Program likely terminated early from missing datapoints, forced stop, or abnormal execution.]" << std::endl;
+			std::cout << "[Error Code Number: " << err_code << "]";
+			std::cout << std::endl;
+		}
+		if (err_code == 2)
+		{
+			std::cout << "Non-standard program error. Possible issues with system memory or program memory allocation." << std::endl;
+			std::cout << "Error Code Number: " << err_code;
+			std::cout << std::endl;
+		}
+	}
+};
 
 int main()
 {
@@ -52,7 +75,7 @@ int main()
 				// Set this variable to true until an event terminates it
 				MyPage->is_running = true;
 
-				while (MyPage->is_running == true && MyPage->err_code == 0)
+				while (MyPage->is_running == true && err_code == 0)
 				{
 					// Create a new file.
 					MyPage->create_file();
@@ -65,9 +88,11 @@ int main()
 
 				app_exit = true;
 
-				if (MyPage->err_code != 0)
+				if (err_code != 0)
 				{
 					app_exit = false;
+
+					error_message();
 				}
 			}
 
@@ -88,10 +113,13 @@ int main()
 			app_exit = true;
 
 			break;
-		default:
+		default: // Not a valid response
 			std::cout << "Either you typed in letters or you made an invalid number choice." << std::endl;
 			std::cout << "This program cannot continue without valid input, forcing program halt." << std::endl;
+			std::cout << std::endl;
 
+			err_code = 1;
+			error_message();
 			app_exit = false; // The user made an invalid choice, so the exit is flagged as an error.
 			break;
 		}
@@ -105,6 +133,8 @@ int main()
 		std::cout << "Sorry," << std::endl;
 		std::cout << "This is an invalid response." << std::endl;
 
+		err_code = 1;
+		error_message();
 		app_exit = false;
 	}
 
@@ -125,7 +155,7 @@ int main()
 		std::cout << "Shutting down..." << std::endl;
 
 		// Window is forcefully closed because of an error.
-		return 1; // Use RETURN, not EXIT - exit is unsafe compared to returning a value
+		return err_code;; // Use RETURN, not EXIT - exit is unsafe compared to returning a value
 	}
 
 	// Window closes without error.

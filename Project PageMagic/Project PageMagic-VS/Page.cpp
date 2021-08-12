@@ -1,11 +1,13 @@
 #include "Page.h"
 
+/* err_code is a general purpose variable. If it ever returns anything except 0, something went wrong. */
+
 Page::Page()
 {
 	this->temp = 0;
 	this->t_point = &temp;
 
-	this->page_debug = false;
+	this->page_debug = true;
 
 	this->global_line = 1;
 	this->global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
@@ -272,8 +274,8 @@ int Page::display_all()
 
 		// Don't delete the pointer, just return an error. Deleting raw pointers is bad.
 
-		err_code = 1;
-		return 1;
+		err_code = 2; // This is an elevated failure because there was a memory interruption
+		return err_code;
 	}
 	
 	std::cout << "To add a tag to your HTML file, you must enter a number." << std::endl;
@@ -290,7 +292,8 @@ int Page::display_all()
 		t_ref += 1; // This reference is safe to use in this manner
 	}
 
-	return 0;
+	err_code = 0;
+	return err_code;
 };
 
 int Page::tag_begin() // Messed around with enum scopes until I found an appropriate one.
@@ -311,11 +314,12 @@ int Page::tag_begin() // Messed around with enum scopes until I found an appropr
 
 	std::cout << std::endl;
 
-	return 0;
+	err_code = 0;
+	return err_code;
 };
 
 // This could be reconfigured as a string return type but I like this setup better.
-void Page::editing_process()
+int Page::editing_process()
 {
 	std::cout << std::endl;
 	std::cout << "Write a sentence to attach to your tag: ";
@@ -323,16 +327,21 @@ void Page::editing_process()
 	std::cin.ignore();
 	std::getline(std::cin, this->tag_filler);
 
+	// Check for potential exceptions here -- TODO
+
 	// Use pointers here, not references.
 	this->complete_string = this->html_tags.at(*tag_pointer) + this->tag_fill() + this->html_end.at(*tag_pointer);
 
 	std::cout << "Your completed tag is: " << this->complete_string << " !";
 
 	std::cout << std::endl;
+
+	err_code = 0;
+	return err_code;
 };
 
 // Don't be fooled by the name, this is just an elaborate function for modifying the META tag.
-void Page::meta_process()
+int Page::meta_process()
 {
 	std::cout << "This my require additional editing." << std::endl;
 	std::cout << "Meta tags usually require something tacked on to the tag itself." << std::endl;
@@ -344,15 +353,27 @@ void Page::meta_process()
 	// In order to recycle resources and keep them relevant, use this again.
 	std::cin >> this->local_hyperlink;
 
+	if (local_hyperlink == "")
+	{
+		std::cout << "Error, no hyperlink was provided. This tag cannot be completed without one." << std::endl;
+		std::cout << std::endl;
+
+		err_code = 1;
+		return err_code;
+	}
+
 	this->link_end = "</meta>";
 	this->complete_hyperlink = this->tag_grab + this->local_hyperlink + this->link_end;
 
 	std::cout << "The completed meta tag is " << complete_hyperlink << " !" << std::endl;
 	std::cout << std::endl;
 	std::cout << "There is usually no need for additional text in the meta tag, so let's move on." << std::endl;
+
+	err_code = 0;
+	return err_code;
 };
 
-void Page::hyperlink_process()
+int Page::hyperlink_process()
 {
 	std::cout << "This tag requires additional editing." << std::endl;
 	std::cout << "Hyperlinks will be formatted automatically by the program, but they require a website URL." << std::endl;
@@ -378,10 +399,15 @@ void Page::hyperlink_process()
 	std::cin.ignore();
 	std::getline(std::cin, this->tag_filler);
 
+	// Exception checking -- TODO
+
 	this->complete_hyperlink = this->complete_hyperlink + this->tag_fill() + this->html_end.at(*tag_pointer);
 
 	std::cout << "Your completed tag is: " << complete_hyperlink << " !";
 	global_ref += 1;
+
+	err_code = 0;
+	return err_code;
 };
 
 // This was originally used for character arrays but now returns strings in general
@@ -390,7 +416,7 @@ std::string Page::tag_fill()
 	return this->tag_filler; // Show what the user typed as full string
 };
 
-void Page::declare(std::string local_file) // Declaration should always just emphasize that a file exists and is accessible.
+int Page::declare(std::string local_file) // Declaration should always just emphasize that a file exists and is accessible.
 {
 	if(std::ifstream(local_file))
 	{
@@ -400,10 +426,16 @@ void Page::declare(std::string local_file) // Declaration should always just emp
 	{
 		std::cout << "There was a problem with validating the file name. Please double check file parameters." << std::endl;
 		std::cout << std::endl;
+
+		err_code = 1;
+		return err_code;
 	}
+
+	err_code = 0;
+	return err_code;
 }
 
-// Designed to reduce clutter. This part is mostly visual anyway.
+// Designed to reduce clutter. This function can remain void because it should not encounter any exceptions as-is.
 void Page::title_sequence()
 {
 	std::cout << "Creating standard HTML5 tag header..." << std::endl;
@@ -424,9 +456,9 @@ void Page::title_sequence()
 	std::cout << "Line " << this->find_line() << ": ";
 	std::cout << "<meta charset = 'utf-8'>" << std::endl;
 	std::cout << std::endl;
-};
+}
 
-// This function technically serves no purpose, but I'm keeping it as-is so I don't break the program flow.
+// This public function allows all other functions to be executed privately and makes things easier to follow
 void Page::setup()
 {
 	this->page_setup();
@@ -481,7 +513,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 		std::cerr << cstr << std::endl;
 
 		err_code = 1;
-		return 1;
+		return err_code;
 	}
 
 	std::cout << "Writing to file: " << full_file << std::endl;
@@ -524,7 +556,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 		std::cout << "The program connot successfully continue this operation. Please try again later." << std::endl;
 
 		err_code = 1;
-		return 1;
+		return err_code;
 	}
 
 	std::cout << std::endl;
@@ -555,15 +587,28 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	this->page_explain(); // Shortens an explanation.
 
-	// While the user has not entered "n" as a response.
-	while (this->option != 'n')
+	// While the user has not entered no as a response
+	while (this->option != "no")
 	{
 		std::cout << std::endl;
 		std::cout << "Would you like to add another tag to your webpage?" << std::endl;
-		std::cout << "Type y for yes, n for no." << std::endl;
-		std::cin >> option; // Initialized to junk unless the user enters something.
+		std::cout << "Type yes or no." << std::endl;
 
-		if (this->option == 'y')
+		// std::cin.ignore(); // This is only really necessary if the input has spaces
+		std::getline(std::cin, this->option);
+
+		if (this->option == "exit") // This is an emergency exit.
+		{
+			std::cout << std::endl;
+			std::cout << "Override recognized. Halting process." << std::endl;
+			std::cout << std::endl;
+			std::cout << "Program terminated prematurely due to emergency stop. Halting tagging process." << std::endl;
+
+			err_code = 1;
+			return err_code;
+		}
+
+		if (this->option == "yes")
 		{
 			// Ask for a tag number - start a switch statement
 			std::cout << "Please enter the tag number." << std::endl;
@@ -944,6 +989,12 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 			// Creates specially formatted bold text
 			case STRONGTEXT:
+				this->standard_tag = true;
+
+				std::cout << "The sentence will be formatted on your HTML document to appear bold and vivid." << std::endl;
+				std::cout << "If used within a paragraph, it should follow paragraph formatting." << std::endl;
+
+				this->editing_process();
 				break;
 
 			// Used for custom CSS
@@ -1143,7 +1194,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			// Create a standardized function that can be used for most of the other tags. TODO
 
 		}
-		else if (this->option == 'n')
+		else if (this->option == "no")
 		{
 			std::cout << "Progress was saved to file." << std::endl;
 			std::cout << "Command recognized. Halting tagging process..." << std::endl;
@@ -1186,7 +1237,8 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	outfile.close(); // ALWAYS close the file
 
-	return 0;
+	err_code = 0;
+	return err_code;
 };
 
 // Doesn't actually do anything, just explains what's going on for the user.

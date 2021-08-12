@@ -7,6 +7,7 @@
 
 // I do not recommend doing this often, but in this case I was using full_file as a global.
 extern std::string full_file;
+extern int err_code;
 
 class Page
 {
@@ -18,7 +19,7 @@ public:
 	std::string decision;
 	int global_line = 0;
 	bool is_running = false;
-	int err_code = 0; // Should be 0 by default to interpret non-error
+	// int err_code; // Should be 0 by default to interpret non-error
 
 	// Methods
 	inline std::string const get_title() { return title_header; };
@@ -45,7 +46,7 @@ private:
 	bool standard_tag = true;
 	bool ignore_tag = false;
 
-	char option; // This is the only non-string input
+	std::string option{};
 	std::string filetype{ ".html" };
 	std::string f_name;
 	std::string title_header = "Untitled"; // Default title for created pages.
@@ -88,15 +89,15 @@ private:
 	void initialize_tags();
 	inline int const find_line() { return *global_point; };
 	std::string s_state(int num);
-	void declare(std::string local_file);
+	int declare(std::string local_file);
 	void title_sequence();
 	int display_all();
 	int page_setup();
 	void page_explain();
 	int tag_begin();
-	void editing_process();
-	void meta_process();
-	void hyperlink_process();
+	int editing_process();
+	int meta_process();
+	int hyperlink_process();
 	std::string tag_fill();
 	void memory_cleaner();
 };
