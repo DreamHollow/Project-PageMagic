@@ -532,21 +532,20 @@ void Page::memory_cleaner()
 	}
 };
 
-// It was too difficult to set up private functions within this one so it's all lumped in together.
-int Page::page_setup() // Tags the beginning of an HTML document with proper heading.
+int Page::tagging_loop()
 {
-	// Tried some exception handling here.
-	std::fstream outfile;
+	std::fstream samefile;
 
 	try
 	{
-		outfile.open(full_file, std::ios::in | std::ios::out);
-		if (!outfile)
+		// Any strings added after this point are appended rather than directly written in
+		samefile.open(full_file, std::ios_base::app);
+		if (!samefile)
 		{
 			throw "Error opening file!";
 		}
 	}
-	catch(const char* cstr) // If the file can't actually open, it should cut off here.
+	catch (const char* cstr) // If the file can't actually open, it should cut off here.
 	{
 		std::cerr << cstr << std::endl;
 
@@ -554,78 +553,6 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 		return this->error_detected(err_ref);
 	}
 
-	std::cout << "Writing to file: " << full_file << std::endl;
-
-	this->title_sequence();
-
-	// File should be written with standard head tags. This is automatically configured for HTML5 in English.
-	// Lines are ACTUALLY written here but displayed earlier for reasons of convenience.
-	outfile << "<!DOCTYPE html>" << std::endl;
-	outfile << "<html lang = 'en'>" << std::endl;
-	outfile << "<head>" << std::endl;
-	outfile << "<meta charset = 'utf-8'>" << std::endl;
-
-	if (this->page_debug == true)
-	{
-		std::cout << std::endl;
-		std::cout << "DEBUG: " << std::endl;
-		std::cout << "Document lines written so far: " << find_line() << std::endl;
-		std::cout << std::endl;
-	}
-
-	std::cout << "Starting title naming process..." << std::endl;
-	std::cout << std::endl;
-	std::cout << "What would you like the title of this webpage to be?" << std::endl;
-	// This is no longer true! Try not to exceed 50 characters, though.
-	// std::cout << "Please use a single word title for now. The program has problems recording space bar input." << std::endl;
-
-	std::cout << "Page Title: ";
-
-	std::cin.ignore();
-	std::getline(std::cin, this->title_header);
-
-	if (this->title_header == "")
-	{
-		std::cout << std::endl;
-		std::cout << "There was an error and no input was detected!" << std::endl;
-		std::cout << std::endl;
-		std::cout << "Reminder: This program is experimental and some bugs may still be present." << std::endl;
-		std::cout << std::endl;
-		std::cout << "The program connot successfully continue this operation. Please try again later." << std::endl;
-
-		this->err_ref = 1;
-		return this->error_detected(err_ref);
-	}
-
-	std::cout << std::endl;
-
-	std::cout << "Your output was recorded as " << this->get_title() << std::endl;
-
-	outfile << "<title>" << this->title_header << "</title>" << std::endl;
-	global_ref += 1; // Another line written in. This one closes on it's own.
-
-	system("pause"); // Pause to allow the user to read what's happening.
-
-	this->tag_begin(); // Declares tags but they can't actually be used in scope unless it's page_setup()
-
-	std::cout << std::endl;
-	std::cout << "Please remember to add the <head> and <body> tags in order for the page to be fully functional." << std::endl;
-	std::cout << "If you need more information on how to build webpages in general, please consult the information at " << std::endl;
-	std::cout << "https://www.w3schools.com/" << std::endl;
-	std::cout << "Copy and paste the link to your browser to go there!" << std::endl;
-	std::cout << std::endl;
-
-	std::cout << "The <head> tag of your HTML document has already been created. Creating a <body> tag..." << std::endl;
-
-	outfile << "<body>" << std::endl;
-	global_ref += 1;
-
-	std::cout << "<body>" << std::endl;
-	std::cout << std::endl;
-
-	this->page_explain(); // Shortens an explanation.
-
-	// While the user has not entered no as a response
 	while (this->option != "no")
 	{
 		std::cout << std::endl;
@@ -664,7 +591,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			// Finally added a proper switch statement to deal with outlier tags without simple modifications; this was a lot of work.
 			switch (*tag_pointer) // This should just refer directly to tagger, which is the real variable here
 			{
-			// Allows HTML commenting
+				// Allows HTML commenting
 			case COMMENT:
 				this->standard_tag = true;
 
@@ -674,7 +601,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 				this->editing_process();
 				break;
 
-			// Creates a web page link -- the actual tag is <a> which is why it's high on the list
+				// Creates a web page link -- the actual tag is <a> which is why it's high on the list
 			case HYPERLINK:
 				this->standard_tag = false;
 
@@ -684,21 +611,21 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case ABBREVIATE:
 				break;
 
-			// Formats an address (not a URL, an actual home or business address)
+				// Formats an address (not a URL, an actual home or business address)
 			case ADDRESS:
 				break;
 
 			case AREA:
 				break;
 
-			// Functions a lot like <div> by dividing content to be seen as isolated from the normal page
+				// Functions a lot like <div> by dividing content to be seen as isolated from the normal page
 			case ARTICLE:
 				break;
 
 			case ASIDE:
 				break;
 
-			// Provides audio via a source
+				// Provides audio via a source
 			case AUDIO:
 				break;
 
@@ -708,12 +635,12 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case BDO:
 				break;
 
-			// Creates a huge formatted quote based on the string it's given
+				// Creates a huge formatted quote based on the string it's given
 			case BLOCKQUOTE:
 
 				break;
 
-			// Creates a body tag where the bulk of most content should go; not relevant as it's already present
+				// Creates a body tag where the bulk of most content should go; not relevant as it's already present
 			case BODY:
 				this->standard_tag = true;
 
@@ -727,7 +654,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 				break;
 
-			// Creates a line break, not the same as a horizontal ruler
+				// Creates a line break, not the same as a horizontal ruler
 			case BREAK:
 				this->standard_tag = false;
 
@@ -742,7 +669,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 				std::cout << std::endl;
 				break;
 
-			// Creates a functional button; should be paired with other tags
+				// Creates a functional button; should be paired with other tags
 			case BUTTON:
 				break;
 
@@ -755,7 +682,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case CITE:
 				break;
 
-			// Special HTML tag that isolates and displays code snippets
+				// Special HTML tag that isolates and displays code snippets
 			case CODE:
 				break;
 
@@ -774,7 +701,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case DESCRIPTLIST:
 				break;
 
-			// Text that is omitted or intentionally altered to display that it is not relevant
+				// Text that is omitted or intentionally altered to display that it is not relevant
 			case DELETED:
 				break;
 
@@ -787,7 +714,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case DIALOG:
 				break;
 
-			// Used to divide content for special purposes
+				// Used to divide content for special purposes
 			case DIV:
 				break;
 
@@ -800,7 +727,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case EMPHASIZE:
 				break;
 
-			// Creates embedded content
+				// Creates embedded content
 			case EMBED:
 				break;
 
@@ -813,38 +740,38 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case FIGURE:
 				break;
 
-			// Creates a specially formatted text at the bottom of the document
+				// Creates a specially formatted text at the bottom of the document
 			case FOOTER:
 				break;
 
 			case FORM:
 				break;
 
-			// Header One
+				// Header One
 			case H1:
 				break;
 
-			// Header Two
+				// Header Two
 			case H2:
 				break;
 
-			// Header Three
+				// Header Three
 			case H3:
 				break;
 
-			// Header Four
+				// Header Four
 			case H4:
 				break;
 
-			// Header Five
+				// Header Five
 			case H5:
 				break;
 
-			// Header Six
+				// Header Six
 			case H6:
 				break;
 
-			// Contains page information and attributes including the <meta> tag
+				// Contains page information and attributes including the <meta> tag
 			case HEAD:
 				this->standard_tag = true;
 
@@ -860,7 +787,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case HEADER:
 				break;
 
-			// Creates a huge line across the entire HTML document
+				// Creates a huge line across the entire HTML document
 			case HORZRULER:
 				this->standard_tag = false;
 
@@ -871,7 +798,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 				this->complete_hyperlink = s_state(*tag_pointer);
 				break;
 
-			// The root tag of the html document
+				// The root tag of the html document
 			case HTMLROOT: // This is automatically provided by the program and should never be used twice
 				this->standard_tag = true;
 
@@ -898,7 +825,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case IFRAME:
 				break;
 
-			// Creates an image linked to an image source
+				// Creates an image linked to an image source
 			case IMG:
 				break;
 
@@ -932,7 +859,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case MARK:
 				break;
 
-			// Sets information for page display or attributes
+				// Sets information for page display or attributes
 			case META:
 				this->standard_tag = false;
 
@@ -942,18 +869,18 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case METER:
 				break;
 
-			// Object usually formatted for user navigation
+				// Object usually formatted for user navigation
 			case NAV:
 				break;
 
-			// The web page displays this message on a web browser when JavaScript is disabled
+				// The web page displays this message on a web browser when JavaScript is disabled
 			case NOSCRIPT:
 				break;
 
 			case OBJECT:
 				break;
 
-			// Creates an ordered list that displays numbers
+				// Creates an ordered list that displays numbers
 			case ORDERLIST:
 				break;
 
@@ -966,66 +893,66 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case OUTPUT:
 				break;
 
-			// Very common tag used to denote a paragraph of text; should really be paired with other functional tags
+				// Very common tag used to denote a paragraph of text; should really be paired with other functional tags
 			case PARAGRAPH:
 				break;
 
 			case PARAMETER:
 				break;
 
-			// Similar functionality to IMG
+				// Similar functionality to IMG
 			case PICTURE:
 				break;
 
 			case PREFORMAT:
 				break;
 
-			// Used to create progress bars and such
+				// Used to create progress bars and such
 			case PROGRESS:
 				break;
 
-			// Creates a small and specially formatted short quote string
+				// Creates a small and specially formatted short quote string
 			case SHORTQUOTE:
 				break;
 
-			// If Ruby is not present on this page but is relevant to the web page itself, this tag becomes relevant
+				// If Ruby is not present on this page but is relevant to the web page itself, this tag becomes relevant
 			case NORUBY:
 				std::cout << "Putting this tag in your HTML document show text that will display if a user's browser doesn't support Ruby annotations." << std::endl;
 				std::cout << std::endl;
 
 				break;
 
-			// Creates text with a line straight through it
+				// Creates text with a line straight through it
 			case STRIKEOUT:
 				break;
 
 			case SAMPLE:
 				break;
 
-			// Allows for custom JavaScript or other programming elements
+				// Allows for custom JavaScript or other programming elements
 			case SCRIPT:
 				break;
 
-			// Creates a section of relevant data, images, video, or text
+				// Creates a section of relevant data, images, video, or text
 			case SECTION:
 				break;
 
 			case SELECT:
 				break;
 
-			// Formats text to be small
+				// Formats text to be small
 			case SMALL:
 				break;
 
-			// Creates a linked source object
+				// Creates a linked source object
 			case SOURCE:
 				break;
 
-			// Functions sort of like <div> or <style> but shorter
+				// Functions sort of like <div> or <style> but shorter
 			case SPAN:
 				break;
 
-			// Creates specially formatted bold text
+				// Creates specially formatted bold text
 			case STRONGTEXT:
 				this->standard_tag = true;
 
@@ -1035,13 +962,13 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 				this->editing_process();
 				break;
 
-			// Used for custom CSS
+				// Used for custom CSS
 			case STYLE:
 				// This tag is mostly functionally useless without something to actually attach it to. This needs to be pairable with other tags. - TODO
 
 				break;
 
-			// Forces text to look small
+				// Forces text to look small
 			case SUBSCRIPT:
 				this->standard_tag = true;
 
@@ -1052,11 +979,11 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 				this->editing_process();
 				break;
 
-			// Creates a summary text object
+				// Creates a summary text object
 			case SUMMARY:
 				break;
 
-			// Forces text to look like an exponent
+				// Forces text to look like an exponent
 			case SUPERSCRIPT:
 				this->standard_tag = true;
 
@@ -1067,19 +994,19 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 				this->editing_process();
 				break;
 
-			// SVG is a type of canvas object
+				// SVG is a type of canvas object
 			case SVG:
 				break;
 
-			// Creates a table. Because this is a complex tag, requires more data
+				// Creates a table. Because this is a complex tag, requires more data
 			case TABLE:
 				break;
 
-			// Table body, should be coupled with TABLE
+				// Table body, should be coupled with TABLE
 			case TBODY:
 				break;
 
-			// Individual table cell, should be coupled with TABLE and others
+				// Individual table cell, should be coupled with TABLE and others
 			case TABLECELL:
 				break;
 
@@ -1089,11 +1016,11 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case TEXTAREA:
 				break;
 
-			// Table footer, should be coupled with TABLE
+				// Table footer, should be coupled with TABLE
 			case TABLEFOOT:
 				break;
 
-			// Table header; should be coupled with TABLE
+				// Table header; should be coupled with TABLE
 			case TABLEHEAD:
 				break;
 
@@ -1101,7 +1028,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case THEADCONT:
 				break;
 
-			// Creates a time object for HTML page
+				// Creates a time object for HTML page
 			case TIME:
 				this->standard_tag = true;
 
@@ -1119,14 +1046,14 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 				break;
 
-			// Creates and fills a table row with relevant information
+				// Creates and fills a table row with relevant information
 			case TABLEROW: // This should be coupled with TABLE
 				break;
 
 			case TRACK:
 				break;
 
-			// Creates an unordered list
+				// Creates an unordered list
 			case UNORDERLIST:
 				// This needs to be paired with actual list elements at some point. It's useless without them. - TODO
 
@@ -1136,11 +1063,11 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			case VARIABLE:
 				break;
 
-			// Links a video via a source
+				// Links a video via a source
 			case VIDEO:
 				break;
 
-			// Creates a line break; NOT the same as <hr>
+				// Creates a line break; NOT the same as <hr>
 			case WEBLINEBREAK:
 				break;
 
@@ -1197,7 +1124,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 				if (*tag_pointer != XEND) // If the tag is a valid tag and not filler
 				{
-					outfile << this->complete_string;
+					samefile << this->complete_string;
 				}
 				else
 				{
@@ -1219,7 +1146,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 				std::cout << "You added " << complete_hyperlink;
 				std::cout << std::endl;
 
-				outfile << this->complete_hyperlink;
+				samefile << this->complete_hyperlink;
 			}
 
 			// File always writes the data when finished.
@@ -1248,7 +1175,129 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 		// Once this loop is broken, the Page object exits after program finishes deploying the full HTML.
 	};
 
+	// Close the file once more, prepare for final append.
+	samefile.close();
+
+	err_ref = 0;
+	return this->error_detected(err_ref);
+};
+
+// It was too difficult to set up private functions within this one so it's all lumped in together.
+int Page::page_setup() // Tags the beginning of an HTML document with proper heading.
+{
+	// File is initially opened and modified.
+	std::fstream file;
+
+	try
+	{
+		file.open(full_file, std::ios::in | std::ios::out);
+		if (!file)
+		{
+			throw "Error opening file!";
+		}
+	}
+	catch(const char* cstr) // If the file can't actually open, it should cut off here.
+	{
+		std::cerr << cstr << std::endl;
+
+		this->err_ref = 1;
+		return this->error_detected(err_ref);
+	}
+
+	std::cout << "Writing to file: " << full_file << std::endl;
+
+	this->title_sequence();
+
+	// File should be written with standard head tags. This is automatically configured for HTML5 in English.
+	// Lines are ACTUALLY written here but displayed earlier for reasons of convenience.
+	file << "<!DOCTYPE html>" << std::endl;
+	file << "<html lang = 'en'>" << std::endl;
+	file << "<head>" << std::endl;
+	file << "<meta charset = 'utf-8'>" << std::endl;
+
+	if (this->page_debug == true)
+	{
+		std::cout << std::endl;
+		std::cout << "DEBUG: " << std::endl;
+		std::cout << "Document lines written so far: " << find_line() << std::endl;
+		std::cout << std::endl;
+	}
+
+	std::cout << "Starting title naming process..." << std::endl;
+	std::cout << std::endl;
+	std::cout << "What would you like the title of this webpage to be?" << std::endl;
+
+	std::cout << "Page Title: ";
+
+	std::cin.ignore();
+	std::getline(std::cin, this->title_header);
+
+	if (this->title_header == "")
+	{
+		std::cout << std::endl;
+		std::cout << "There was an error and no input was detected!" << std::endl;
+		std::cout << std::endl;
+		std::cout << "Reminder: This program is experimental and some bugs may still be present." << std::endl;
+		std::cout << std::endl;
+		std::cout << "The program connot successfully continue this operation. Please try again later." << std::endl;
+
+		this->err_ref = 1;
+		return this->error_detected(err_ref);
+	}
+
+	std::cout << std::endl;
+
+	std::cout << "Your output was recorded as " << this->get_title() << std::endl;
+
+	file << "<title>" << this->title_header << "</title>" << std::endl;
+	global_ref += 1; // Another line written in. This one closes on it's own.
+
+	system("pause"); // Pause to allow the user to read what's happening.
+
+	this->tag_begin(); // Declares tags but they can't actually be used in scope unless it's page_setup()
+
+	std::cout << std::endl;
+	std::cout << "Please remember to add the <head> and <body> tags in order for the page to be fully functional." << std::endl;
+	std::cout << "If you need more information on how to build webpages in general, please consult the information at " << std::endl;
+	std::cout << "https://www.w3schools.com/" << std::endl;
+	std::cout << "Copy and paste the link to your browser to go there!" << std::endl;
+	std::cout << std::endl;
+
+	std::cout << "The <head> tag of your HTML document has already been created. Creating a <body> tag..." << std::endl;
+
+	file << "<body>" << std::endl;
+	global_ref += 1;
+
+	std::cout << "<body>" << std::endl;
+	std::cout << std::endl;
+
+	// Close the original file here, reopen it in tagging_loop()
+	file.close();
+
+	this->page_explain(); // Shortens an explanation.
+
+	tagging_loop();
+
 	// All of this is just finalization and finishing touches to the document.
+
+	// Reopen the file and append data
+	std::fstream file_cont;
+	try
+	{
+		// Any strings added after this point are appended rather than directly written in
+		file_cont.open(full_file, std::ios_base::app);
+		if (!file_cont)
+		{
+			throw "Error opening file!";
+		}
+	}
+	catch (const char* cstr) // If the file can't actually open, it should cut off here.
+	{
+		std::cerr << cstr << std::endl;
+
+		this->err_ref = 1;
+		return this->error_detected(err_ref);
+	}
 
 	std::cout << "All done with tagging! Finishing document cleanup..." << std::endl;
 
@@ -1256,16 +1305,16 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 	std::cout << std::endl;
 	std::cout << "</body>" << std::endl;
 
-	outfile << std::endl;
-	outfile << "</body>" << std::endl;
+	file_cont << std::endl;
+	file_cont << "</body>" << std::endl;
 
 	// This runs when the program is finished tagging.
 	std::cout << "Writing HTML end tag..." << std::endl;
 	std::cout << std::endl;
 	std::cout << "</html>" << std::endl;
 
-	outfile << std::endl;
-	outfile << "</html>";
+	file_cont << std::endl;
+	file_cont << "</html>";
 
 	global_ref += 2; // Writing the end tags counts as more lines
 
@@ -1273,7 +1322,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 	std::cout << "Lines wrapped up at " << find_line() << ".";
 	std::cout << std::endl;
 
-	outfile.close(); // ALWAYS close the file
+	file_cont.close(); // Each instance of the file should be closed at this point.
 
 	this->err_ref = 0;
 	return this->error_detected(err_ref);

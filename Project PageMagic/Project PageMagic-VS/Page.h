@@ -103,6 +103,7 @@ private:
 	int hyperlink_process();
 	std::string tag_fill();
 	void memory_cleaner();
+	int tagging_loop();
 };
 
 #endif
