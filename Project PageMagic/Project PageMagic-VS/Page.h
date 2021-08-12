@@ -7,7 +7,6 @@
 
 // I do not recommend doing this often, but in this case I was using full_file as a global.
 extern std::string full_file;
-// extern int err_code;
 
 class Page
 {
@@ -19,12 +18,14 @@ public:
 	std::string decision;
 	int global_line = 0;
 	bool is_running = false;
-	// int err_code; // Should be 0 by default to interpret non-error
+	int err_code{};
+	int &err_ref = err_code;
 
 	// Methods
 	inline std::string const get_title() { return title_header; };
 	bool create_file();
 	void setup();
+	bool error_detected(int &err_ref);
 
 private:
 	// Pointers / Memory Objects
@@ -36,10 +37,12 @@ private:
 	// Variables
 	int tagger;
 	int temp;
+	bool warning_displayed = false; // Used to prevent the program from using the error warning multiple times
 
 	// Assign Once Only
 	int &global_ref = global_line;
 	int &t_ref = temp;
+	int &global_err = err_code;
 
 	// This tag is used all over the Page class for in-code debugging purposes. Switch to FALSE if you're not debugging.
 	bool page_debug;
@@ -85,7 +88,7 @@ private:
 	};
 
 	// Methods
-	// bool valid_ref(int &ref_address);
+	void show_error();
 	void initialize_tags();
 	inline int const find_line() { return *global_point; };
 	std::string s_state(int num);

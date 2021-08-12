@@ -3,28 +3,8 @@
 // Global variables are usually VERY BAD but in this case it's considered useful.
 std::string full_file;
 bool program_debug = true;
-// int err_code{};
-
-//void error_message()
-//{
-//	if (program_debug == true && err_code != 0)
-//	{
-//		std::cout << "During program runtime, the program returned this error: ";
-//		if (err_code == 1)
-//		{
-//			std::cout << std::endl;
-//			std::cout << "[Standard program error. Program likely terminated early from missing datapoints, forced stop, or abnormal execution.]" << std::endl;
-//			std::cout << "[Error Code Number: " << err_code << "]";
-//			std::cout << std::endl;
-//		}
-//		if (err_code == 2)
-//		{
-//			std::cout << "Non-standard program error. Possible issues with system memory or program memory allocation." << std::endl;
-//			std::cout << "Error Code Number: " << err_code;
-//			std::cout << std::endl;
-//		}
-//	}
-//};
+int err_code{};
+int& err_ref = err_code;
 
 int main()
 {
@@ -75,25 +55,27 @@ int main()
 				// Set this variable to true until an event terminates it
 				MyPage->is_running = true;
 
-				while (MyPage->is_running == true) // && err_code == 0)
+				while (MyPage->is_running && MyPage->error_detected(MyPage->err_code) == false)
 				{
 					// Create a new file.
 					MyPage->create_file();
 
 					MyPage->setup();
 					
-					// Terminate the loop here or it will run forever
+					if (MyPage->error_detected(MyPage->err_code) == true)
+					{
+						// End the loop and display an error message
+
+						app_exit = false;
+					}
+					else
+					{
+						app_exit = true;
+					}
+
+					// Terminate the loop here no matter what
 					MyPage->is_running = false;
 				}
-
-				app_exit = true;
-
-				/*if (err_code != 0)
-				{
-					app_exit = false;
-
-					error_message();
-				}*/
 			}
 
 			break;
@@ -133,8 +115,6 @@ int main()
 		std::cout << "Sorry," << std::endl;
 		std::cout << "This is an invalid response." << std::endl;
 
-		// err_code = 1;
-		// error_message();
 		app_exit = false;
 	}
 
@@ -152,11 +132,10 @@ int main()
 	{
 		std::cout << std::endl;
 		std::cout << "An error occured. Please try again later." << std::endl;
-		std::cout << "Shutting down..." << std::endl;
+		std::cout << "Program shutting down..." << std::endl;
 
 		// Window is forcefully closed because of an error.
 		return 1;
-		// return err_code;; // Use RETURN, not EXIT - exit is unsafe compared to returning a value
 	}
 
 	// Window closes without error.

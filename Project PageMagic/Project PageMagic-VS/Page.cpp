@@ -22,16 +22,34 @@ Page::Page()
 
 Page::~Page()
 {
-	if (page_debug == true)
+	if (this->page_debug == true)
 	{
 		std::cout << std::endl;
 		std::cout << "Deconstructor was called; left the scope of Page object." << std::endl;
 		std::cout << std::endl;
-		// std::cout << "Err_code was set to " << err_code << std::endl;
 	}
 
 	// I feel better having this function do some general cleanup on exit.
 	this->memory_cleaner();
+};
+
+void Page::show_error()
+{
+	std::cout << "There was an error during execution." << std::endl;
+	std::cout << "[Error Code: ";
+
+	switch (err_code)
+	{
+	case 1:
+		std::cout << "1, Standard Error]" << std::endl;
+		break;
+	case 2:
+		std::cout << "2, Elevated Error - Please report this to the developer]" << std::endl;
+		break;
+	default:
+		std::cout << "Unknown error!]" << std::endl;
+		break;
+	}
 };
 
 void Page::initialize_tags()
@@ -275,8 +293,10 @@ int Page::display_all()
 
 		// Don't delete the pointer, just return an error. Deleting raw pointers is bad.
 
-		// err_code = 2; // This is an elevated failure because there was a memory interruption
-		return 2;
+		this->err_ref = 2;
+
+		// This is an elevated failure because there was a memory interruption
+		return this->error_detected(err_ref);
 	}
 	
 	std::cout << "To add a tag to your HTML file, you must enter a number." << std::endl;
@@ -293,8 +313,8 @@ int Page::display_all()
 		t_ref += 1; // This reference is safe to use in this manner
 	}
 
-	// err_code = 0;
-	return 0;
+	err_ref = 0;
+	return this->error_detected(err_ref);
 };
 
 int Page::tag_begin() // Messed around with enum scopes until I found an appropriate one.
@@ -315,8 +335,8 @@ int Page::tag_begin() // Messed around with enum scopes until I found an appropr
 
 	std::cout << std::endl;
 
-	// err_code = 0;
-	return 0;
+	this->err_ref = 0;
+	return this->error_detected(err_ref);
 };
 
 // This could be reconfigured as a string return type but I like this setup better.
@@ -337,8 +357,8 @@ int Page::editing_process()
 
 	std::cout << std::endl;
 
-	// err_code = 0;
-	return 0;
+	this->err_ref = 0;
+	return this->error_detected(err_ref);
 };
 
 // Don't be fooled by the name, this is just an elaborate function for modifying the META tag.
@@ -359,8 +379,8 @@ int Page::meta_process()
 		std::cout << "Error, no hyperlink was provided. This tag cannot be completed without one." << std::endl;
 		std::cout << std::endl;
 
-		// err_code = 1;
-		return 1;
+		this->err_ref = 1;
+		return this->error_detected(err_ref);
 	}
 
 	this->link_end = "</meta>";
@@ -370,8 +390,8 @@ int Page::meta_process()
 	std::cout << std::endl;
 	std::cout << "There is usually no need for additional text in the meta tag, so let's move on." << std::endl;
 
-	// err_code = 0;
-	return 0;
+	this->err_ref = 0;
+	return this->error_detected(err_ref);
 };
 
 int Page::hyperlink_process()
@@ -407,8 +427,8 @@ int Page::hyperlink_process()
 	std::cout << "Your completed tag is: " << complete_hyperlink << " !";
 	global_ref += 1;
 
-	// err_code = 0;
-	return 0;
+	this->err_ref = 0;
+	return this->error_detected(err_ref);
 };
 
 // This was originally used for character arrays but now returns strings in general
@@ -428,13 +448,13 @@ int Page::declare(std::string local_file) // Declaration should always just emph
 		std::cout << "There was a problem with validating the file name. Please double check file parameters." << std::endl;
 		std::cout << std::endl;
 
-		// err_code = 1;
-		return 1;
+		this->err_ref = 1;
+		return this->error_detected(err_ref);
 	}
 
-	// err_code = 0;
-	return 0;
-}
+	this->err_ref = 0;
+	return this->error_detected(err_ref);
+};
 
 // Designed to reduce clutter. This function can remain void because it should not encounter any exceptions as-is.
 void Page::title_sequence()
@@ -457,7 +477,7 @@ void Page::title_sequence()
 	std::cout << "Line " << this->find_line() << ": ";
 	std::cout << "<meta charset = 'utf-8'>" << std::endl;
 	std::cout << std::endl;
-}
+};
 
 // This public function allows all other functions to be executed privately and makes things easier to follow
 void Page::setup()
@@ -465,6 +485,23 @@ void Page::setup()
 	this->page_setup();
 
 	// Other functions were intended to be run after the intial page_setup but were later removed
+}
+
+bool Page::error_detected(int &err_ref)
+{
+	if (err_code != 0)
+	{
+		if (warning_displayed == false)
+		{
+			show_error();
+		}
+
+		warning_displayed = true;
+
+		return true;
+	}
+
+	return false; // Return 0, indicating that things are functioning as they should
 };
 
 // Memory management can be tricky. This function is fine as void return type.
@@ -513,8 +550,8 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 	{
 		std::cerr << cstr << std::endl;
 
-		// err_code = 1;
-		return 1;
+		this->err_ref = 1;
+		return this->error_detected(err_ref);
 	}
 
 	std::cout << "Writing to file: " << full_file << std::endl;
@@ -556,8 +593,8 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 		std::cout << std::endl;
 		std::cout << "The program connot successfully continue this operation. Please try again later." << std::endl;
 
-		// err_code = 1;
-		return 1;
+		this->err_ref = 1;
+		return this->error_detected(err_ref);
 	}
 
 	std::cout << std::endl;
@@ -605,8 +642,8 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			std::cout << std::endl;
 			std::cout << "Program terminated prematurely due to emergency stop. Halting tagging process." << std::endl;
 
-			// err_code = 1;
-			return 1;
+			err_ref = 1;
+			return this->error_detected(err_ref);
 		}
 
 		if (this->option == "yes")
@@ -615,7 +652,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 			std::cout << "Please enter the tag number." << std::endl;
 			std::cin >> *tag_pointer;
 
-			if (*tag_pointer < 0 || *tag_pointer > XEND)
+			if (*tag_pointer < COMMENT || *tag_pointer > XEND)
 			{
 				std::cout << "This input is strictly not allowed. Tag is set to invalid." << std::endl;
 				std::cout << std::endl;
@@ -1238,8 +1275,8 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	outfile.close(); // ALWAYS close the file
 
-	// err_code = 0;
-	return 0;
+	this->err_ref = 0;
+	return this->error_detected(err_ref);
 };
 
 // Doesn't actually do anything, just explains what's going on for the user.
