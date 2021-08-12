@@ -7,7 +7,7 @@
 
 // I do not recommend doing this often, but in this case I was using full_file as a global.
 extern std::string full_file;
-extern int err_code;
+// extern int err_code;
 
 class Page
 {
