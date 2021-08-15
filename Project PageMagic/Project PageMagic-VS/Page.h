@@ -91,19 +91,20 @@ private:
 	void const show_error();
 	void initialize_tags();
 	inline int const find_line() { return *global_point; };
-	std::string s_state(int num);
-	int declare(std::string local_file);
-	void const title_sequence();
-	int const display_all();
+	std::string const s_state(int num);
+	int const declare(std::string local_file);
+	void title_sequence();
+	int display_all();
 	int page_setup();
-	void page_explain();
+	void const page_explain();
 	int tag_begin();
 	int editing_process();
 	int meta_process();
 	int hyperlink_process();
-	std::string tag_fill();
+	std::string const tag_fill();
 	void memory_cleaner();
 	int tagging_loop();
+	int tag_finish();
 };
 
 #endif

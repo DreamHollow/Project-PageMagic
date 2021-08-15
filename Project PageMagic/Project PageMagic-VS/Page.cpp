@@ -279,12 +279,13 @@ void Page::initialize_tags()
 };
 
 // s_state just tells the program what to look at out of all the HTML tags that are available. It's very useful.
-std::string Page::s_state(int num)
+std::string const Page::s_state(int num)
 {
 	return this->html_tags.at(num); // Return the HTML tag at the appropriate number.
 };
 
-int const Page::display_all()
+// This can't be const because it does modify some data
+int Page::display_all()
 {
 	if (this->t_point == nullptr || t_point == NULL) // Covering all bases here
 	{
@@ -295,6 +296,12 @@ int const Page::display_all()
 		// Don't delete the pointer, just return an error. Deleting raw pointers is bad.
 
 		this->err_ref = 2;
+
+		if (page_debug = true)
+		{
+			std::cout << "display_all() returned a value of " << err_code;
+			std::cout << std::endl;
+		}
 
 		// This is an elevated failure because there was a memory interruption
 		return this->error_detected(err_ref);
@@ -315,6 +322,13 @@ int const Page::display_all()
 	}
 
 	err_ref = 0;
+
+	if (page_debug = true)
+	{
+		std::cout << "display_all() returned a value of " << err_code;
+		std::cout << std::endl;
+	}
+
 	return this->error_detected(err_ref);
 };
 
@@ -337,6 +351,13 @@ int Page::tag_begin() // Messed around with enum scopes until I found an appropr
 	std::cout << std::endl;
 
 	this->err_ref = 0;
+
+	if (page_debug = true)
+	{
+		std::cout << "tag_begin() returned a value of " << err_code;
+		std::cout << std::endl;
+	}
+
 	return this->error_detected(err_ref);
 };
 
@@ -359,6 +380,13 @@ int Page::editing_process()
 	std::cout << std::endl;
 
 	this->err_ref = 0;
+
+	if (page_debug = true)
+	{
+		std::cout << "editing_process() returned a value of " << err_code;
+		std::cout << std::endl;
+	}
+
 	return this->error_detected(err_ref);
 };
 
@@ -381,6 +409,13 @@ int Page::meta_process()
 		std::cout << std::endl;
 
 		this->err_ref = 1;
+
+		if (page_debug = true)
+		{
+			std::cout << "meta_process() returned a value of " << err_code;
+			std::cout << std::endl;
+		}
+
 		return this->error_detected(err_ref);
 	}
 
@@ -392,6 +427,13 @@ int Page::meta_process()
 	std::cout << "There is usually no need for additional text in the meta tag, so let's move on." << std::endl;
 
 	this->err_ref = 0;
+
+	if (page_debug = true)
+	{
+		std::cout << "meta_process() returned a value of " << err_code;
+		std::cout << std::endl;
+	}
+
 	return this->error_detected(err_ref);
 };
 
@@ -429,16 +471,23 @@ int Page::hyperlink_process()
 	global_ref += 1;
 
 	this->err_ref = 0;
+
+	if (page_debug = true)
+	{
+		std::cout << "hyperlink_process() returned a value of " << err_code;
+		std::cout << std::endl;
+	}
+
 	return this->error_detected(err_ref);
 };
 
 // This was originally used for character arrays but now returns strings in general
-std::string Page::tag_fill()
+std::string const Page::tag_fill()
 {
 	return this->tag_filler; // Show what the user typed as full string
 };
 
-int Page::declare(std::string local_file) // Declaration should always just emphasize that a file exists and is accessible.
+int const Page::declare(std::string local_file) // Declaration should always just emphasize that a file exists and is accessible.
 {
 	if(std::ifstream(local_file))
 	{
@@ -450,15 +499,29 @@ int Page::declare(std::string local_file) // Declaration should always just emph
 		std::cout << std::endl;
 
 		this->err_ref = 1;
+
+		if (page_debug = true)
+		{
+			std::cout << "declare() returned a value of " << err_code;
+			std::cout << std::endl;
+		}
+
 		return this->error_detected(err_ref);
 	}
 
 	this->err_ref = 0;
+
+	if (page_debug = true)
+	{
+		std::cout << "declare() returned a value of " << err_code;
+		std::cout << std::endl;
+	}
+
 	return this->error_detected(err_ref);
 };
 
 // Designed to reduce clutter. This function can remain void because it should not encounter any exceptions as-is.
-void const Page::title_sequence()
+void Page::title_sequence()
 {
 	std::cout << "Creating standard HTML5 tag header..." << std::endl;
 	std::cout << "Line numbers are not written to the document. They just show what lines have been processed." << std::endl;
@@ -549,6 +612,13 @@ int Page::tagging_loop()
 		std::cerr << cstr << std::endl;
 
 		this->err_ref = 1;
+
+		if (page_debug = true)
+		{
+			std::cout << "tagging_loop() returned a value of " << err_code;
+			std::cout << std::endl;
+		}
+
 		return this->error_detected(err_ref);
 	}
 
@@ -1178,6 +1248,77 @@ int Page::tagging_loop()
 	samefile.close();
 
 	err_ref = 0;
+
+	if (page_debug = true)
+	{
+		std::cout << "tagging_loop() returned a value of " << err_code;
+		std::cout << std::endl;
+	}
+
+	return this->error_detected(err_ref);
+};
+
+int Page::tag_finish()
+{
+	// Reopen the file and append data
+	std::fstream file_cont;
+	try
+	{
+		// Any strings added after this point are appended rather than directly written in
+		file_cont.open(full_file, std::ios_base::app);
+		if (!file_cont)
+		{
+			throw "Error opening file!";
+		}
+	}
+	catch (const char* cstr) // If the file can't actually open, it should cut off here.
+	{
+		std::cerr << cstr << std::endl;
+
+		this->err_ref = 1;
+
+		if (page_debug = true)
+		{
+			std::cout << "tag_finish() returned a value of " << err_code;
+			std::cout << std::endl;
+		}
+
+		return this->error_detected(err_ref);
+	}
+
+	std::cout << "All done with tagging! Finishing document cleanup..." << std::endl;
+
+	std::cout << "Writing body end tag..." << std::endl;
+	std::cout << std::endl;
+	std::cout << "</body>" << std::endl;
+
+	file_cont << std::endl;
+	file_cont << "</body>" << std::endl;
+
+	// This runs when the program is finished tagging.
+	std::cout << "Writing HTML end tag..." << std::endl;
+	std::cout << std::endl;
+	std::cout << "</html>" << std::endl;
+
+	file_cont << std::endl;
+	file_cont << "</html>";
+
+	global_ref += 2; // Writing the end tags counts as more lines
+
+	std::cout << std::endl;
+	std::cout << "Lines wrapped up at " << find_line() << ".";
+	std::cout << std::endl;
+
+	file_cont.close(); // Each instance of the file should be closed at this point.
+
+	this->err_ref = 0;
+
+	if (page_debug = true)
+	{
+		std::cout << "tag_finish() returned a value of " << err_code;
+		std::cout << std::endl;
+	}
+
 	return this->error_detected(err_ref);
 };
 
@@ -1279,56 +1420,33 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	// All of this is just finalization and finishing touches to the document.
 
-	// Reopen the file and append data
-	std::fstream file_cont;
-	try
+	if (err_ref == 0)
 	{
-		// Any strings added after this point are appended rather than directly written in
-		file_cont.open(full_file, std::ios_base::app);
-		if (!file_cont)
-		{
-			throw "Error opening file!";
-		}
+		tag_finish();
 	}
-	catch (const char* cstr) // If the file can't actually open, it should cut off here.
+	else
 	{
-		std::cerr << cstr << std::endl;
+		std::cout << std::endl;
+		std::cout << "There were errors during program runtime and this process must be halted." << std::endl;
+		std::cout << std::endl;
 
 		this->err_ref = 1;
 		return this->error_detected(err_ref);
 	}
 
-	std::cout << "All done with tagging! Finishing document cleanup..." << std::endl;
-
-	std::cout << "Writing body end tag..." << std::endl;
-	std::cout << std::endl;
-	std::cout << "</body>" << std::endl;
-
-	file_cont << std::endl;
-	file_cont << "</body>" << std::endl;
-
-	// This runs when the program is finished tagging.
-	std::cout << "Writing HTML end tag..." << std::endl;
-	std::cout << std::endl;
-	std::cout << "</html>" << std::endl;
-
-	file_cont << std::endl;
-	file_cont << "</html>";
-
-	global_ref += 2; // Writing the end tags counts as more lines
-
-	std::cout << std::endl;
-	std::cout << "Lines wrapped up at " << find_line() << ".";
-	std::cout << std::endl;
-
-	file_cont.close(); // Each instance of the file should be closed at this point.
-
 	this->err_ref = 0;
+
+	if (page_debug = true)
+	{
+		std::cout << "page_setup() returned a value of " << err_code;
+		std::cout << std::endl;
+	}
+
 	return this->error_detected(err_ref);
 };
 
 // Doesn't actually do anything, just explains what's going on for the user.
-void Page::page_explain()
+void const Page::page_explain()
 {
 	std::cout << "When you are finished, a matching </body> tag will be added to the end of the document." << std::endl;
 	std::cout << "The </html> tag will also be added automatically." << std::endl;

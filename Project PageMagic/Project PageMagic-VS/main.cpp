@@ -66,6 +66,8 @@ int main()
 					// Terminate the loop here no matter what
 					MyPage->is_running = false;
 				}
+
+				app_exit = true;
 			}
 
 			break;
