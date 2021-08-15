@@ -33,7 +33,8 @@ Page::~Page()
 	this->memory_cleaner();
 };
 
-void Page::show_error()
+// This is const because it should only ever show error messages and only ONCE
+void const Page::show_error()
 {
 	std::cout << "There was an error during execution." << std::endl;
 	std::cout << "[Error Code: ";
@@ -283,7 +284,7 @@ std::string Page::s_state(int num)
 	return this->html_tags.at(num); // Return the HTML tag at the appropriate number.
 };
 
-int Page::display_all()
+int const Page::display_all()
 {
 	if (this->t_point == nullptr || t_point == NULL) // Covering all bases here
 	{
@@ -457,7 +458,7 @@ int Page::declare(std::string local_file) // Declaration should always just emph
 };
 
 // Designed to reduce clutter. This function can remain void because it should not encounter any exceptions as-is.
-void Page::title_sequence()
+void const Page::title_sequence()
 {
 	std::cout << "Creating standard HTML5 tag header..." << std::endl;
 	std::cout << "Line numbers are not written to the document. They just show what lines have been processed." << std::endl;
@@ -483,8 +484,6 @@ void Page::title_sequence()
 void Page::setup()
 {
 	this->page_setup();
-
-	// Other functions were intended to be run after the intial page_setup but were later removed
 }
 
 bool Page::error_detected(int &err_ref)

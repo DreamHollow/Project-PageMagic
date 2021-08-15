@@ -88,13 +88,13 @@ private:
 	};
 
 	// Methods
-	void show_error();
+	void const show_error();
 	void initialize_tags();
 	inline int const find_line() { return *global_point; };
 	std::string s_state(int num);
 	int declare(std::string local_file);
-	void title_sequence();
-	int display_all();
+	void const title_sequence();
+	int const display_all();
 	int page_setup();
 	void page_explain();
 	int tag_begin();

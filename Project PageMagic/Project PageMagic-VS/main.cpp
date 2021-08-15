@@ -55,23 +55,13 @@ int main()
 				// Set this variable to true until an event terminates it
 				MyPage->is_running = true;
 
+				// This error-catching function currently doesn't do anything, needs logic updates so it fills it's primary function -- TODO
 				while (MyPage->is_running && MyPage->error_detected(MyPage->err_code) == false)
 				{
 					// Create a new file.
 					MyPage->create_file();
 
 					MyPage->setup();
-					
-					if (MyPage->error_detected(MyPage->err_code) == true)
-					{
-						// End the loop and display an error message
-
-						app_exit = false;
-					}
-					else
-					{
-						app_exit = true;
-					}
 
 					// Terminate the loop here no matter what
 					MyPage->is_running = false;
