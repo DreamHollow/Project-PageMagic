@@ -67,7 +67,20 @@ int main()
 					MyPage->is_running = false;
 				}
 
-				app_exit = true;
+				if (MyPage->err_code != 0)
+				{
+					app_exit = false;
+				}
+				else if (MyPage->err_code == 2)
+				{
+					std::cout << "The program has encountered a serious error and has ceased it's standard functions." << std::endl;
+
+					app_exit = false;
+				}
+				else
+				{
+					app_exit = true;
+				}
 			}
 
 			break;

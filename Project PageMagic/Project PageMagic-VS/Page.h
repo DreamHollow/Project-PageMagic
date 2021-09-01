@@ -48,6 +48,10 @@ private:
 	bool page_debug;
 	bool standard_tag = true;
 	bool ignore_tag = false;
+	bool main_tag = false;
+	bool sub_tag = false;
+
+	/* Sub-tagging system will detect and prevent tags from being used if they cannot exist in <body> or <head> without formatting. */
 
 	std::string option{};
 	std::string filetype{ ".html" };
@@ -97,7 +101,8 @@ private:
 	int display_all();
 	int page_setup();
 	void const page_explain();
-	int tag_begin();
+	int maintag_begin();
+	int subtag_begin();
 	int editing_process();
 	int meta_process();
 	int hyperlink_process();

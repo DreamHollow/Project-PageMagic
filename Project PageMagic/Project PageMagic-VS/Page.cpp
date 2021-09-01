@@ -332,7 +332,7 @@ int Page::display_all()
 	return this->error_detected(err_ref);
 };
 
-int Page::tag_begin() // Messed around with enum scopes until I found an appropriate one.
+int Page::maintag_begin() // Messed around with enum scopes until I found an appropriate one.
 {
 	std::cout << std::endl;
 	std::cout << "Tag availability will vary greatly on different stages of the project." << std::endl;
@@ -354,7 +354,20 @@ int Page::tag_begin() // Messed around with enum scopes until I found an appropr
 
 	if (page_debug = true)
 	{
-		std::cout << "tag_begin() returned a value of " << err_code;
+		std::cout << "maintag_begin() returned a value of " << err_code;
+		std::cout << std::endl;
+	}
+
+	return this->error_detected(err_ref);
+};
+
+int Page::subtag_begin()
+{
+	this->err_ref = 0;
+
+	if (page_debug == true)
+	{
+		std::cout << "subtag_begin returned a value of " << err_code;
 		std::cout << std::endl;
 	}
 
@@ -440,11 +453,15 @@ int Page::meta_process()
 int Page::hyperlink_process()
 {
 	std::cout << "This tag requires additional editing." << std::endl;
-	std::cout << "Hyperlinks will be formatted automatically by the program, but they require a website URL." << std::endl;
+	std::cout << "Hyperlinks will be formatted automatically by the program, but they require a URL or file link." << std::endl;
 	std::cout << std::endl;
-	std::cout << "Please enter a URL." << std::endl;
-	std::cout << "<a href= '";
-	this->tag_grab = "<a href='";
+	std::cout << "Please enter a link for this tag." << std::endl;
+
+	if (*tag_pointer == HYPERLINK) // If normal hyperlink is being used
+	{
+		std::cout << "<a href= '";
+		this->tag_grab = "<a href='";
+	}
 
 	std::cin >> this->local_hyperlink;
 
@@ -467,7 +484,7 @@ int Page::hyperlink_process()
 
 	this->complete_hyperlink = this->complete_hyperlink + this->tag_fill() + this->html_end.at(*tag_pointer);
 
-	std::cout << "Your completed tag is: " << complete_hyperlink << " !";
+	std::cout << "Your completed tag is: " << this->complete_hyperlink << " !";
 	global_ref += 1;
 
 	this->err_ref = 0;
@@ -650,7 +667,7 @@ int Page::tagging_loop()
 
 			if (*tag_pointer < COMMENT || *tag_pointer > XEND)
 			{
-				std::cout << "This input is strictly not allowed. Tag is set to invalid." << std::endl;
+				std::cout << "This input is strictly not allowed. Tag is set to NULL." << std::endl;
 				std::cout << std::endl;
 
 				*tag_pointer = XEND;
@@ -660,7 +677,7 @@ int Page::tagging_loop()
 			// Finally added a proper switch statement to deal with outlier tags without simple modifications; this was a lot of work.
 			switch (*tag_pointer) // This should just refer directly to tagger, which is the real variable here
 			{
-				// Allows HTML commenting
+			// Allows HTML commenting, might be confusing using this through PageMagic
 			case COMMENT:
 				this->standard_tag = true;
 
@@ -670,9 +687,10 @@ int Page::tagging_loop()
 				this->editing_process();
 				break;
 
-				// Creates a web page link -- the actual tag is <a> which is why it's high on the list
+			// Creates a web page link -- the actual tag is <a> which is why it's high on the list
 			case HYPERLINK:
 				this->standard_tag = false;
+				// this->sub_tag = true;
 
 				this->hyperlink_process();
 				break;
@@ -680,22 +698,31 @@ int Page::tagging_loop()
 			case ABBREVIATE:
 				break;
 
-				// Formats an address (not a URL, an actual home or business address)
+			// Formats an address (not a URL, an actual home or business address)
 			case ADDRESS:
 				break;
 
 			case AREA:
 				break;
 
-				// Functions a lot like <div> by dividing content to be seen as isolated from the normal page
+			// Functions a lot like <div> by dividing content to be seen as isolated from the normal page
 			case ARTICLE:
 				break;
 
+			// Functions almost like <article>
 			case ASIDE:
 				break;
 
-				// Provides audio via a source
+			// Provides audio via a source
 			case AUDIO:
+				// This is going to require a little more work than usual because audio tags are formatted slightly differently.
+				//this->standard_tag = false;
+
+				//std::cout << "Audio tags require a URL or file link to function properly." << std::endl;
+				//std::cout << "Please type out the exact link of your audio file, or it will not function properly on your web page." << std::endl;
+				//std::cout << std::endl;
+
+				//this->hyperlink_process();
 				break;
 
 			case BDI:
@@ -704,12 +731,12 @@ int Page::tagging_loop()
 			case BDO:
 				break;
 
-				// Creates a huge formatted quote based on the string it's given
+			// Creates a huge formatted quote based on the string it's given
 			case BLOCKQUOTE:
 
 				break;
 
-				// Creates a body tag where the bulk of most content should go; not relevant as it's already present
+			// Creates a body tag where the bulk of most content should go; not relevant as it's already present
 			case BODY:
 				this->standard_tag = true;
 
@@ -723,7 +750,7 @@ int Page::tagging_loop()
 
 				break;
 
-				// Creates a line break, not the same as a horizontal ruler
+			// Creates a line break, not the same as a horizontal ruler
 			case BREAK:
 				this->standard_tag = false;
 
@@ -738,21 +765,28 @@ int Page::tagging_loop()
 				std::cout << std::endl;
 				break;
 
-				// Creates a functional button; should be paired with other tags
+			// Creates a functional button; should be paired with other tags
 			case BUTTON:
 				break;
 
+			// Used for display formatting
 			case CANVAS:
 				break;
 
+			// Used in assocation with an image or piece of content that needs captioning
 			case CAPTION:
 				break;
 
 			case CITE:
 				break;
 
-				// Special HTML tag that isolates and displays code snippets
+			// Special HTML tag that isolates and displays code snippets of other languages
 			case CODE:
+				this->standard_tag = true;
+				std::cout << "This tag will allow you to add embedded code on the webpage. Any code within this tag will only display as a string." << std::endl;
+				std::cout << std::endl;
+
+				this->editing_process();
 				break;
 
 			case COLUMN:
@@ -770,8 +804,15 @@ int Page::tagging_loop()
 			case DESCRIPTLIST:
 				break;
 
-				// Text that is omitted or intentionally altered to display that it is not relevant
+			// Text that is omitted or intentionally altered to display that it is not relevant
 			case DELETED:
+				this->standard_tag = true;
+
+				std::cout << "This tag will strike through web page text, similar to <s> but meant to emphasize rewritten statements." << std::endl;
+				std::cout << "In terms of functionality, this tag and the <s> strike tag are virtually identical." << std::endl;
+				std::cout << std::endl;
+
+				this->editing_process();
 				break;
 
 			case DETAILS:
@@ -783,7 +824,7 @@ int Page::tagging_loop()
 			case DIALOG:
 				break;
 
-				// Used to divide content for special purposes
+			// Used to divide content for special purposes; this needs a lot of work
 			case DIV:
 				break;
 
@@ -796,7 +837,7 @@ int Page::tagging_loop()
 			case EMPHASIZE:
 				break;
 
-				// Creates embedded content
+			// Creates embedded content
 			case EMBED:
 				break;
 
@@ -809,38 +850,75 @@ int Page::tagging_loop()
 			case FIGURE:
 				break;
 
-				// Creates a specially formatted text at the bottom of the document
+			// Creates a specially formatted text at the bottom of the document
 			case FOOTER:
 				break;
 
+			// Allows a user to create a page-defined form that can be filled out
 			case FORM:
 				break;
 
-				// Header One
+			// Header One
 			case H1:
+				this->standard_tag = true;
+
+				std::cout << "This tag creates a very large heading, known as Heading 1." << std::endl;
+				std::cout << std::endl;
+
+				this->editing_process();
 				break;
 
-				// Header Two
+			// Header Two
 			case H2:
+				this->standard_tag = true;
+
+				std::cout << "This tag creates a somewhat large heading, known as Heading 2." << std::endl;
+				std::cout << std::endl;
+
+				this->editing_process();
 				break;
 
-				// Header Three
+			// Header Three
 			case H3:
+				this->standard_tag = true;
+
+				std::cout << "This tag creates a medium sized heading, known as Heading 3." << std::endl;
+				std::cout << std::endl;
+
+				this->editing_process();
 				break;
 
-				// Header Four
+			// Header Four
 			case H4:
+				this->standard_tag = true;
+
+				std::cout << "This tag creates a heading that is a similar size to normal text, known as Heading 4." << std::endl;
+				std::cout << std::endl;
+
+				this->editing_process();
 				break;
 
-				// Header Five
+			// Header Five
 			case H5:
+				this->standard_tag = true;
+
+				std::cout << "This tag creates a heading that is noticably smaller than normal text, known as Heading 5." << std::endl;
+				std::cout << std::endl;
+
+				this->editing_process();
 				break;
 
-				// Header Six
+			// Header Six
 			case H6:
+				this->standard_tag = true;
+
+				std::cout << "This tag creates a heading that is relatively tiny compared to normal text, known as Heading 6." << std::endl;
+				std::cout << std::endl;
+
+				this->editing_process();
 				break;
 
-				// Contains page information and attributes including the <meta> tag
+			// Contains page information and attributes including the <meta> tag
 			case HEAD:
 				this->standard_tag = true;
 
@@ -853,10 +931,11 @@ int Page::tagging_loop()
 
 				break;
 
+			// Not normally used outside of specific formatting; defines a page header
 			case HEADER:
 				break;
 
-				// Creates a huge line across the entire HTML document
+			// Creates a huge line across the entire HTML document
 			case HORZRULER:
 				this->standard_tag = false;
 
@@ -867,7 +946,7 @@ int Page::tagging_loop()
 				this->complete_hyperlink = s_state(*tag_pointer);
 				break;
 
-				// The root tag of the html document
+			// The root tag of the html document
 			case HTMLROOT: // This is automatically provided by the program and should never be used twice
 				this->standard_tag = true;
 
@@ -888,13 +967,13 @@ int Page::tagging_loop()
 				std::cout << "This sentence will be italicized and appear with italics formatting when displayed in a web browser." << std::endl;
 				std::cout << std::endl;
 
-				editing_process();
+				this->editing_process();
 				break;
 
 			case IFRAME:
 				break;
 
-				// Creates an image linked to an image source
+			// Creates an image linked to an image source
 			case IMG:
 				break;
 
@@ -919,7 +998,14 @@ int Page::tagging_loop()
 			case LINK:
 				break;
 
+			// Defines the main content of a page, usually to draw attention from a user
 			case MAIN:
+				this->standard_tag = true;
+
+				std::cout << "This tag will focus inputted text as the main scope of a web page." << std::endl;
+				std::cout << std::endl;
+
+				this->editing_process();
 				break;
 
 			case IMGMAP:
@@ -928,7 +1014,7 @@ int Page::tagging_loop()
 			case MARK:
 				break;
 
-				// Sets information for page display or attributes
+			// Sets information for page display or attributes
 			case META:
 				this->standard_tag = false;
 
@@ -938,18 +1024,18 @@ int Page::tagging_loop()
 			case METER:
 				break;
 
-				// Object usually formatted for user navigation
+			// Object usually formatted for user navigation
 			case NAV:
 				break;
 
-				// The web page displays this message on a web browser when JavaScript is disabled
+			// The web page displays this message on a web browser when JavaScript is disabled
 			case NOSCRIPT:
 				break;
 
 			case OBJECT:
 				break;
 
-				// Creates an ordered list that displays numbers
+			// Creates an ordered list that displays numbers
 			case ORDERLIST:
 				break;
 
@@ -962,35 +1048,43 @@ int Page::tagging_loop()
 			case OUTPUT:
 				break;
 
-				// Very common tag used to denote a paragraph of text; should really be paired with other functional tags
+			// Very common tag used to denote a paragraph of text; should really be paired with other functional tags
 			case PARAGRAPH:
+				this->standard_tag = true;
+
+				std::cout << "This tag will allow you to input text in the form of a paragraph." << std::endl;
+				std::cout << std::endl;
+
+				this->editing_process();
 				break;
 
 			case PARAMETER:
 				break;
 
-				// Similar functionality to IMG
+			// Similar functionality to IMG
 			case PICTURE:
 				break;
 
 			case PREFORMAT:
 				break;
 
-				// Used to create progress bars and such
+			// Used to create progress bars and such
 			case PROGRESS:
 				break;
 
-				// Creates a small and specially formatted short quote string
+			// Creates a small and specially formatted short quote string
 			case SHORTQUOTE:
 				break;
 
-				// If Ruby is not present on this page but is relevant to the web page itself, this tag becomes relevant
+			// If Ruby is not present on this page but is relevant to the web page itself, this tag becomes relevant
 			case NORUBY:
+				this->standard_tag = true;
+
 				std::cout << "Putting this tag in your HTML document show text that will display if a user's browser doesn't support Ruby annotations." << std::endl;
 				std::cout << std::endl;
 
+				this->editing_process();
 				break;
-
 				// Creates text with a line straight through it
 			case STRIKEOUT:
 				break;
@@ -998,30 +1092,30 @@ int Page::tagging_loop()
 			case SAMPLE:
 				break;
 
-				// Allows for custom JavaScript or other programming elements
+			// Allows for custom JavaScript or other programming elements
 			case SCRIPT:
 				break;
 
-				// Creates a section of relevant data, images, video, or text
+			// Creates a section of relevant data, images, video, or text
 			case SECTION:
 				break;
 
 			case SELECT:
 				break;
 
-				// Formats text to be small
+			// Formats text to be small
 			case SMALL:
 				break;
 
-				// Creates a linked source object
+			// Creates a linked source object
 			case SOURCE:
 				break;
 
-				// Functions sort of like <div> or <style> but shorter
+			// Functions sort of like <div> or <style> but shorter
 			case SPAN:
 				break;
 
-				// Creates specially formatted bold text
+			// Creates specially formatted bold text
 			case STRONGTEXT:
 				this->standard_tag = true;
 
@@ -1031,7 +1125,7 @@ int Page::tagging_loop()
 				this->editing_process();
 				break;
 
-				// Used for custom CSS
+			// Used for custom CSS
 			case STYLE:
 				// This tag is mostly functionally useless without something to actually attach it to. This needs to be pairable with other tags. - TODO
 
@@ -1048,11 +1142,11 @@ int Page::tagging_loop()
 				this->editing_process();
 				break;
 
-				// Creates a summary text object
+			// Creates a summary text object
 			case SUMMARY:
 				break;
 
-				// Forces text to look like an exponent
+			// Forces text to look like an exponent
 			case SUPERSCRIPT:
 				this->standard_tag = true;
 
@@ -1063,19 +1157,19 @@ int Page::tagging_loop()
 				this->editing_process();
 				break;
 
-				// SVG is a type of canvas object
+			// SVG is a type of canvas object
 			case SVG:
 				break;
 
-				// Creates a table. Because this is a complex tag, requires more data
+			// Creates a table. Because this is a complex tag, requires more data
 			case TABLE:
 				break;
 
-				// Table body, should be coupled with TABLE
+			// Table body, should be coupled with TABLE
 			case TBODY:
 				break;
 
-				// Individual table cell, should be coupled with TABLE and others
+			// Individual table cell, should be coupled with TABLE and others
 			case TABLECELL:
 				break;
 
@@ -1085,21 +1179,24 @@ int Page::tagging_loop()
 			case TEXTAREA:
 				break;
 
-				// Table footer, should be coupled with TABLE
+			// Table footer, should be coupled with TABLE
 			case TABLEFOOT:
 				break;
 
-				// Table header; should be coupled with TABLE
+			// Table header; should be coupled with TABLE
 			case TABLEHEAD:
 				break;
 
-
+			// Table header extended
 			case THEADCONT:
 				break;
 
-				// Creates a time object for HTML page
+			// Creates a time object for HTML page
 			case TIME:
 				this->standard_tag = true;
+
+				std::cout << "Formatted time variable will be added to the document as-is, no further input is required." << std::endl;
+				std::cout << std::endl;
 
 				break;
 
@@ -1109,20 +1206,18 @@ int Page::tagging_loop()
 				std::cout << "There is no need to add a <title> tag, because it was assigned during document creation." << std::endl;
 				std::cout << "The <title> tag was not added." << std::endl;
 
-				// this->complete_string = s_state(XEND);
-
 				this->ignore_tag = true;
 
 				break;
 
-				// Creates and fills a table row with relevant information
+			// Creates and fills a table row with relevant information
 			case TABLEROW: // This should be coupled with TABLE
 				break;
 
 			case TRACK:
 				break;
 
-				// Creates an unordered list
+			// Creates an unordered list
 			case UNORDERLIST:
 				// This needs to be paired with actual list elements at some point. It's useless without them. - TODO
 
@@ -1132,15 +1227,15 @@ int Page::tagging_loop()
 			case VARIABLE:
 				break;
 
-				// Links a video via a source
+			// Links a video via a source
 			case VIDEO:
 				break;
 
-				// Creates a line break; NOT the same as <hr>
+			// Creates a line break; NOT the same as <hr>
 			case WEBLINEBREAK:
 				break;
 
-			case XEND: // Don't actually use this. This tag helps with program functionality.
+			case XEND: // Don't actually use this. This tag helps with program functionality. Can't hide it either or it breaks display.
 				this->standard_tag = true;
 
 				std::cout << "This tag is filler and is not used on HTML pages." << std::endl;
@@ -1154,7 +1249,7 @@ int Page::tagging_loop()
 
 			default:
 				std::cout << std::endl;
-				std::cout << "This tag number was not recognized, please try again." << std::endl;
+				std::cout << "This tag number was not recognized or is invalid, please try again." << std::endl;
 				break;
 			}
 
@@ -1216,6 +1311,11 @@ int Page::tagging_loop()
 				std::cout << std::endl;
 
 				samefile << this->complete_hyperlink;
+			}
+
+			if (sub_tag == true) // If a sub-tagging process is finished, reset it
+			{
+				sub_tag = false;
 			}
 
 			// File always writes the data when finished.
@@ -1394,7 +1494,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	system("pause"); // Pause to allow the user to read what's happening.
 
-	this->tag_begin(); // Declares tags but they can't actually be used in scope unless it's page_setup()
+	this->maintag_begin(); // Declares tags but they can't actually be used in scope unless it's page_setup()
 
 	std::cout << std::endl;
 	std::cout << "Please remember to add the <head> and <body> tags in order for the page to be fully functional." << std::endl;
