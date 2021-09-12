@@ -3,6 +3,7 @@
 #define PAGE_H
 
 #include "pch.h"
+#include <direct.h>
 #include <string> // Including this seperate because it doesn't play nice with PCH
 
 // I do not recommend doing this often, but in this case I was using full_file as a global.
@@ -15,6 +16,8 @@ public:
 	virtual ~Page();
 	
 	// Variables
+	// bool is_valid = false;
+	// bool is_accessible = false;
 	std::string decision;
 	int global_line = 0;
 	bool is_running = false;
@@ -37,15 +40,15 @@ private:
 	// Variables
 	int tagger;
 	int temp;
-	bool warning_displayed = false; // Used to prevent the program from using the error warning multiple times
 
 	// Assign Once Only
 	int &global_ref = global_line;
 	int &t_ref = temp;
 	int &global_err = err_code;
 
-	// This tag is used all over the Page class for in-code debugging purposes. Switch to FALSE if you're not debugging.
-	bool page_debug;
+	// Booleans
+	bool warning_displayed = false; // Used to prevent the program from using the error warning multiple times
+	bool page_debug; // This tag is used all over the Page class for in-code debugging purposes. Switch to FALSE if you're not debugging.
 	bool standard_tag = true;
 	bool ignore_tag = false;
 	bool main_tag = false;
@@ -53,6 +56,7 @@ private:
 
 	/* Sub-tagging system will detect and prevent tags from being used if they cannot exist in <body> or <head> without formatting. */
 
+	// Strings
 	std::string option{};
 	std::string filetype{ ".html" };
 	std::string f_name;
@@ -92,6 +96,8 @@ private:
 	};
 
 	// Methods
+	bool create_directory();
+	int access_directory();
 	void const show_error();
 	void initialize_tags();
 	inline int const find_line() { return *global_point; };

@@ -33,6 +33,37 @@ Page::~Page()
 	this->memory_cleaner();
 };
 
+// Asks if the user wants to create a directory, returns false if no.
+bool Page::create_directory()
+{
+	std::cout << "The default location where HTML files (web pages) are stored is the same folder that the program is running in." << std::endl;
+	std::cout << "Would you like to create a directory to store your HTML web page?" << std::endl;
+
+	// User provides input.
+
+	// Invalid input causes this step to be skipped entirely.
+
+	// No directory was created.
+	return false;
+};
+
+// This runs regardless of directory creation. It just tells the user to let the program know where the HTML files should be located.
+int Page::access_directory()
+{
+	std::cout << "Would you like to use the default directory to save this HTML document? Type yes or no to confirm." << std::endl;
+
+	// User provides input.
+
+	// Invalid input will not access a directory and returns to default settings.
+
+	// If the directory is valid and can be accessed.
+
+	// If the directory was able to be interacted with by the program without creating errors.
+	err_ref = 0;
+
+	return error_detected(err_ref);
+};
+
 // This is const because it should only ever show error messages and only ONCE
 void const Page::show_error()
 {
