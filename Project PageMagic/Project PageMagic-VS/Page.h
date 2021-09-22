@@ -102,7 +102,7 @@ private:
 	void initialize_tags();
 	inline int const find_line() { return *global_point; };
 	std::string const s_state(int num);
-	int const declare(std::string local_file);
+	int declare(std::string local_file);
 	void title_sequence();
 	int display_all();
 	int page_setup();

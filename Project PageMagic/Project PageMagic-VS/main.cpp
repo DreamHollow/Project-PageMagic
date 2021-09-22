@@ -1,9 +1,8 @@
 #include "Page.h"
 
-// Global variables are usually VERY BAD but in this case it's considered useful.
-std::string full_file;
-bool program_debug = true;
-int err_code{};
+std::string full_file; // Global file name, should be kept consistent across everything
+bool program_debug = true; // A boolean that determines whether debug processes are shown
+int err_code{}; // Global error code - interrupts processes that violate program rules
 int& err_ref = err_code;
 
 int main()
@@ -56,7 +55,7 @@ int main()
 				MyPage->is_running = true;
 
 				// This error-catching function currently doesn't do anything, needs logic updates so it fills it's primary function -- TODO
-				while (MyPage->is_running && MyPage->error_detected(MyPage->err_code) == false)
+				while (MyPage->is_running && MyPage->error_detected(MyPage->err_ref) == false)
 				{
 					// Create a new file.
 					MyPage->create_file();
@@ -67,11 +66,11 @@ int main()
 					MyPage->is_running = false;
 				}
 
-				if (MyPage->err_code != 0)
+				if (MyPage->err_ref != 0)
 				{
 					app_exit = false;
 				}
-				else if (MyPage->err_code == 2)
+				else if (MyPage->err_ref == 2)
 				{
 					std::cout << "The program has encountered a serious error and has ceased it's standard functions." << std::endl;
 

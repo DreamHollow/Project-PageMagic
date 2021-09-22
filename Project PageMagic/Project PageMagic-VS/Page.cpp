@@ -37,13 +37,16 @@ Page::~Page()
 bool Page::create_directory()
 {
 	std::cout << "The default location where HTML files (web pages) are stored is the same folder that the program is running in." << std::endl;
-	std::cout << "Would you like to create a directory to store your HTML web page?" << std::endl;
+	std::cout << "Please note that you do not have to create a folder in order to use this program or access your web pages." << std::endl;
+	std::cout << "Would you like to create a folder to store your HTML web page?" << std::endl;
+
+	// Provide a default directory
 
 	// User provides input.
 
 	// Invalid input causes this step to be skipped entirely.
 
-	// No directory was created.
+	// No directory was created. This should be the default if accessing an existing directory or file.
 	return false;
 };
 
@@ -59,7 +62,7 @@ int Page::access_directory()
 	// If the directory is valid and can be accessed.
 
 	// If the directory was able to be interacted with by the program without creating errors.
-	err_ref = 0;
+	this->err_ref = 0;
 
 	return error_detected(err_ref);
 };
@@ -70,7 +73,7 @@ void const Page::show_error()
 	std::cout << "There was an error during execution." << std::endl;
 	std::cout << "[Error Code: ";
 
-	switch (err_code)
+	switch (this->err_code)
 	{
 	case 1:
 		std::cout << "1, Standard Error]" << std::endl;
@@ -89,224 +92,224 @@ void Page::initialize_tags()
 
 	// There are an absolutely MASSIVE amount of HTML tags. I didn't even know some of these existed.
 	// Enum will keep track of which tags to deploy, vector will fill the tags.
-	html_tags.push_back("<!--"); // 0; Very different from most tags
-	html_tags.push_back("<a>"); // 1; Must be modified to contain a value like a URL
-	html_tags.push_back("<abbr>"); // 2
-	html_tags.push_back("<address>"); // 3
-	html_tags.push_back("<area>"); // 4
-	html_tags.push_back("<article>"); // 5
-	html_tags.push_back("<aside>"); // 6
-	html_tags.push_back("<audio>"); // 7; Must be modified
-	html_tags.push_back("<bdi>"); // 8
-	html_tags.push_back("<bdo>"); // 9
-	html_tags.push_back("<blockquote>"); // 10
-	html_tags.push_back("<body>"); // 11; this tag should really be included before ALL content.
-	html_tags.push_back("<br>"); // 12; line break
-	html_tags.push_back("<button>"); // 13
-	html_tags.push_back("<canvas>"); // 14
-	html_tags.push_back("<caption>"); // 15; accessibility options
-	html_tags.push_back("<cite>"); // 16
-	html_tags.push_back("<code>"); // 17; very important to programmers
-	html_tags.push_back("<col>"); // 18
-	html_tags.push_back("<colgroup>"); // 19; contains a group of columns
-	html_tags.push_back("<data>"); // 20; allows machine readable code
-	html_tags.push_back("<datalist>"); // 21
-	html_tags.push_back("<dd>"); // 22
-	html_tags.push_back("<del>"); // 23
-	html_tags.push_back("<details>"); // 24
-	html_tags.push_back("<dfn>"); // 25
-	html_tags.push_back("<dialog>"); // 26
-	html_tags.push_back("<div>"); // 27
-	html_tags.push_back("<dl>"); // 28
-	html_tags.push_back("<dt>"); // 29
-	html_tags.push_back("<em>"); // 30
-	html_tags.push_back("<embed>"); // 31
-	html_tags.push_back("<fieldset>"); // 32
-	html_tags.push_back("<figcaption>"); // 33
-	html_tags.push_back("<figure>"); // 34
-	html_tags.push_back("<footer>"); // 35
-	html_tags.push_back("<form>"); // 36
-	html_tags.push_back("<h1>"); // 37
-	html_tags.push_back("<h2>"); // 38
-	html_tags.push_back("<h3>"); // 39
-	html_tags.push_back("<h4>"); // 40
-	html_tags.push_back("<h5>"); // 41
-	html_tags.push_back("<h6>"); // 42
-	html_tags.push_back("<head>"); // 43
-	html_tags.push_back("<header>"); // 44
-	html_tags.push_back("<hr>"); // 45
-	html_tags.push_back("<html>"); // 46; INVALID - ROOT
-	html_tags.push_back("<i>"); // 47
-	html_tags.push_back("<iframe>"); // 48
-	html_tags.push_back("<img>"); // 49; requires modification
-	html_tags.push_back("<input>"); // 50
-	html_tags.push_back("<ins>"); // 51
-	html_tags.push_back("<kbd>"); // 52
-	html_tags.push_back("<label>"); // 53
-	html_tags.push_back("<legend>"); // 54
-	html_tags.push_back("<li>"); // 55
-	html_tags.push_back("<link>"); // 56
-	html_tags.push_back("<main>"); // 57
-	html_tags.push_back("<map>"); // 58
-	html_tags.push_back("<mark>"); // 59
-	html_tags.push_back("<meta>"); // 60
-	html_tags.push_back("<meter>"); // 61
-	html_tags.push_back("<nav>"); // 62
-	html_tags.push_back("<noscript>"); // 63
-	html_tags.push_back("<object>"); // 64
-	html_tags.push_back("<ol>"); // 65
-	html_tags.push_back("<optgroup"); // 66
-	html_tags.push_back("<option>"); // 67
-	html_tags.push_back("<output>"); // 68
-	html_tags.push_back("<p>"); // 69
-	html_tags.push_back("<param>"); // 70
-	html_tags.push_back("<picture>"); // 71
-	html_tags.push_back("<pre>"); // 72
-	html_tags.push_back("<progress>"); // 73
-	html_tags.push_back("<q>"); // 74
-	html_tags.push_back("<rp>"); // 75; "no ruby"
-	html_tags.push_back("<s>"); // 76
-	html_tags.push_back("<samp>"); // 77
-	html_tags.push_back("<script>"); // 78
-	html_tags.push_back("<section>"); // 79
-	html_tags.push_back("<select>"); // 80
-	html_tags.push_back("<small>"); // 81
-	html_tags.push_back("<source>"); // 82
-	html_tags.push_back("<span>"); // 83
-	html_tags.push_back("<strong>"); // 84
-	html_tags.push_back("<style>"); // 85
-	html_tags.push_back("<sub>"); // 86
-	html_tags.push_back("<summary>"); // 87
-	html_tags.push_back("<sup>"); // 88
-	html_tags.push_back("<svg>"); // 89
-	html_tags.push_back("<table>"); // 90
-	html_tags.push_back("<tbody>"); // 91
-	html_tags.push_back("<td>"); // 92
-	html_tags.push_back("<template>"); // 93
-	html_tags.push_back("<textarea>"); // 94
-	html_tags.push_back("<tfoot>"); // 95
-	html_tags.push_back("<th>"); // 96
-	html_tags.push_back("<thead>"); // 97
-	html_tags.push_back("<time>"); // 98
-	html_tags.push_back("<title>"); // 99; INVALID
-	html_tags.push_back("<tr>"); // 100
-	html_tags.push_back("<track>"); // 101
-	html_tags.push_back("<ul>"); // 102
-	html_tags.push_back("<var>"); // 103
-	html_tags.push_back("<video>"); // 104
-	html_tags.push_back("<wbr>"); // 105
-	html_tags.push_back("NULL"); // 106, used for invalid tags
+	this->html_tags.push_back("<!--"); // 0; Very different from most tags
+	this->html_tags.push_back("<a>"); // 1; Must be modified to contain a value like a URL
+	this->html_tags.push_back("<abbr>"); // 2
+	this->html_tags.push_back("<address>"); // 3
+	this->html_tags.push_back("<area>"); // 4
+	this->html_tags.push_back("<article>"); // 5
+	this->html_tags.push_back("<aside>"); // 6
+	this->html_tags.push_back("<audio>"); // 7; Must be modified
+	this->html_tags.push_back("<bdi>"); // 8
+	this->html_tags.push_back("<bdo>"); // 9
+	this->html_tags.push_back("<blockquote>"); // 10
+	this->html_tags.push_back("<body>"); // 11; this tag should really be included before ALL content.
+	this->html_tags.push_back("<br>"); // 12; line break
+	this->html_tags.push_back("<button>"); // 13
+	this->html_tags.push_back("<canvas>"); // 14
+	this->html_tags.push_back("<caption>"); // 15; accessibility options
+	this->html_tags.push_back("<cite>"); // 16
+	this->html_tags.push_back("<code>"); // 17; very important to programmers
+	this->html_tags.push_back("<col>"); // 18
+	this->html_tags.push_back("<colgroup>"); // 19; contains a group of columns
+	this->html_tags.push_back("<data>"); // 20; allows machine readable code
+	this->html_tags.push_back("<datalist>"); // 21
+	this->html_tags.push_back("<dd>"); // 22
+	this->html_tags.push_back("<del>"); // 23
+	this->html_tags.push_back("<details>"); // 24
+	this->html_tags.push_back("<dfn>"); // 25
+	this->html_tags.push_back("<dialog>"); // 26
+	this->html_tags.push_back("<div>"); // 27
+	this->html_tags.push_back("<dl>"); // 28
+	this->html_tags.push_back("<dt>"); // 29
+	this->html_tags.push_back("<em>"); // 30
+	this->html_tags.push_back("<embed>"); // 31
+	this->html_tags.push_back("<fieldset>"); // 32
+	this->html_tags.push_back("<figcaption>"); // 33
+	this->html_tags.push_back("<figure>"); // 34
+	this->html_tags.push_back("<footer>"); // 35
+	this->html_tags.push_back("<form>"); // 36
+	this->html_tags.push_back("<h1>"); // 37
+	this->html_tags.push_back("<h2>"); // 38
+	this->html_tags.push_back("<h3>"); // 39
+	this->html_tags.push_back("<h4>"); // 40
+	this->html_tags.push_back("<h5>"); // 41
+	this->html_tags.push_back("<h6>"); // 42
+	this->html_tags.push_back("<head>"); // 43
+	this->html_tags.push_back("<header>"); // 44
+	this->html_tags.push_back("<hr>"); // 45
+	this->html_tags.push_back("<html>"); // 46; INVALID - ROOT
+	this->html_tags.push_back("<i>"); // 47
+	this->html_tags.push_back("<iframe>"); // 48
+	this->html_tags.push_back("<img>"); // 49; requires modification
+	this->html_tags.push_back("<input>"); // 50
+	this->html_tags.push_back("<ins>"); // 51
+	this->html_tags.push_back("<kbd>"); // 52
+	this->html_tags.push_back("<label>"); // 53
+	this->html_tags.push_back("<legend>"); // 54
+	this->html_tags.push_back("<li>"); // 55
+	this->html_tags.push_back("<link>"); // 56
+	this->html_tags.push_back("<main>"); // 57
+	this->html_tags.push_back("<map>"); // 58
+	this->html_tags.push_back("<mark>"); // 59
+	this->html_tags.push_back("<meta>"); // 60
+	this->html_tags.push_back("<meter>"); // 61
+	this->html_tags.push_back("<nav>"); // 62
+	this->html_tags.push_back("<noscript>"); // 63
+	this->html_tags.push_back("<object>"); // 64
+	this->html_tags.push_back("<ol>"); // 65
+	this->html_tags.push_back("<optgroup"); // 66
+	this->html_tags.push_back("<option>"); // 67
+	this->html_tags.push_back("<output>"); // 68
+	this->html_tags.push_back("<p>"); // 69
+	this->html_tags.push_back("<param>"); // 70
+	this->html_tags.push_back("<picture>"); // 71
+	this->html_tags.push_back("<pre>"); // 72
+	this->html_tags.push_back("<progress>"); // 73
+	this->html_tags.push_back("<q>"); // 74
+	this->html_tags.push_back("<rp>"); // 75; "no ruby"
+	this->html_tags.push_back("<s>"); // 76
+	this->html_tags.push_back("<samp>"); // 77
+	this->html_tags.push_back("<script>"); // 78
+	this->html_tags.push_back("<section>"); // 79
+	this->html_tags.push_back("<select>"); // 80
+	this->html_tags.push_back("<small>"); // 81
+	this->html_tags.push_back("<source>"); // 82
+	this->html_tags.push_back("<span>"); // 83
+	this->html_tags.push_back("<strong>"); // 84
+	this->html_tags.push_back("<style>"); // 85
+	this->html_tags.push_back("<sub>"); // 86
+	this->html_tags.push_back("<summary>"); // 87
+	this->html_tags.push_back("<sup>"); // 88
+	this->html_tags.push_back("<svg>"); // 89
+	this->html_tags.push_back("<table>"); // 90
+	this->html_tags.push_back("<tbody>"); // 91
+	this->html_tags.push_back("<td>"); // 92
+	this->html_tags.push_back("<template>"); // 93
+	this->html_tags.push_back("<textarea>"); // 94
+	this->html_tags.push_back("<tfoot>"); // 95
+	this->html_tags.push_back("<th>"); // 96
+	this->html_tags.push_back("<thead>"); // 97
+	this->html_tags.push_back("<time>"); // 98
+	this->html_tags.push_back("<title>"); // 99; INVALID
+	this->html_tags.push_back("<tr>"); // 100
+	this->html_tags.push_back("<track>"); // 101
+	this->html_tags.push_back("<ul>"); // 102
+	this->html_tags.push_back("<var>"); // 103
+	this->html_tags.push_back("<video>"); // 104
+	this->html_tags.push_back("<wbr>"); // 105
+	this->html_tags.push_back("NULL"); // 106, used for invalid tags
 
 
 
 	// Matching all of the opening tags to the closing tags.
-	html_end.push_back("-->"); // 0
-	html_end.push_back("</a>"); // 1; Must be modified to contain a value like a URL
-	html_end.push_back("</abbr>"); // 2
-	html_end.push_back("</address>"); // 3
-	html_end.push_back("</area>"); // 4
-	html_end.push_back("</article>"); // 5
-	html_end.push_back("</aside>"); // 6
-	html_end.push_back("</audio>"); // 7; Must be modified
-	html_end.push_back("</bdi>"); // 8
-	html_end.push_back("</bdo>"); // 9
-	html_end.push_back("</blockquote>"); // 10
-	html_end.push_back("</body>"); // 11; this tag should really be included before ALL content.
-	html_end.push_back("</br>"); // 12; line break
-	html_end.push_back("</button>"); // 13
-	html_end.push_back("</canvas>"); // 14
-	html_end.push_back("</caption>"); // 15; accessibility options
-	html_end.push_back("</cite>"); // 16
-	html_end.push_back("</code>"); // 17; very important to programmers
-	html_end.push_back("</col>"); // 18
-	html_end.push_back("</colgroup>"); // 19; contains a group of columns
-	html_end.push_back("</data>"); // 20; allows machine readable code
-	html_end.push_back("</datalist>"); // 21
-	html_end.push_back("</dd>"); // 22
-	html_end.push_back("</del>"); // 23
-	html_end.push_back("</details>"); // 24
-	html_end.push_back("</dfn>"); // 25
-	html_end.push_back("</dialog>"); // 26
-	html_end.push_back("</div>"); // 27
-	html_end.push_back("</dl>"); // 28
-	html_end.push_back("</dt>"); // 29
-	html_end.push_back("</em>"); // 30
-	html_end.push_back("</embed>"); // 31
-	html_end.push_back("</fieldset>"); // 32
-	html_end.push_back("</figcaption>"); // 33
-	html_end.push_back("</figure>"); // 34
-	html_end.push_back("</footer>"); // 35
-	html_end.push_back("</form>"); // 36
-	html_end.push_back("</h1>"); // 37
-	html_end.push_back("</h2>"); // 38
-	html_end.push_back("</h3>"); // 39
-	html_end.push_back("</h4>"); // 40
-	html_end.push_back("</h5>"); // 41
-	html_end.push_back("</h6>"); // 42
-	html_end.push_back("</head>"); // 43
-	html_end.push_back("</header>"); // 44
-	html_end.push_back("</hr>"); // 45
-	html_end.push_back("</html>"); // 46; INVALID - ROOT
-	html_end.push_back("</i>"); // 47
-	html_end.push_back("</iframe>"); // 48
-	html_end.push_back("</img>"); // 49; requires modification
-	html_end.push_back("</input>"); // 50
-	html_end.push_back("</ins>"); // 51
-	html_end.push_back("</kbd>"); // 52
-	html_end.push_back("</label>"); // 53
-	html_end.push_back("</legend>"); // 54
-	html_end.push_back("</li>"); // 55
-	html_end.push_back("</link>"); // 56
-	html_end.push_back("</main>"); // 57
-	html_end.push_back("</map>"); // 58
-	html_end.push_back("</mark>"); // 59
-	html_end.push_back("</meta>"); // 60
-	html_end.push_back("</meter>"); // 61
-	html_end.push_back("</nav>"); // 62
-	html_end.push_back("</noscript>"); // 63
-	html_end.push_back("</object>"); // 64
-	html_end.push_back("</ol>"); // 65
-	html_end.push_back("</optgroup"); // 66
-	html_end.push_back("</option>"); // 67
-	html_end.push_back("</output>"); // 68
-	html_end.push_back("</p>"); // 69
-	html_end.push_back("</param>"); // 70
-	html_end.push_back("</picture>"); // 71
-	html_end.push_back("</pre>"); // 72
-	html_end.push_back("</progress>"); // 73
-	html_end.push_back("</q>"); // 74
-	html_end.push_back("</rp>"); // 75; "no ruby"
-	html_end.push_back("</s>"); // 76
-	html_end.push_back("</samp>"); // 77
-	html_end.push_back("</script>"); // 78
-	html_end.push_back("</section>"); // 79
-	html_end.push_back("</select>"); // 80
-	html_end.push_back("</small>"); // 81
-	html_end.push_back("</source>"); // 82
-	html_end.push_back("</span>"); // 83
-	html_end.push_back("</strong>"); // 84
-	html_end.push_back("</style>"); // 85
-	html_end.push_back("</sub>"); // 86
-	html_end.push_back("</summary>"); // 87
-	html_end.push_back("</sup>"); // 88
-	html_end.push_back("</svg>"); // 89
-	html_end.push_back("</table>"); // 90
-	html_end.push_back("</tbody>"); // 91
-	html_end.push_back("</td>"); // 92
-	html_end.push_back("</template>"); // 93
-	html_end.push_back("</textarea>"); // 94
-	html_end.push_back("</tfoot>"); // 95
-	html_end.push_back("</th>"); // 96
-	html_end.push_back("</thead>"); // 97
-	html_end.push_back("</time>"); // 98
-	html_end.push_back("</title>"); // 99; INVALID
-	html_end.push_back("</tr>"); // 100
-	html_end.push_back("</track>"); // 101
-	html_end.push_back("</ul>"); // 102
-	html_end.push_back("</var>"); // 103
-	html_end.push_back("</video>"); // 104
-	html_end.push_back("</wbr>"); // 105
-	html_end.push_back("NULL"); // 106
+	this->html_end.push_back("-->"); // 0
+	this->html_end.push_back("</a>"); // 1; Must be modified to contain a value like a URL
+	this->html_end.push_back("</abbr>"); // 2
+	this->html_end.push_back("</address>"); // 3
+	this->html_end.push_back("</area>"); // 4
+	this->html_end.push_back("</article>"); // 5
+	this->html_end.push_back("</aside>"); // 6
+	this->html_end.push_back("</audio>"); // 7; Must be modified
+	this->html_end.push_back("</bdi>"); // 8
+	this->html_end.push_back("</bdo>"); // 9
+	this->html_end.push_back("</blockquote>"); // 10
+	this->html_end.push_back("</body>"); // 11; this tag should really be included before ALL content.
+	this->html_end.push_back("</br>"); // 12; line break
+	this->html_end.push_back("</button>"); // 13
+	this->html_end.push_back("</canvas>"); // 14
+	this->html_end.push_back("</caption>"); // 15; accessibility options
+	this->html_end.push_back("</cite>"); // 16
+	this->html_end.push_back("</code>"); // 17; very important to programmers
+	this->html_end.push_back("</col>"); // 18
+	this->html_end.push_back("</colgroup>"); // 19; contains a group of columns
+	this->html_end.push_back("</data>"); // 20; allows machine readable code
+	this->html_end.push_back("</datalist>"); // 21
+	this->html_end.push_back("</dd>"); // 22
+	this->html_end.push_back("</del>"); // 23
+	this->html_end.push_back("</details>"); // 24
+	this->html_end.push_back("</dfn>"); // 25
+	this->html_end.push_back("</dialog>"); // 26
+	this->html_end.push_back("</div>"); // 27
+	this->html_end.push_back("</dl>"); // 28
+	this->html_end.push_back("</dt>"); // 29
+	this->html_end.push_back("</em>"); // 30
+	this->html_end.push_back("</embed>"); // 31
+	this->html_end.push_back("</fieldset>"); // 32
+	this->html_end.push_back("</figcaption>"); // 33
+	this->html_end.push_back("</figure>"); // 34
+	this->html_end.push_back("</footer>"); // 35
+	this->html_end.push_back("</form>"); // 36
+	this->html_end.push_back("</h1>"); // 37
+	this->html_end.push_back("</h2>"); // 38
+	this->html_end.push_back("</h3>"); // 39
+	this->html_end.push_back("</h4>"); // 40
+	this->html_end.push_back("</h5>"); // 41
+	this->html_end.push_back("</h6>"); // 42
+	this->html_end.push_back("</head>"); // 43
+	this->html_end.push_back("</header>"); // 44
+	this->html_end.push_back("</hr>"); // 45
+	this->html_end.push_back("</html>"); // 46; INVALID - ROOT
+	this->html_end.push_back("</i>"); // 47
+	this->html_end.push_back("</iframe>"); // 48
+	this->html_end.push_back("</img>"); // 49; requires modification
+	this->html_end.push_back("</input>"); // 50
+	this->html_end.push_back("</ins>"); // 51
+	this->html_end.push_back("</kbd>"); // 52
+	this->html_end.push_back("</label>"); // 53
+	this->html_end.push_back("</legend>"); // 54
+	this->html_end.push_back("</li>"); // 55
+	this->html_end.push_back("</link>"); // 56
+	this->html_end.push_back("</main>"); // 57
+	this->html_end.push_back("</map>"); // 58
+	this->html_end.push_back("</mark>"); // 59
+	this->html_end.push_back("</meta>"); // 60
+	this->html_end.push_back("</meter>"); // 61
+	this->html_end.push_back("</nav>"); // 62
+	this->html_end.push_back("</noscript>"); // 63
+	this->html_end.push_back("</object>"); // 64
+	this->html_end.push_back("</ol>"); // 65
+	this->html_end.push_back("</optgroup"); // 66
+	this->html_end.push_back("</option>"); // 67
+	this->html_end.push_back("</output>"); // 68
+	this->html_end.push_back("</p>"); // 69
+	this->html_end.push_back("</param>"); // 70
+	this->html_end.push_back("</picture>"); // 71
+	this->html_end.push_back("</pre>"); // 72
+	this->html_end.push_back("</progress>"); // 73
+	this->html_end.push_back("</q>"); // 74
+	this->html_end.push_back("</rp>"); // 75; "no ruby"
+	this->html_end.push_back("</s>"); // 76
+	this->html_end.push_back("</samp>"); // 77
+	this->html_end.push_back("</script>"); // 78
+	this->html_end.push_back("</section>"); // 79
+	this->html_end.push_back("</select>"); // 80
+	this->html_end.push_back("</small>"); // 81
+	this->html_end.push_back("</source>"); // 82
+	this->html_end.push_back("</span>"); // 83
+	this->html_end.push_back("</strong>"); // 84
+	this->html_end.push_back("</style>"); // 85
+	this->html_end.push_back("</sub>"); // 86
+	this->html_end.push_back("</summary>"); // 87
+	this->html_end.push_back("</sup>"); // 88
+	this->html_end.push_back("</svg>"); // 89
+	this->html_end.push_back("</table>"); // 90
+	this->html_end.push_back("</tbody>"); // 91
+	this->html_end.push_back("</td>"); // 92
+	this->html_end.push_back("</template>"); // 93
+	this->html_end.push_back("</textarea>"); // 94
+	this->html_end.push_back("</tfoot>"); // 95
+	this->html_end.push_back("</th>"); // 96
+	this->html_end.push_back("</thead>"); // 97
+	this->html_end.push_back("</time>"); // 98
+	this->html_end.push_back("</title>"); // 99; INVALID
+	this->html_end.push_back("</tr>"); // 100
+	this->html_end.push_back("</track>"); // 101
+	this->html_end.push_back("</ul>"); // 102
+	this->html_end.push_back("</var>"); // 103
+	this->html_end.push_back("</video>"); // 104
+	this->html_end.push_back("</wbr>"); // 105
+	this->html_end.push_back("NULL"); // 106
 };
 
 // s_state just tells the program what to look at out of all the HTML tags that are available. It's very useful.
@@ -328,7 +331,7 @@ int Page::display_all()
 
 		this->err_ref = 2;
 
-		if (page_debug = true)
+		if (this->page_debug = true)
 		{
 			std::cout << "display_all() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -383,7 +386,7 @@ int Page::maintag_begin() // Messed around with enum scopes until I found an app
 
 	this->err_ref = 0;
 
-	if (page_debug = true)
+	if (this->page_debug = true)
 	{
 		std::cout << "maintag_begin() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -394,9 +397,11 @@ int Page::maintag_begin() // Messed around with enum scopes until I found an app
 
 int Page::subtag_begin()
 {
+
+
 	this->err_ref = 0;
 
-	if (page_debug == true)
+	if (this->page_debug == true)
 	{
 		std::cout << "subtag_begin returned a value of " << err_code;
 		std::cout << std::endl;
@@ -425,7 +430,7 @@ int Page::editing_process()
 
 	this->err_ref = 0;
 
-	if (page_debug = true)
+	if (this->page_debug = true)
 	{
 		std::cout << "editing_process() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -447,14 +452,14 @@ int Page::meta_process()
 	// In order to recycle resources and keep them relevant, use this again.
 	std::cin >> this->local_hyperlink;
 
-	if (local_hyperlink == "")
+	if (this->local_hyperlink == "")
 	{
 		std::cout << "Error, no hyperlink was provided. This tag cannot be completed without one." << std::endl;
 		std::cout << std::endl;
 
 		this->err_ref = 1;
 
-		if (page_debug = true)
+		if (this->page_debug = true)
 		{
 			std::cout << "meta_process() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -520,7 +525,7 @@ int Page::hyperlink_process()
 
 	this->err_ref = 0;
 
-	if (page_debug = true)
+	if (this->page_debug = true)
 	{
 		std::cout << "hyperlink_process() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -535,7 +540,7 @@ std::string const Page::tag_fill()
 	return this->tag_filler; // Show what the user typed as full string
 };
 
-int const Page::declare(std::string local_file) // Declaration should always just emphasize that a file exists and is accessible.
+int Page::declare(std::string local_file) // Declaration should always just emphasize that a file exists and is accessible.
 {
 	if(std::ifstream(local_file))
 	{
@@ -661,7 +666,7 @@ int Page::tagging_loop()
 
 		this->err_ref = 1;
 
-		if (page_debug = true)
+		if (this->page_debug = true)
 		{
 			std::cout << "tagging_loop() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -1380,7 +1385,7 @@ int Page::tagging_loop()
 
 	err_ref = 0;
 
-	if (page_debug = true)
+	if (this->page_debug = true)
 	{
 		std::cout << "tagging_loop() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -1408,7 +1413,7 @@ int Page::tag_finish()
 
 		this->err_ref = 1;
 
-		if (page_debug = true)
+		if (this->page_debug = true)
 		{
 			std::cout << "tag_finish() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -1444,7 +1449,7 @@ int Page::tag_finish()
 
 	this->err_ref = 0;
 
-	if (page_debug = true)
+	if (this->page_debug = true)
 	{
 		std::cout << "tag_finish() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -1567,7 +1572,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	this->err_ref = 0;
 
-	if (page_debug = true)
+	if (this->page_debug = true)
 	{
 		std::cout << "page_setup() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -1591,6 +1596,8 @@ void const Page::page_explain()
 bool Page::create_file()
 {
 	extern std::string full_file;
+
+	// Start directory search/creation - TODO
 
 	std::cout << "Please enter the name of the file you are trying to create." << std::endl;
 	std::cout << "Filename: ";
