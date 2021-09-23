@@ -1,4 +1,13 @@
+#include <cstdint>
 #include "Page.h"
+
+#if INTPTR_MAX == INT64_MAX
+// Define 64 bit system
+#elif INTPTR_MAX == INT32_MAX
+// Define 32 bit system
+#else
+#error Unknown pointer size or missing macros!
+#endif
 
 std::string full_file; // Global file name, should be kept consistent across everything
 bool program_debug = true; // A boolean that determines whether debug processes are shown

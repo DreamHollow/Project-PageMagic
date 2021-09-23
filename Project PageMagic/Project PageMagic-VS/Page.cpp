@@ -366,7 +366,7 @@ int Page::display_all()
 	return this->error_detected(err_ref);
 };
 
-int Page::maintag_begin() // Messed around with enum scopes until I found an appropriate one.
+int Page::maintag_begin() // Beginning of structurally significant tagging.
 {
 	std::cout << std::endl;
 	std::cout << "Tag availability will vary greatly on different stages of the project." << std::endl;
@@ -395,10 +395,8 @@ int Page::maintag_begin() // Messed around with enum scopes until I found an app
 	return this->error_detected(err_ref);
 };
 
-int Page::subtag_begin()
+int Page::subtag_begin() // Beginning of aesthetically important tagging.
 {
-
-
 	this->err_ref = 0;
 
 	if (this->page_debug == true)
