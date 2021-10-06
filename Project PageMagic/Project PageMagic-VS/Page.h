@@ -3,6 +3,8 @@
 #define PAGE_H
 
 #include "pch.h"
+#include <vector>
+#include <array>
 #include <direct.h>
 #include <string> // Including this seperate because it doesn't play nice with PCH
 
@@ -27,6 +29,7 @@ public:
 	// Methods
 	inline std::string const get_title() { return title_header; };
 	bool create_file();
+	// bool access_file(); // This public method first determines if a file can be accessed before following up.
 	void setup();
 	bool error_detected(int &err_ref);
 

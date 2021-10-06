@@ -53,7 +53,10 @@ bool Page::create_directory()
 // This runs regardless of directory creation. It just tells the user to let the program know where the HTML files should be located.
 int Page::access_directory()
 {
-	std::cout << "Would you like to use the default directory to save this HTML document? Type yes or no to confirm." << std::endl;
+	std::cout << "Would you like to use the default directory to save this HTML document?" << std::endl;
+	std::cout << "If yes, it will output to the same folder as this program." << std::endl;
+	std::cout << "If no, it will output to a folder of your choice." << std::endl;
+	std::cout << std::endl;
 
 	// User provides input.
 
@@ -1631,3 +1634,47 @@ bool Page::create_file()
 	file.close(); // Always close the file when you're done with it.
 	return true;
 };
+
+//// This function shouldn't be used as-is, it's still in testing stages.
+//bool Page::access_file()
+//{
+//	extern std::string full_file;
+//
+//	std::cout << "Please enter the full file string that you are trying to access." << std::endl;
+//	std::cout << "You may copy/paste this information if necessary." << std::endl;
+//	std::cout << std::endl;
+//	std::cout << "If the file cannot be accessed, this operation may stop unexpectedly." << std::endl;
+//	std::cout << std::endl;
+//
+//	// Directory is irrelevant here because it's being manually typed out.
+//
+//	std::cout << "Please enter the entire file location: ";
+//	std::cin >> full_file;
+//
+//	try
+//	{
+//		std::fstream file;
+//
+//		if (!file)
+//		{
+//			std::cout << "File could not be properly verified." << std::endl;
+//
+//			if (page_debug == true)
+//			{
+//				std::cout << std::endl;
+//				std::cout << "File object failed. Verification failed. Ending process early." << std::endl;
+//			}
+//
+//			return false;
+//		}
+//	}
+//	catch(const char* msg)
+//	{
+//		std::cerr << msg << std::endl;
+//
+//		return false;
+//	}
+//
+//	// Assume true if file is accessed.
+//	return true;
+//};

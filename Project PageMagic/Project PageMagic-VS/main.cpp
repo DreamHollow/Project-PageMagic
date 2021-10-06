@@ -3,13 +3,16 @@
 
 #if INTPTR_MAX == INT64_MAX
 // Define 64 bit system
+
+// Notify the user
+#pragma message ("64-BIT SYSTEM IDENTIFIED.")
 #elif INTPTR_MAX == INT32_MAX
-// Define 32 bit system
+#pragma message ("32-BIT SYSTEM IDENTIFIED.")
 #else
 #error Unknown pointer size or missing macros!
 #endif
 
-std::string full_file; // Global file name, should be kept consistent across everything
+std::string full_file; // Global file name, should be kept consistent across everything (Globals are normally VERY BAD, avoid using them!)
 bool program_debug = true; // A boolean that determines whether debug processes are shown
 int err_code{}; // Global error code - interrupts processes that violate program rules
 int& err_ref = err_code;
@@ -75,11 +78,11 @@ int main()
 					MyPage->is_running = false;
 				}
 
-				if (MyPage->err_ref != 0)
+				if (MyPage->err_ref != 0) // If an error is returned
 				{
 					app_exit = false;
 				}
-				else if (MyPage->err_ref == 2)
+				else if (MyPage->err_ref == 2) // If a critical error happens
 				{
 					std::cout << "The program has encountered a serious error and has ceased it's standard functions." << std::endl;
 
@@ -95,8 +98,7 @@ int main()
 		case 2:
 			std::cout << "This feature is currently disabled. It will be re-enabled when functionality is restored. Thank you." << std::endl;
 
-			// When this feature is successfully implemented, it should be able to read created files.
-			// MyPage->open_file();
+
 
 			// I'm not interested in having this menu loop.
 
