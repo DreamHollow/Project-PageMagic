@@ -1,4 +1,4 @@
-#include "Page.h"
+#include "Page.hpp"
 
 /* err_code is a general purpose variable. If it ever returns anything except 0, something went wrong. */
 
@@ -7,7 +7,7 @@ Page::Page()
 	this->temp = 0;
 	this->t_point = &temp;
 
-	this->page_debug = true;
+	// this->page_debug = true;
 
 	this->global_line = 1;
 	this->global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
@@ -22,15 +22,15 @@ Page::Page()
 
 Page::~Page()
 {
-	if (this->page_debug == true)
+	if (debugbot->is_debugging() == true)
 	{
 		std::cout << std::endl;
 		std::cout << "Deconstructor was called; left the scope of Page object." << std::endl;
 		std::cout << std::endl;
 	}
 
-	// I feel better having this function do some general cleanup on exit.
-	this->memory_cleaner();
+	// Just empties strings and other pre-set information.
+	this->data_cleaner();
 };
 
 // Asks if the user wants to create a directory, returns false if no.
@@ -334,7 +334,7 @@ int Page::display_all()
 
 		this->err_ref = 2;
 
-		if (this->page_debug = true)
+		if (this->debugbot->is_debugging() == true)
 		{
 			std::cout << "display_all() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -360,7 +360,7 @@ int Page::display_all()
 
 	err_ref = 0;
 
-	if (page_debug = true)
+	if (this->debugbot->is_debugging() == true)
 	{
 		std::cout << "display_all() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -389,7 +389,7 @@ int Page::maintag_begin() // Beginning of structurally significant tagging.
 
 	this->err_ref = 0;
 
-	if (this->page_debug = true)
+	if (this->debugbot->is_debugging() == true)
 	{
 		std::cout << "maintag_begin() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -402,7 +402,7 @@ int Page::subtag_begin() // Beginning of aesthetically important tagging.
 {
 	this->err_ref = 0;
 
-	if (this->page_debug == true)
+	if (this->debugbot->is_debugging() == true)
 	{
 		std::cout << "subtag_begin returned a value of " << err_code;
 		std::cout << std::endl;
@@ -431,7 +431,7 @@ int Page::editing_process()
 
 	this->err_ref = 0;
 
-	if (this->page_debug = true)
+	if (this->debugbot->is_debugging() == true)
 	{
 		std::cout << "editing_process() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -460,7 +460,7 @@ int Page::meta_process()
 
 		this->err_ref = 1;
 
-		if (this->page_debug = true)
+		if (this->debugbot->is_debugging() == true)
 		{
 			std::cout << "meta_process() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -478,7 +478,7 @@ int Page::meta_process()
 
 	this->err_ref = 0;
 
-	if (page_debug = true)
+	if (this->debugbot->is_debugging() == true)
 	{
 		std::cout << "meta_process() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -526,7 +526,7 @@ int Page::hyperlink_process()
 
 	this->err_ref = 0;
 
-	if (this->page_debug = true)
+	if (this->debugbot->is_debugging() == true)
 	{
 		std::cout << "hyperlink_process() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -554,7 +554,7 @@ int Page::declare(std::string local_file) // Declaration should always just emph
 
 		this->err_ref = 1;
 
-		if (page_debug = true)
+		if (debugbot->is_debugging() == true)
 		{
 			std::cout << "declare() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -565,7 +565,7 @@ int Page::declare(std::string local_file) // Declaration should always just emph
 
 	this->err_ref = 0;
 
-	if (page_debug = true)
+	if (debugbot->is_debugging() == true)
 	{
 		std::cout << "declare() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -621,7 +621,7 @@ bool Page::error_detected(int &err_ref)
 };
 
 // Memory management can be tricky. This function is fine as void return type.
-void Page::memory_cleaner()
+void Page::data_cleaner()
 {
 	// I'll be honest with you, memory management in C++ is not my strong suit.
 	// This function just wipes clean the vectors and file information regardless of general object deletion.
@@ -629,7 +629,7 @@ void Page::memory_cleaner()
 	this->html_tags.clear();
 	this->html_end.clear();
 
-	if (this->page_debug == true)
+	if (this->debugbot->is_debugging() == true)
 	{
 		std::cout << std::endl;
 		std::cout << "Vectors wiped..." << std::endl;
@@ -640,7 +640,7 @@ void Page::memory_cleaner()
 	{
 		full_file.clear();
 
-		if (this->page_debug == true)
+		if (this->debugbot->is_debugging() == true)
 		{
 			std::cout << std::endl;
 			std::cout << "File information cleared..." << std::endl;
@@ -648,6 +648,7 @@ void Page::memory_cleaner()
 	}
 };
 
+// This loop is massive because it's hard to break it into smaller pieces
 int Page::tagging_loop()
 {
 	std::fstream samefile;
@@ -667,7 +668,7 @@ int Page::tagging_loop()
 
 		this->err_ref = 1;
 
-		if (this->page_debug = true)
+		if (this->debugbot->is_debugging() == true)
 		{
 			std::cout << "tagging_loop() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -1296,7 +1297,7 @@ int Page::tagging_loop()
 
 			this->tag_grab = this->s_state(*tag_pointer); // Direct assignment. Seems to work for the purpose of this program.
 
-			if (this->page_debug == true)
+			if (this->debugbot->is_debugging() == true)
 			{
 				std::cout << std::endl;
 				std::cout << "DEBUG: " << "tag_grab is assigned to " << this->tag_grab << std::endl;
@@ -1329,7 +1330,7 @@ int Page::tagging_loop()
 				}
 				else
 				{
-					if (this->page_debug == true)
+					if (this->debugbot->is_debugging() == true)
 					{
 						std::cout << "The tag position was XEND / NULL and was ignored.";
 					}
@@ -1386,7 +1387,7 @@ int Page::tagging_loop()
 
 	err_ref = 0;
 
-	if (this->page_debug = true)
+	if (this->debugbot->is_debugging() == true)
 	{
 		std::cout << "tagging_loop() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -1414,7 +1415,7 @@ int Page::tag_finish()
 
 		this->err_ref = 1;
 
-		if (this->page_debug = true)
+		if (this->debugbot->is_debugging() == true)
 		{
 			std::cout << "tag_finish() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -1450,7 +1451,7 @@ int Page::tag_finish()
 
 	this->err_ref = 0;
 
-	if (this->page_debug = true)
+	if (this->debugbot->is_debugging() == true)
 	{
 		std::cout << "tag_finish() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -1492,7 +1493,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 	file << "<head>" << std::endl;
 	file << "<meta charset = 'utf-8'>" << std::endl;
 
-	if (this->page_debug == true)
+	if (this->debugbot->is_debugging() == true)
 	{
 		std::cout << std::endl;
 		std::cout << "DEBUG: " << std::endl;
@@ -1573,7 +1574,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	this->err_ref = 0;
 
-	if (this->page_debug = true)
+	if (this->debugbot->is_debugging() == true)
 	{
 		std::cout << "page_setup() returned a value of " << err_code;
 		std::cout << std::endl;

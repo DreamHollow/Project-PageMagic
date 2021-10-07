@@ -1,5 +1,5 @@
 #include <cstdint>
-#include "Page.h"
+#include "Page.hpp"
 
 #if INTPTR_MAX == INT64_MAX
 // Define 64 bit system

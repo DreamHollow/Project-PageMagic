@@ -3,10 +3,14 @@
 #define PAGE_H
 
 #include "pch.h"
+#include "LocalDebugger.hpp"
 #include <vector>
 #include <array>
 #include <direct.h>
 #include <string> // Including this seperate because it doesn't play nice with PCH
+
+/* Most functions have an int return type to be passed down to the error functions to determine where things went wrong.
+Very serious errors return "2" and are usually memory related. */
 
 // I do not recommend doing this often, but in this case I was using full_file as a global.
 extern std::string full_file;
@@ -16,6 +20,8 @@ class Page
 public:
 	Page();
 	virtual ~Page();
+
+	std::unique_ptr<LocalDebugger> debugbot = std::make_unique<LocalDebugger>(); // Debugger object
 	
 	// Variables
 	// bool is_valid = false;
@@ -51,7 +57,7 @@ private:
 
 	// Booleans
 	bool warning_displayed = false; // Used to prevent the program from using the error warning multiple times
-	bool page_debug; // This tag is used all over the Page class for in-code debugging purposes. Switch to FALSE if you're not debugging.
+	// bool page_debug; // This tag is used all over the Page class for in-code debugging purposes. Switch to FALSE if you're not debugging.
 	bool standard_tag = true;
 	bool ignore_tag = false;
 	bool main_tag = false;
@@ -79,7 +85,7 @@ private:
 	std::string complete_hyperlink;
 	std::string link_end = "'>"; // Needs to exist to close off the link properly.
 
-	// It was a nightmare trying to figure out what C++11's implementation of this system is.
+	// It was a nightmare trying to figure out what C++11's implementation of this system is. Used default.
 	enum WEBTAGS
 	{
 		COMMENT = 0, HYPERLINK, ABBREVIATE, ADDRESS, AREA, ARTICLE, ASIDE, AUDIO,
@@ -116,7 +122,7 @@ private:
 	int meta_process();
 	int hyperlink_process();
 	std::string const tag_fill();
-	void memory_cleaner();
+	void data_cleaner();
 	int tagging_loop();
 	int tag_finish();
 };
