@@ -17,7 +17,7 @@ Page::Page()
 
 	this->option = 'a'; // Initialized to junk, is set during function.
 
-	this->initialize_tags();
+	this->init_tags();
 };
 
 Page::~Page()
@@ -41,6 +41,8 @@ bool Page::create_directory()
 	std::cout << "Would you like to create a folder to store your HTML web page?" << std::endl;
 
 	// Provide a default directory
+	std::cout << "Your choice: ";
+
 
 	// User provides input.
 
@@ -88,9 +90,10 @@ void const Page::show_error()
 		std::cout << "Unknown error!]" << std::endl;
 		break;
 	}
-};
+}
 
-void Page::initialize_tags()
+// Tags initialized here are called upon using a corresponding enum
+void Page::init_tags()
 {
 
 	// There are an absolutely MASSIVE amount of HTML tags. I didn't even know some of these existed.
@@ -315,12 +318,6 @@ void Page::initialize_tags()
 	this->html_end.push_back("NULL"); // 106
 };
 
-// s_state just tells the program what to look at out of all the HTML tags that are available. It's very useful.
-std::string const Page::s_state(int num)
-{
-	return this->html_tags.at(num); // Return the HTML tag at the appropriate number.
-};
-
 // This can't be const because it does modify some data
 int Page::display_all()
 {
@@ -535,12 +532,6 @@ int Page::hyperlink_process()
 	return this->error_detected(err_ref);
 };
 
-// This was originally used for character arrays but now returns strings in general
-std::string const Page::tag_fill()
-{
-	return this->tag_filler; // Show what the user typed as full string
-};
-
 int Page::declare(std::string local_file) // Declaration should always just emphasize that a file exists and is accessible.
 {
 	if(std::ifstream(local_file))
@@ -683,7 +674,6 @@ int Page::tagging_loop()
 		std::cout << "Would you like to add another tag to your webpage?" << std::endl;
 		std::cout << "Type yes or no." << std::endl;
 
-		// std::cin.ignore(); // This is only really necessary if the input has spaces
 		std::getline(std::cin, this->option);
 
 		if (this->option == "exit") // This is an emergency exit.
@@ -1635,47 +1625,3 @@ bool Page::create_file()
 	file.close(); // Always close the file when you're done with it.
 	return true;
 };
-
-//// This function shouldn't be used as-is, it's still in testing stages.
-//bool Page::access_file()
-//{
-//	extern std::string full_file;
-//
-//	std::cout << "Please enter the full file string that you are trying to access." << std::endl;
-//	std::cout << "You may copy/paste this information if necessary." << std::endl;
-//	std::cout << std::endl;
-//	std::cout << "If the file cannot be accessed, this operation may stop unexpectedly." << std::endl;
-//	std::cout << std::endl;
-//
-//	// Directory is irrelevant here because it's being manually typed out.
-//
-//	std::cout << "Please enter the entire file location: ";
-//	std::cin >> full_file;
-//
-//	try
-//	{
-//		std::fstream file;
-//
-//		if (!file)
-//		{
-//			std::cout << "File could not be properly verified." << std::endl;
-//
-//			if (page_debug == true)
-//			{
-//				std::cout << std::endl;
-//				std::cout << "File object failed. Verification failed. Ending process early." << std::endl;
-//			}
-//
-//			return false;
-//		}
-//	}
-//	catch(const char* msg)
-//	{
-//		std::cerr << msg << std::endl;
-//
-//		return false;
-//	}
-//
-//	// Assume true if file is accessed.
-//	return true;
-//};

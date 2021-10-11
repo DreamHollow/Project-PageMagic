@@ -108,9 +108,9 @@ private:
 	bool create_directory();
 	int access_directory();
 	void const show_error();
-	void initialize_tags();
+	void init_tags();
 	inline int const find_line() { return *global_point; };
-	std::string const s_state(int num);
+	std::string const s_state(int num) { return this->html_tags.at(num); };
 	int declare(std::string local_file);
 	void title_sequence();
 	int display_all();
@@ -121,7 +121,7 @@ private:
 	int editing_process();
 	int meta_process();
 	int hyperlink_process();
-	std::string const tag_fill();
+	std::string const tag_fill() { return this->tag_filler; };
 	void data_cleaner();
 	int tagging_loop();
 	int tag_finish();
