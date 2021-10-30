@@ -5,7 +5,6 @@
 #include "pch.h"
 #include "LocalDebugger.hpp"
 #include <vector>
-#include <array>
 #include <direct.h>
 #include <string> // Including this seperate because it doesn't play nice with PCH
 
@@ -21,7 +20,7 @@ public:
 	Page();
 	virtual ~Page();
 
-	std::unique_ptr<LocalDebugger> debugbot = std::make_unique<LocalDebugger>(); // Debugger object
+	LocalDebugger debugbot; // Stack object, no need for major heap memory allocation
 	
 	// Variables
 	// bool is_valid = false;
@@ -67,7 +66,7 @@ private:
 
 	// Strings
 	std::string option{};
-	std::string filetype{ ".html" };
+	const std::string filetype{ ".html" };
 	std::string f_name;
 	std::string title_header = "Untitled"; // Default title for created pages.
 	std::vector<std::string> html_tags; // All beginning tags are here.
@@ -83,7 +82,11 @@ private:
 	// Tagging Hyperlinks etc.
 	std::string local_hyperlink;
 	std::string complete_hyperlink;
-	std::string link_end = "'>"; // Needs to exist to close off the link properly.
+	std::string link_end = "'>"; // Needs to exist to close off the link properly - Needs to change for tagging system to work properly
+
+	// Sub-tagging Variables
+	std::string sub_hyperlink;
+	std::string sub_complete;
 
 	// It was a nightmare trying to figure out what C++11's implementation of this system is. Used default.
 	enum WEBTAGS
@@ -105,8 +108,9 @@ private:
 	};
 
 	// Methods
-	bool create_directory();
-	int access_directory();
+	void init_settings();
+	// bool create_directory();
+	// int access_directory();
 	void const show_error();
 	void init_tags();
 	inline int const find_line() { return *global_point; };

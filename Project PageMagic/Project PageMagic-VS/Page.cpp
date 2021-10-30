@@ -4,25 +4,13 @@
 
 Page::Page()
 {
-	this->temp = 0;
-	this->t_point = &temp;
-
-	// this->page_debug = true;
-
-	this->global_line = 1;
-	this->global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
-
-	this->tagger = 0; // The actual tagging variable being used.
-	this->tag_pointer = &tagger; // The tag pointer used to determine which tag is edited.
-
-	this->option = 'a'; // Initialized to junk, is set during function.
-
+	this->init_settings();
 	this->init_tags();
 };
 
 Page::~Page()
 {
-	if (debugbot->is_debugging() == true)
+	if (debugbot.is_debugging() == true)
 	{
 		std::cout << std::endl;
 		std::cout << "Deconstructor was called; left the scope of Page object." << std::endl;
@@ -33,6 +21,21 @@ Page::~Page()
 	this->data_cleaner();
 };
 
+void Page::init_settings()
+{
+	this->temp = 0;
+	this->t_point = &temp;
+
+	this->global_line = 1;
+	this->global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
+
+	this->tagger = 0; // The actual tagging variable being used.
+	this->tag_pointer = &tagger; // The tag pointer used to determine which tag is edited.
+
+	this->option = 'a'; // Initialized to junk, is set during function.
+};
+
+/*
 // Asks if the user wants to create a directory, returns false if no.
 bool Page::create_directory()
 {
@@ -71,6 +74,7 @@ int Page::access_directory()
 
 	return error_detected(err_ref);
 };
+*/
 
 // This is const because it should only ever show error messages and only ONCE
 void const Page::show_error()
@@ -331,7 +335,7 @@ int Page::display_all()
 
 		this->err_ref = 2;
 
-		if (this->debugbot->is_debugging() == true)
+		if (this->debugbot.is_debugging() == true)
 		{
 			std::cout << "display_all() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -352,12 +356,12 @@ int Page::display_all()
 	{
 		std::cout << this->html_tags.at(*t_point) << " is assigned to number " << *t_point << std::endl; // The tag and pointer should match one to one.
 
-		t_ref += 1; // This reference is safe to use in this manner
+		t_ref += 1; // This increases "temp" which increases the value of t_point also, so it iterates
 	}
 
 	err_ref = 0;
 
-	if (this->debugbot->is_debugging() == true)
+	if (this->debugbot.is_debugging() == true)
 	{
 		std::cout << "display_all() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -386,7 +390,7 @@ int Page::maintag_begin() // Beginning of structurally significant tagging.
 
 	this->err_ref = 0;
 
-	if (this->debugbot->is_debugging() == true)
+	if (this->debugbot.is_debugging() == true)
 	{
 		std::cout << "maintag_begin() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -399,7 +403,7 @@ int Page::subtag_begin() // Beginning of aesthetically important tagging.
 {
 	this->err_ref = 0;
 
-	if (this->debugbot->is_debugging() == true)
+	if (this->debugbot.is_debugging() == true)
 	{
 		std::cout << "subtag_begin returned a value of " << err_code;
 		std::cout << std::endl;
@@ -428,7 +432,7 @@ int Page::editing_process()
 
 	this->err_ref = 0;
 
-	if (this->debugbot->is_debugging() == true)
+	if (this->debugbot.is_debugging() == true)
 	{
 		std::cout << "editing_process() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -457,7 +461,7 @@ int Page::meta_process()
 
 		this->err_ref = 1;
 
-		if (this->debugbot->is_debugging() == true)
+		if (this->debugbot.is_debugging() == true)
 		{
 			std::cout << "meta_process() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -475,7 +479,7 @@ int Page::meta_process()
 
 	this->err_ref = 0;
 
-	if (this->debugbot->is_debugging() == true)
+	if (this->debugbot.is_debugging() == true)
 	{
 		std::cout << "meta_process() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -523,7 +527,7 @@ int Page::hyperlink_process()
 
 	this->err_ref = 0;
 
-	if (this->debugbot->is_debugging() == true)
+	if (this->debugbot.is_debugging() == true)
 	{
 		std::cout << "hyperlink_process() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -545,7 +549,7 @@ int Page::declare(std::string local_file) // Declaration should always just emph
 
 		this->err_ref = 1;
 
-		if (debugbot->is_debugging() == true)
+		if (debugbot.is_debugging() == true)
 		{
 			std::cout << "declare() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -556,7 +560,7 @@ int Page::declare(std::string local_file) // Declaration should always just emph
 
 	this->err_ref = 0;
 
-	if (debugbot->is_debugging() == true)
+	if (debugbot.is_debugging() == true)
 	{
 		std::cout << "declare() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -620,7 +624,7 @@ void Page::data_cleaner()
 	this->html_tags.clear();
 	this->html_end.clear();
 
-	if (this->debugbot->is_debugging() == true)
+	if (this->debugbot.is_debugging() == true)
 	{
 		std::cout << std::endl;
 		std::cout << "Vectors wiped..." << std::endl;
@@ -631,11 +635,16 @@ void Page::data_cleaner()
 	{
 		full_file.clear();
 
-		if (this->debugbot->is_debugging() == true)
+		if (this->debugbot.is_debugging() == true)
 		{
 			std::cout << std::endl;
 			std::cout << "File information cleared..." << std::endl;
 		}
+	}
+	else
+	{
+		std::cout << "File information could not be verified or is already wiped clean." << std::endl;
+		std::cout << "If file data was assigned, please report this bug to the developer." << std::endl;
 	}
 };
 
@@ -659,7 +668,7 @@ int Page::tagging_loop()
 
 		this->err_ref = 1;
 
-		if (this->debugbot->is_debugging() == true)
+		if (this->debugbot.is_debugging() == true)
 		{
 			std::cout << "tagging_loop() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -1287,7 +1296,7 @@ int Page::tagging_loop()
 
 			this->tag_grab = this->s_state(*tag_pointer); // Direct assignment. Seems to work for the purpose of this program.
 
-			if (this->debugbot->is_debugging() == true)
+			if (this->debugbot.is_debugging() == true)
 			{
 				std::cout << std::endl;
 				std::cout << "DEBUG: " << "tag_grab is assigned to " << this->tag_grab << std::endl;
@@ -1320,7 +1329,7 @@ int Page::tagging_loop()
 				}
 				else
 				{
-					if (this->debugbot->is_debugging() == true)
+					if (this->debugbot.is_debugging() == true)
 					{
 						std::cout << "The tag position was XEND / NULL and was ignored.";
 					}
@@ -1377,7 +1386,7 @@ int Page::tagging_loop()
 
 	err_ref = 0;
 
-	if (this->debugbot->is_debugging() == true)
+	if (this->debugbot.is_debugging() == true)
 	{
 		std::cout << "tagging_loop() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -1405,7 +1414,7 @@ int Page::tag_finish()
 
 		this->err_ref = 1;
 
-		if (this->debugbot->is_debugging() == true)
+		if (this->debugbot.is_debugging() == true)
 		{
 			std::cout << "tag_finish() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -1441,7 +1450,7 @@ int Page::tag_finish()
 
 	this->err_ref = 0;
 
-	if (this->debugbot->is_debugging() == true)
+	if (this->debugbot.is_debugging() == true)
 	{
 		std::cout << "tag_finish() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -1483,7 +1492,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 	file << "<head>" << std::endl;
 	file << "<meta charset = 'utf-8'>" << std::endl;
 
-	if (this->debugbot->is_debugging() == true)
+	if (this->debugbot.is_debugging() == true)
 	{
 		std::cout << std::endl;
 		std::cout << "DEBUG: " << std::endl;
@@ -1564,7 +1573,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	this->err_ref = 0;
 
-	if (this->debugbot->is_debugging() == true)
+	if (this->debugbot.is_debugging() == true)
 	{
 		std::cout << "page_setup() returned a value of " << err_code;
 		std::cout << std::endl;

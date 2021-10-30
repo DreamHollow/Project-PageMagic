@@ -8,7 +8,7 @@ public:
 	virtual ~LocalDebugger();
 
 	// Functions
-	const bool is_debugging() { return debug_on; }; // Having this as const has helped reduce incorrect syntax
+	const bool is_debugging() const { return debug_on; }; // Having this as const has helped reduce incorrect syntax
 
 private:
 	// Variables
