@@ -13,12 +13,12 @@
 #endif
 
 std::string full_file; // Global file name, should be kept consistent across everything (Globals are normally VERY BAD, avoid using them!)
-bool program_debug = true; // A boolean that determines whether debug processes are shown
-int err_code{}; // Global error code - interrupts processes that violate program rules
-int& err_ref = err_code;
 
 int main()
 {
+	int err_code{};
+	int& err_ref = err_code;
+
 	// Using this boolean to determine event outcomes.
 	bool debug_state = true;
 	
@@ -36,7 +36,7 @@ int main()
 	std::cout << "Your answer: ";
 	std::cin >> decision;
 
-	std::transform(decision.begin(), decision.end(), decision.begin(), [](unsigned char c) { return std::tolower(c); }); // String is transformed to lower case to catch outliers.
+	std::transform(decision.begin(), decision.end(), decision.begin(), [](unsigned char c) { return std::tolower(c); }); // String processed as char array transformed to lower case to catch outliers.
 
 	std::cout << std::endl;
 	std::cout << "You responded: " << decision << std::endl;
@@ -70,7 +70,7 @@ int main()
 				while (MyPage->is_running && MyPage->error_detected(MyPage->err_ref) == false)
 				{
 					// Create a new file.
-					MyPage->create_file();
+					MyPage->start_file();
 
 					MyPage->setup();
 

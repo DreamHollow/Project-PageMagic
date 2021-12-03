@@ -1,0 +1,43 @@
+#ifndef MANAGER_HPP
+#define MANAGER_HPP
+
+#include "pch.h"
+#include "LocalDebugger.hpp"
+#include <string>
+
+class Manager
+{
+public:
+	Manager();
+	virtual ~Manager();
+
+	// Variables
+	int error_state;
+
+	// Functions
+	bool file_created();
+	int file_process();
+	void file_write(std::string input_param);
+	void close_file();
+
+private:
+	// Variables
+	bool file_access;
+	const std::string filetype{ ".html" };
+	std::string f_name;
+
+	// Functions
+	bool file_init(std::string file);
+	int validate(std::string local_file);
+
+	// Accessors
+	const bool file_verified() const { return file_access; };
+
+	// File System Operator
+	std::fstream file;
+
+	// Debugger
+	LocalDebugger file_debug;
+};
+
+#endif

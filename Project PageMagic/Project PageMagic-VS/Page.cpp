@@ -1,6 +1,8 @@
 #include "Page.hpp"
 
-/* err_code is a general purpose variable. If it ever returns anything except 0, something went wrong. */
+/* err_code is a general purpose variable. If it ever returns anything except 0, something went wrong.
+* The functions that return ints are intended to catch exceptions and force Page object to return to main.
+* The file access system is a work in progress. */
 
 Page::Page()
 {
@@ -35,47 +37,6 @@ void Page::init_settings()
 	this->option = 'a'; // Initialized to junk, is set during function.
 };
 
-/*
-// Asks if the user wants to create a directory, returns false if no.
-bool Page::create_directory()
-{
-	std::cout << "The default location where HTML files (web pages) are stored is the same folder that the program is running in." << std::endl;
-	std::cout << "Please note that you do not have to create a folder in order to use this program or access your web pages." << std::endl;
-	std::cout << "Would you like to create a folder to store your HTML web page?" << std::endl;
-
-	// Provide a default directory
-	std::cout << "Your choice: ";
-
-
-	// User provides input.
-
-	// Invalid input causes this step to be skipped entirely.
-
-	// No directory was created. This should be the default if accessing an existing directory or file.
-	return false;
-};
-
-// This runs regardless of directory creation. It just tells the user to let the program know where the HTML files should be located.
-int Page::access_directory()
-{
-	std::cout << "Would you like to use the default directory to save this HTML document?" << std::endl;
-	std::cout << "If yes, it will output to the same folder as this program." << std::endl;
-	std::cout << "If no, it will output to a folder of your choice." << std::endl;
-	std::cout << std::endl;
-
-	// User provides input.
-
-	// Invalid input will not access a directory and returns to default settings.
-
-	// If the directory is valid and can be accessed.
-
-	// If the directory was able to be interacted with by the program without creating errors.
-	this->err_ref = 0;
-
-	return error_detected(err_ref);
-};
-*/
-
 // This is const because it should only ever show error messages and only ONCE
 void const Page::show_error()
 {
@@ -99,7 +60,6 @@ void const Page::show_error()
 // Tags initialized here are called upon using a corresponding enum
 void Page::init_tags()
 {
-
 	// There are an absolutely MASSIVE amount of HTML tags. I didn't even know some of these existed.
 	// Enum will keep track of which tags to deploy, vector will fill the tags.
 	this->html_tags.push_back("<!--"); // 0; Very different from most tags
@@ -325,7 +285,7 @@ void Page::init_tags()
 // This can't be const because it does modify some data
 int Page::display_all()
 {
-	if (this->t_point == nullptr || t_point == NULL) // Covering all bases here
+	if (this->t_point == nullptr || t_point == NULL) // The function should end abruptly if the pointers malfunction
 	{
 		std::cout << "Error, no memory could be allocated to this pointer!";
 		std::cout << "The tag display function encountered some problems and must be terminated." << std::endl;
@@ -333,7 +293,7 @@ int Page::display_all()
 
 		// Don't delete the pointer, just return an error. Deleting raw pointers is bad.
 
-		this->err_ref = 2;
+		this->err_ref = 2; // Elevated Error
 
 		if (this->debugbot.is_debugging() == true)
 		{
@@ -536,39 +496,6 @@ int Page::hyperlink_process()
 	return this->error_detected(err_ref);
 };
 
-int Page::declare(std::string local_file) // Declaration should always just emphasize that a file exists and is accessible.
-{
-	if(std::ifstream(local_file))
-	{
-		std::cout << local_file + " was validated successfully." << std::endl;
-	}
-	else
-	{
-		std::cout << "There was a problem with validating the file name. Please double check file parameters." << std::endl;
-		std::cout << std::endl;
-
-		this->err_ref = 1;
-
-		if (debugbot.is_debugging() == true)
-		{
-			std::cout << "declare() returned a value of " << err_code;
-			std::cout << std::endl;
-		}
-
-		return this->error_detected(err_ref);
-	}
-
-	this->err_ref = 0;
-
-	if (debugbot.is_debugging() == true)
-	{
-		std::cout << "declare() returned a value of " << err_code;
-		std::cout << std::endl;
-	}
-
-	return this->error_detected(err_ref);
-};
-
 // Designed to reduce clutter. This function can remain void because it should not encounter any exceptions as-is.
 void Page::title_sequence()
 {
@@ -596,7 +523,7 @@ void Page::title_sequence()
 void Page::setup()
 {
 	this->page_setup();
-}
+};
 
 bool Page::error_detected(int &err_ref)
 {
@@ -651,31 +578,31 @@ void Page::data_cleaner()
 // This loop is massive because it's hard to break it into smaller pieces
 int Page::tagging_loop()
 {
-	std::fstream samefile;
+	//std::fstream samefile;
 
-	try
-	{
-		// Any strings added after this point are appended rather than directly written in
-		samefile.open(full_file, std::ios_base::app);
-		if (!samefile)
-		{
-			throw "Error opening file!";
-		}
-	}
-	catch (const char* cstr) // If the file can't actually open, it should cut off here.
-	{
-		std::cerr << cstr << std::endl;
+	//try
+	//{
+	//	// Any strings added after this point are appended rather than directly written in
+	//	samefile.open(full_file, std::ios_base::app);
+	//	if (!samefile)
+	//	{
+	//		throw "Error opening file!";
+	//	}
+	//}
+	//catch (const char* cstr) // If the file can't actually open, it should cut off here.
+	//{
+	//	std::cerr << cstr << std::endl;
 
-		this->err_ref = 1;
+	//	this->err_ref = 1;
 
-		if (this->debugbot.is_debugging() == true)
-		{
-			std::cout << "tagging_loop() returned a value of " << err_code;
-			std::cout << std::endl;
-		}
+	//	if (this->debugbot.is_debugging() == true)
+	//	{
+	//		std::cout << "tagging_loop() returned a value of " << err_code;
+	//		std::cout << std::endl;
+	//	}
 
-		return this->error_detected(err_ref);
-	}
+	//	return this->error_detected(err_ref);
+	//}
 
 	while (this->option != "no")
 	{
@@ -1325,7 +1252,7 @@ int Page::tagging_loop()
 
 				if (*tag_pointer != XEND) // If the tag is a valid tag and not filler
 				{
-					samefile << this->complete_string;
+					manager.file_write(this->complete_string);
 				}
 				else
 				{
@@ -1347,7 +1274,7 @@ int Page::tagging_loop()
 				std::cout << "You added " << complete_hyperlink;
 				std::cout << std::endl;
 
-				samefile << this->complete_hyperlink;
+				manager.file_write(this->complete_hyperlink);
 			}
 
 			if (sub_tag == true) // If a sub-tagging process is finished, reset it
@@ -1382,7 +1309,7 @@ int Page::tagging_loop()
 	};
 
 	// Close the file once more, prepare for final append.
-	samefile.close();
+	// samefile.close();
 
 	err_ref = 0;
 
@@ -1397,48 +1324,22 @@ int Page::tagging_loop()
 
 int Page::tag_finish()
 {
-	// Reopen the file and append data
-	std::fstream file_cont;
-	try
-	{
-		// Any strings added after this point are appended rather than directly written in
-		file_cont.open(full_file, std::ios_base::app);
-		if (!file_cont)
-		{
-			throw "Error opening file!";
-		}
-	}
-	catch (const char* cstr) // If the file can't actually open, it should cut off here.
-	{
-		std::cerr << cstr << std::endl;
-
-		this->err_ref = 1;
-
-		if (this->debugbot.is_debugging() == true)
-		{
-			std::cout << "tag_finish() returned a value of " << err_code;
-			std::cout << std::endl;
-		}
-
-		return this->error_detected(err_ref);
-	}
-
 	std::cout << "All done with tagging! Finishing document cleanup..." << std::endl;
 
 	std::cout << "Writing body end tag..." << std::endl;
 	std::cout << std::endl;
 	std::cout << "</body>" << std::endl;
 
-	file_cont << std::endl;
-	file_cont << "</body>" << std::endl;
+	manager.file_write(""); // Write nothing and append a newline
+	manager.file_write("</body>");
 
 	// This runs when the program is finished tagging.
 	std::cout << "Writing HTML end tag..." << std::endl;
 	std::cout << std::endl;
 	std::cout << "</html>" << std::endl;
 
-	file_cont << std::endl;
-	file_cont << "</html>";
+	manager.file_write("");
+	manager.file_write("</html>");
 
 	global_ref += 2; // Writing the end tags counts as more lines
 
@@ -1446,7 +1347,7 @@ int Page::tag_finish()
 	std::cout << "Lines wrapped up at " << find_line() << ".";
 	std::cout << std::endl;
 
-	file_cont.close(); // Each instance of the file should be closed at this point.
+	manager.close_file(); // Make sure the file is closed.
 
 	this->err_ref = 0;
 
@@ -1462,24 +1363,7 @@ int Page::tag_finish()
 // It was too difficult to set up private functions within this one so it's all lumped in together.
 int Page::page_setup() // Tags the beginning of an HTML document with proper heading.
 {
-	// File is initially opened and modified.
-	std::fstream file;
-
-	try
-	{
-		file.open(full_file, std::ios::in | std::ios::out);
-		if (!file)
-		{
-			throw "Error opening file!";
-		}
-	}
-	catch(const char* cstr) // If the file can't actually open, it should cut off here.
-	{
-		std::cerr << cstr << std::endl;
-
-		this->err_ref = 1;
-		return this->error_detected(err_ref);
-	}
+	manager.file_process(); // Start the file editing process
 
 	std::cout << "Writing to file: " << full_file << std::endl;
 
@@ -1487,10 +1371,10 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	// File should be written with standard head tags. This is automatically configured for HTML5 in English.
 	// Lines are ACTUALLY written here but displayed earlier for reasons of convenience.
-	file << "<!DOCTYPE html>" << std::endl;
-	file << "<html lang = 'en'>" << std::endl;
-	file << "<head>" << std::endl;
-	file << "<meta charset = 'utf-8'>" << std::endl;
+	manager.file_write("<!DOCTYPE html>");
+	manager.file_write("<html lang = 'en'>");
+	manager.file_write("<head>");
+	manager.file_write("<meta charset = 'utf-8'>");
 
 	if (this->debugbot.is_debugging() == true)
 	{
@@ -1526,8 +1410,10 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	std::cout << "Your output was recorded as " << this->get_title() << std::endl;
 
-	file << "<title>" << this->title_header << "</title>" << std::endl;
-	global_ref += 1; // Another line written in. This one closes on it's own.
+	manager.file_write("<title>");
+	manager.file_write(this->title_header);
+	manager.file_write("</title>");
+	global_ref += 3; // Because of the new file writing system additional lines are added.
 
 	system("pause"); // Pause to allow the user to read what's happening.
 
@@ -1542,14 +1428,14 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	std::cout << "The <head> tag of your HTML document has already been created. Creating a <body> tag..." << std::endl;
 
-	file << "<body>" << std::endl;
+	manager.file_write("<body>");
 	global_ref += 1;
 
 	std::cout << "<body>" << std::endl;
 	std::cout << std::endl;
 
-	// Close the original file here, reopen it in tagging_loop()
-	file.close();
+	// The file would have originally closed here, but the execution has changed.
+	// file.close();
 
 	this->page_explain(); // Shortens an explanation.
 
@@ -1594,43 +1480,20 @@ void const Page::page_explain()
 };
 
 // Returns true when successful and false when not.
-bool Page::create_file()
+int Page::start_file()
 {
-	extern std::string full_file;
+	manager.file_created();
 
-	// Start directory search/creation - TODO
-
-	std::cout << "Please enter the name of the file you are trying to create." << std::endl;
-	std::cout << "Filename: ";
-	std::cin >> this->f_name;
-	std::cout << std::endl;
-
-	// String is concatenated so that the file is valid.
-	full_file = this->f_name + this->filetype;
-
-	this->f_name = full_file;
-
-	/* Not only is this the name of the file that will be created, this is the file name that will stay in memory.
-	As long as the class remains active in the user session, full_file should not change unless the user calls for it to be closed. */
-
-	if(std::ifstream(this->f_name))
+	if (manager.error_state != 0) // Unclean exit
 	{
-		std::cout << "File already exists!" << std::endl;
-		std::cout << "Could not create file." << std::endl;
+		this->err_ref = manager.error_state;
 
-		return false;
+		return error_detected(err_ref);
 	}
-	std::ofstream file(this->f_name);
-
-	if(!file)
+	else
 	{
-		std::cout << "An error occured and the file could not be created." << std::endl;
+		this->err_ref = 0;
 
-		return false;
+		return error_detected(err_ref);
 	}
-
-	this->declare(full_file);
-
-	file.close(); // Always close the file when you're done with it.
-	return true;
 };
