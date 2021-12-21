@@ -12,7 +12,7 @@
 #error Unknown pointer size or missing macros!
 #endif
 
-std::string full_file; // Global file name, should be kept consistent across everything (Globals are normally VERY BAD, avoid using them!)
+// std::string full_file; // Global file name, should be kept consistent across everything (Globals are normally VERY BAD, avoid using them!)
 
 int main()
 {

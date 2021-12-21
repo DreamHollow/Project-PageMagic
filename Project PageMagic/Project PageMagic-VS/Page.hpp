@@ -2,7 +2,6 @@
 #ifndef PAGE_H
 #define PAGE_H
 
-#include "pch.h"
 #include "LocalDebugger.hpp"
 #include "Manager.hpp"
 #include <vector>
@@ -11,7 +10,7 @@
 Very serious errors return "2" and are usually memory related. */
 
 // I do not recommend doing this often, but in this case I was using full_file as a global.
-extern std::string full_file;
+// extern std::string full_file;
 
 class Page
 {

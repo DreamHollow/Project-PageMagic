@@ -1,10 +1,10 @@
 #include "Manager.hpp"
-extern std::string full_file;
+// extern std::string full_file;
 
 Manager::Manager()
 {
-	error_state = 0;
-	file_access = true;
+	this->error_state = 0;
+	this->file_access = true;
 };
 
 Manager::~Manager()
@@ -14,7 +14,9 @@ Manager::~Manager()
 		close_file();
 	}
 
-	file_access = false;
+	this->clear_strings();
+
+	this->file_access = false;
 };
 
 int Manager::file_process()
@@ -36,17 +38,53 @@ int Manager::file_process()
 
 bool Manager::file_created()
 {
+	this->full_file.clear(); // Clear the file name and prepare for file creation
+
 	// extern std::string full_file;
 
-	// Start directory search/creation - TODO
+	// Start directory search/creation - TODO(?)
 
 	std::cout << "Please enter the name of the file you are trying to create." << std::endl;
 	std::cout << "Filename: ";
 	std::cin >> this->f_name;
 	std::cout << std::endl;
 
+	// Make sure there are no periods so the program doesn't get confused.
+
+	if (f_name.find('.') != std::string::npos)
+	{
+		std::cout << "Your file cannot be saved as " << f_name << filetype << "!" << std::endl;
+		std::cout << "Your filename cannot contain periods (.) or the file will become corrupted. Please re-launch the program and try again.";
+		std::cout << std::endl;
+
+		this->error_state = 1;
+
+		return false;
+	}
+	else if (f_name.find("`" || "~" || "!" || "@" || "#" || "$" || "%" || "^" || "&" || "*"))
+	{
+		std::cout << "Your file cannot be saved as " << f_name << filetype << " !" << std::endl;
+		std::cout << "Please remove any non-alphanumeric characters from your file name. It will cause file corruption and is not allowed." << std::endl;
+		std::cout << std::endl;
+
+		this->error_state = 1;
+
+		return false;
+	}
+	else if (f_name.find("{" || "}" || "|" || "<" || ">"))
+	{
+		std::cout << "Your file cannot be saved as " << f_name << filetype << " !" << std::endl;
+		std::cout << "Please remove any non-alphanumeric characters from your file name." << std::endl;
+		std::cout << "The characters you selected will cause filetype errors and are not allowed." << std::endl;
+		std::cout << std::endl;
+
+		this->error_state = 1;
+
+		return false;
+	}
+
 	// String is concatenated so that the file is valid.
-	full_file = this->f_name + this->filetype;
+	this->full_file = this->f_name + this->filetype; // "full_file".html
 
 	this->f_name = full_file;
 
@@ -66,7 +104,8 @@ bool Manager::file_created()
 
 	if (!file)
 	{
-		std::cout << "An error occured and the file could not be created." << std::endl;
+		std::cout << "The file could not be opened. It may be corrupt, missing, or moved." << std::endl;
+		std::cout << "Please check your file settings and report this error to the developer." << std::endl;
 
 		this->error_state = 1;
 
@@ -81,7 +120,7 @@ bool Manager::file_created()
 };
 
 // Only start actual file initialization after the file exists
-bool Manager::file_init(std::string local_file)
+bool Manager::file_init(std::string &local_file)
 {
 	// Set file string to argument parameters
 
@@ -108,7 +147,7 @@ bool Manager::file_init(std::string local_file)
 	return true;
 };
 
-int Manager::validate(std::string local_file) // Declaration should always just emphasize that a file exists and is accessible.
+int Manager::validate(std::string& local_file) // Declaration should always just emphasize that a file exists and is accessible.
 {
 	if (std::ifstream(local_file))
 	{
@@ -152,4 +191,13 @@ void Manager::close_file()
 	}
 
 	file.close();
+};
+
+void Manager::clear_strings()
+{
+	std::cout << "Clearing unsaved file data..." << std::endl;
+	std::cout << std::endl;
+
+	f_name.clear();
+	full_file.clear();
 };

@@ -556,23 +556,6 @@ void Page::data_cleaner()
 		std::cout << std::endl;
 		std::cout << "Vectors wiped..." << std::endl;
 	}
-
-	// If the full_file string still holds information, clear it.
-	if (!full_file.empty())
-	{
-		full_file.clear();
-
-		if (this->debugbot.is_debugging() == true)
-		{
-			std::cout << std::endl;
-			std::cout << "File information cleared..." << std::endl;
-		}
-	}
-	else
-	{
-		std::cout << "File information could not be verified or is already wiped clean." << std::endl;
-		std::cout << "If file data was assigned, please report this bug to the developer." << std::endl;
-	}
 };
 
 // This loop is massive because it's hard to break it into smaller pieces
@@ -1365,7 +1348,15 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 {
 	manager.file_process(); // Start the file editing process
 
-	std::cout << "Writing to file: " << full_file << std::endl;
+	if (manager.error_state != 0)
+	{
+		std::cout << "Page Setup was cancelled due to an error." << std::endl;
+
+		err_ref = manager.error_state;
+		return this->error_detected(err_ref);
+	}
+
+	std::cout << "Writing to file: " << manager.full_file << std::endl;
 
 	this->title_sequence();
 

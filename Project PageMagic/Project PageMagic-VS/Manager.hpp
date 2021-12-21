@@ -13,6 +13,7 @@ public:
 
 	// Variables
 	int error_state;
+	std::string full_file;
 
 	// Functions
 	bool file_created();
@@ -27,8 +28,9 @@ private:
 	std::string f_name;
 
 	// Functions
-	bool file_init(std::string file);
-	int validate(std::string local_file);
+	bool file_init(std::string& local_file);
+	int validate(std::string& local_file);
+	void clear_strings();
 
 	// Accessors
 	const bool file_verified() const { return file_access; };
