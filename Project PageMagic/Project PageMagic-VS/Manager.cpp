@@ -61,27 +61,27 @@ bool Manager::file_created()
 
 		return false;
 	}
-	else if (f_name.find("`" || "~" || "!" || "@" || "#" || "$" || "%" || "^" || "&" || "*"))
-	{
-		std::cout << "Your file cannot be saved as " << f_name << filetype << " !" << std::endl;
-		std::cout << "Please remove any non-alphanumeric characters from your file name. It will cause file corruption and is not allowed." << std::endl;
-		std::cout << std::endl;
+	//else if (f_name.find("`" || "~" || "!" || "@" || "#" || "$" || "%" || "^" || "&" || "*"))
+	//{
+	//	std::cout << "Your file cannot be saved as " << f_name << filetype << " !" << std::endl;
+	//	std::cout << "Please remove any non-alphanumeric characters from your file name. It will cause file corruption and is not allowed." << std::endl;
+	//	std::cout << std::endl;
 
-		this->error_state = 1;
+	//	this->error_state = 1;
 
-		return false;
-	}
-	else if (f_name.find("{" || "}" || "|" || "<" || ">"))
-	{
-		std::cout << "Your file cannot be saved as " << f_name << filetype << " !" << std::endl;
-		std::cout << "Please remove any non-alphanumeric characters from your file name." << std::endl;
-		std::cout << "The characters you selected will cause filetype errors and are not allowed." << std::endl;
-		std::cout << std::endl;
+	//	return false;
+	//}
+	//else if (f_name.find("{" || "}" || "|" || "<" || ">"))
+	//{
+	//	std::cout << "Your file cannot be saved as " << f_name << filetype << " !" << std::endl;
+	//	std::cout << "Please remove any non-alphanumeric characters from your file name." << std::endl;
+	//	std::cout << "The characters you selected will cause filetype errors and are not allowed." << std::endl;
+	//	std::cout << std::endl;
 
-		this->error_state = 1;
+	//	this->error_state = 1;
 
-		return false;
-	}
+	//	return false;
+	//}
 
 	// String is concatenated so that the file is valid.
 	this->full_file = this->f_name + this->filetype; // "full_file".html

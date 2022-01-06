@@ -561,32 +561,6 @@ void Page::data_cleaner()
 // This loop is massive because it's hard to break it into smaller pieces
 int Page::tagging_loop()
 {
-	//std::fstream samefile;
-
-	//try
-	//{
-	//	// Any strings added after this point are appended rather than directly written in
-	//	samefile.open(full_file, std::ios_base::app);
-	//	if (!samefile)
-	//	{
-	//		throw "Error opening file!";
-	//	}
-	//}
-	//catch (const char* cstr) // If the file can't actually open, it should cut off here.
-	//{
-	//	std::cerr << cstr << std::endl;
-
-	//	this->err_ref = 1;
-
-	//	if (this->debugbot.is_debugging() == true)
-	//	{
-	//		std::cout << "tagging_loop() returned a value of " << err_code;
-	//		std::cout << std::endl;
-	//	}
-
-	//	return this->error_detected(err_ref);
-	//}
-
 	while (this->option != "no")
 	{
 		std::cout << std::endl;
@@ -611,6 +585,18 @@ int Page::tagging_loop()
 			// Ask for a tag number - start a switch statement
 			std::cout << "Please enter the tag number." << std::endl;
 			std::cin >> *tag_pointer;
+
+			if (std::cin.fail())
+			{
+				std::cout << std::endl;
+				std::cout << "You attempted to enter a value that is not accepted by this program." << std::endl;
+				std::cout << std::endl;
+				std::cout << "This input cannot be accepted as it is. Please only use numerical values listed in the tag list." << std::endl;
+				std::cout << "Tagging loop terminated due to an error." << std::endl;
+
+				err_ref = 1;
+				return this->error_detected(err_ref);
+			}
 
 			if (*tag_pointer < COMMENT || *tag_pointer > XEND)
 			{
