@@ -12,7 +12,7 @@ Page::Page()
 
 Page::~Page()
 {
-	if (debugbot.is_debugging() == true)
+	if (is_debugging())
 	{
 		std::cout << std::endl;
 		std::cout << "Deconstructor was called; left the scope of Page object." << std::endl;
@@ -25,6 +25,7 @@ Page::~Page()
 
 void Page::init_settings()
 {
+	this->page_debug = true;
 	this->temp = 0;
 	this->t_point = &temp;
 
@@ -293,9 +294,9 @@ int Page::display_all()
 
 		// Don't delete the pointer, just return an error. Deleting raw pointers is bad.
 
-		this->err_ref = 2; // Elevated Error
+		this->err_set(2); // Elevated Error
 
-		if (this->debugbot.is_debugging() == true)
+		if (this->is_debugging())
 		{
 			std::cout << "display_all() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -319,9 +320,9 @@ int Page::display_all()
 		t_ref += 1; // This increases "temp" which increases the value of t_point also, so it iterates
 	}
 
-	err_ref = 0;
+	this->err_set(0);
 
-	if (this->debugbot.is_debugging() == true)
+	if (this->is_debugging() == true)
 	{
 		std::cout << "display_all() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -330,6 +331,7 @@ int Page::display_all()
 	return this->error_detected(err_ref);
 };
 
+// This needs to be trimmed down or merged with tagging process - TODO
 int Page::maintag_begin() // Beginning of structurally significant tagging.
 {
 	std::cout << std::endl;
@@ -348,9 +350,9 @@ int Page::maintag_begin() // Beginning of structurally significant tagging.
 
 	std::cout << std::endl;
 
-	this->err_ref = 0;
+	this->err_set(0);
 
-	if (this->debugbot.is_debugging() == true)
+	if (this->is_debugging())
 	{
 		std::cout << "maintag_begin() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -361,9 +363,9 @@ int Page::maintag_begin() // Beginning of structurally significant tagging.
 
 int Page::subtag_begin() // Beginning of aesthetically important tagging.
 {
-	this->err_ref = 0;
+	this->err_set(0);
 
-	if (this->debugbot.is_debugging() == true)
+	if (this->is_debugging())
 	{
 		std::cout << "subtag_begin returned a value of " << err_code;
 		std::cout << std::endl;
@@ -390,9 +392,9 @@ int Page::editing_process()
 
 	std::cout << std::endl;
 
-	this->err_ref = 0;
+	this->err_set(0);
 
-	if (this->debugbot.is_debugging() == true)
+	if (this->is_debugging())
 	{
 		std::cout << "editing_process() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -419,9 +421,9 @@ int Page::meta_process()
 		std::cout << "Error, no hyperlink was provided. This tag cannot be completed without one." << std::endl;
 		std::cout << std::endl;
 
-		this->err_ref = 1;
+		this->err_set(1);
 
-		if (this->debugbot.is_debugging() == true)
+		if (this->is_debugging())
 		{
 			std::cout << "meta_process() returned a value of " << err_code;
 			std::cout << std::endl;
@@ -435,11 +437,12 @@ int Page::meta_process()
 
 	std::cout << "The completed meta tag is " << complete_hyperlink << " !" << std::endl;
 	std::cout << std::endl;
+	// This needs a second look over - TODO
 	std::cout << "There is usually no need for additional text in the meta tag, so let's move on." << std::endl;
 
-	this->err_ref = 0;
+	this->err_set(0);
 
-	if (this->debugbot.is_debugging() == true)
+	if (this->is_debugging())
 	{
 		std::cout << "meta_process() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -485,9 +488,9 @@ int Page::hyperlink_process()
 	std::cout << "Your completed tag is: " << this->complete_hyperlink << " !";
 	global_ref += 1;
 
-	this->err_ref = 0;
+	this->err_set(0);
 
-	if (this->debugbot.is_debugging() == true)
+	if (this->is_debugging())
 	{
 		std::cout << "hyperlink_process() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -519,11 +522,11 @@ void Page::title_sequence()
 	std::cout << std::endl;
 };
 
-// This public function allows all other functions to be executed privately and makes things easier to follow
-void Page::setup()
-{
-	this->page_setup();
-};
+//// This public function allows all other functions to be executed privately and makes things easier to follow
+//void Page::setup()
+//{
+//	this->page_setup();
+//};
 
 bool Page::error_detected(int &err_ref)
 {
@@ -551,7 +554,7 @@ void Page::data_cleaner()
 	this->html_tags.clear();
 	this->html_end.clear();
 
-	if (this->debugbot.is_debugging() == true)
+	if (this->is_debugging())
 	{
 		std::cout << std::endl;
 		std::cout << "Vectors wiped..." << std::endl;
@@ -569,14 +572,23 @@ int Page::tagging_loop()
 
 		std::getline(std::cin, this->option);
 
+		if (std::cin.fail())
+		{
+			std::cout << "Error: Input context not recognized." << std::endl;
+			std::cout << std::endl;
+
+			this->err_set(1);
+			return this->error_detected(err_ref);
+		}
+
 		if (this->option == "exit") // This is an emergency exit.
 		{
 			std::cout << std::endl;
 			std::cout << "Override recognized. Halting process." << std::endl;
 			std::cout << std::endl;
-			std::cout << "Program terminated prematurely due to emergency stop. Halting tagging process." << std::endl;
+			std::cout << "Function terminated prematurely due to emergency stop. Halting tagging process." << std::endl;
 
-			err_ref = 1;
+			this->err_set(1);
 			return this->error_detected(err_ref);
 		}
 
@@ -594,7 +606,7 @@ int Page::tagging_loop()
 				std::cout << "This input cannot be accepted as it is. Please only use numerical values listed in the tag list." << std::endl;
 				std::cout << "Tagging loop terminated due to an error." << std::endl;
 
-				err_ref = 1;
+				this->err_set(1);
 				return this->error_detected(err_ref);
 			}
 
@@ -629,21 +641,26 @@ int Page::tagging_loop()
 				break;
 
 			case ABBREVIATE:
+				this->tag_warning();
 				break;
 
 			// Formats an address (not a URL, an actual home or business address)
 			case ADDRESS:
+				this->tag_warning();
 				break;
 
 			case AREA:
+				this->tag_warning();
 				break;
 
 			// Functions a lot like <div> by dividing content to be seen as isolated from the normal page
 			case ARTICLE:
+				this->tag_warning();
 				break;
 
 			// Functions almost like <article>
 			case ASIDE:
+				this->tag_warning();
 				break;
 
 			// Provides audio via a source
@@ -656,16 +673,20 @@ int Page::tagging_loop()
 				//std::cout << std::endl;
 
 				//this->hyperlink_process();
+				this->tag_warning();
 				break;
 
 			case BDI:
+				this->tag_warning();
 				break;
 
 			case BDO:
+				this->tag_warning();
 				break;
 
 			// Creates a huge formatted quote based on the string it's given
 			case BLOCKQUOTE:
+				this->tag_warning();
 
 				break;
 
@@ -700,17 +721,21 @@ int Page::tagging_loop()
 
 			// Creates a functional button; should be paired with other tags
 			case BUTTON:
+				this->tag_warning();
 				break;
 
 			// Used for display formatting
 			case CANVAS:
+				this->tag_warning();
 				break;
 
 			// Used in assocation with an image or piece of content that needs captioning
 			case CAPTION:
+				this->tag_warning();
 				break;
 
 			case CITE:
+				this->tag_warning();
 				break;
 
 			// Special HTML tag that isolates and displays code snippets of other languages
@@ -723,18 +748,23 @@ int Page::tagging_loop()
 				break;
 
 			case COLUMN:
+				this->tag_warning();
 				break;
 
 			case COLUMNGROUP:
+				this->tag_warning();
 				break;
 
 			case DATA:
+				this->tag_warning();
 				break;
 
 			case DATALIST:
+				this->tag_warning();
 				break;
 
 			case DESCRIPTLIST:
+				this->tag_warning();
 				break;
 
 			// Text that is omitted or intentionally altered to display that it is not relevant
@@ -749,46 +779,59 @@ int Page::tagging_loop()
 				break;
 
 			case DETAILS:
+				this->tag_warning();
 				break;
 
 			case DEFINED:
+				this->tag_warning();
 				break;
 
 			case DIALOG:
+				this->tag_warning();
 				break;
 
 			// Used to divide content for special purposes; this needs a lot of work
 			case DIV:
+				this->tag_warning();
 				break;
 
 			case DESCLIST:
+				this->tag_warning();
 				break;
 
 			case DESCTERM:
+				this->tag_warning();
 				break;
 
 			case EMPHASIZE:
+				this->tag_warning();
 				break;
 
 			// Creates embedded content
 			case EMBED:
+				this->tag_warning();
 				break;
 
 			case FIELDSET:
+				this->tag_warning();
 				break;
 
 			case FIGCAPTION:
+				this->tag_warning();
 				break;
 
 			case FIGURE:
+				this->tag_warning();
 				break;
 
 			// Creates a specially formatted text at the bottom of the document
 			case FOOTER:
+				this->tag_warning();
 				break;
 
 			// Allows a user to create a page-defined form that can be filled out
 			case FORM:
+				this->tag_warning();
 				break;
 
 			// Header One
@@ -866,6 +909,7 @@ int Page::tagging_loop()
 
 			// Not normally used outside of specific formatting; defines a page header
 			case HEADER:
+				this->tag_warning();
 				break;
 
 			// Creates a huge line across the entire HTML document
@@ -904,31 +948,40 @@ int Page::tagging_loop()
 				break;
 
 			case IFRAME:
+				this->tag_warning();
 				break;
 
 			// Creates an image linked to an image source
 			case IMG:
+				this->tag_warning();
 				break;
 
 			case INPUT:
+				this->tag_warning();
 				break;
 
 			case INS:
+				this->tag_warning();
 				break;
 
 			case KEYBOARD:
+				this->tag_warning();
 				break;
 
 			case LABEL:
+				this->tag_warning();
 				break;
 
 			case LEGEND:
+				this->tag_warning();
 				break;
 
 			case LISTITEM:
+				this->tag_warning();
 				break;
 
 			case LINK:
+				this->tag_warning();
 				break;
 
 			// Defines the main content of a page, usually to draw attention from a user
@@ -942,9 +995,11 @@ int Page::tagging_loop()
 				break;
 
 			case IMGMAP:
+				this->tag_warning();
 				break;
 
 			case MARK:
+				this->tag_warning();
 				break;
 
 			// Sets information for page display or attributes
@@ -955,30 +1010,38 @@ int Page::tagging_loop()
 				break;
 
 			case METER:
+				this->tag_warning();
 				break;
 
 			// Object usually formatted for user navigation
 			case NAV:
+				this->tag_warning();
 				break;
 
 			// The web page displays this message on a web browser when JavaScript is disabled
 			case NOSCRIPT:
+				this->tag_warning();
 				break;
 
 			case OBJECT:
+				this->tag_warning();
 				break;
 
 			// Creates an ordered list that displays numbers
 			case ORDERLIST:
+				this->tag_warning();
 				break;
 
 			case OPTGROUP:
+				this->tag_warning();
 				break;
 
 			case OPTION:
+				this->tag_warning();
 				break;
 
 			case OUTPUT:
+				this->tag_warning();
 				break;
 
 			// Very common tag used to denote a paragraph of text; should really be paired with other functional tags
@@ -992,21 +1055,26 @@ int Page::tagging_loop()
 				break;
 
 			case PARAMETER:
+				this->tag_warning();
 				break;
 
 			// Similar functionality to IMG
 			case PICTURE:
+				this->tag_warning();
 				break;
 
 			case PREFORMAT:
+				this->tag_warning();
 				break;
 
 			// Used to create progress bars and such
 			case PROGRESS:
+				this->tag_warning();
 				break;
 
 			// Creates a small and specially formatted short quote string
 			case SHORTQUOTE:
+				this->tag_warning();
 				break;
 
 			// If Ruby is not present on this page but is relevant to the web page itself, this tag becomes relevant
@@ -1020,32 +1088,40 @@ int Page::tagging_loop()
 				break;
 				// Creates text with a line straight through it
 			case STRIKEOUT:
+				this->tag_warning();
 				break;
 
 			case SAMPLE:
+				this->tag_warning();
 				break;
 
 			// Allows for custom JavaScript or other programming elements
 			case SCRIPT:
+				this->tag_warning();
 				break;
 
 			// Creates a section of relevant data, images, video, or text
 			case SECTION:
+				this->tag_warning();
 				break;
 
 			case SELECT:
+				this->tag_warning();
 				break;
 
 			// Formats text to be small
 			case SMALL:
+				this->tag_warning();
 				break;
 
 			// Creates a linked source object
 			case SOURCE:
+				this->tag_warning();
 				break;
 
 			// Functions sort of like <div> or <style> but shorter
 			case SPAN:
+				this->tag_warning();
 				break;
 
 			// Creates specially formatted bold text
@@ -1062,6 +1138,8 @@ int Page::tagging_loop()
 			case STYLE:
 				// This tag is mostly functionally useless without something to actually attach it to. This needs to be pairable with other tags. - TODO
 
+				this->tag_warning();
+
 				break;
 
 				// Forces text to look small
@@ -1077,6 +1155,7 @@ int Page::tagging_loop()
 
 			// Creates a summary text object
 			case SUMMARY:
+				this->tag_warning();
 				break;
 
 			// Forces text to look like an exponent
@@ -1092,36 +1171,45 @@ int Page::tagging_loop()
 
 			// SVG is a type of canvas object
 			case SVG:
+				this->tag_warning();
 				break;
 
 			// Creates a table. Because this is a complex tag, requires more data
 			case TABLE:
+				this->tag_warning();
 				break;
 
 			// Table body, should be coupled with TABLE
 			case TBODY:
+				this->tag_warning();
 				break;
 
 			// Individual table cell, should be coupled with TABLE and others
 			case TABLECELL:
+				this->tag_warning();
 				break;
 
 			case TEMPLATE:
+				this->tag_warning();
 				break;
 
 			case TEXTAREA:
+				this->tag_warning();
 				break;
 
 			// Table footer, should be coupled with TABLE
 			case TABLEFOOT:
+				this->tag_warning();
 				break;
 
 			// Table header; should be coupled with TABLE
 			case TABLEHEAD:
+				this->tag_warning();
 				break;
 
 			// Table header extended
 			case THEADCONT:
+				this->tag_warning();
 				break;
 
 			// Creates a time object for HTML page
@@ -1145,27 +1233,34 @@ int Page::tagging_loop()
 
 			// Creates and fills a table row with relevant information
 			case TABLEROW: // This should be coupled with TABLE
+				this->tag_warning();
 				break;
 
 			case TRACK:
+				this->tag_warning();
 				break;
 
 			// Creates an unordered list
 			case UNORDERLIST:
 				// This needs to be paired with actual list elements at some point. It's useless without them. - TODO
 
+				this->tag_warning();
 
 				break;
 
 			case VARIABLE:
+				this->tag_warning();
 				break;
 
 			// Links a video via a source
 			case VIDEO:
+				this->tag_warning();
+
 				break;
 
 			// Creates a line break; NOT the same as <hr>
 			case WEBLINEBREAK:
+				this->tag_warning();
 				break;
 
 			case XEND: // Don't actually use this. This tag helps with program functionality. Can't hide it either or it breaks display.
@@ -1192,7 +1287,7 @@ int Page::tagging_loop()
 
 			this->tag_grab = this->s_state(*tag_pointer); // Direct assignment. Seems to work for the purpose of this program.
 
-			if (this->debugbot.is_debugging() == true)
+			if (this->is_debugging())
 			{
 				std::cout << std::endl;
 				std::cout << "DEBUG: " << "tag_grab is assigned to " << this->tag_grab << std::endl;
@@ -1225,7 +1320,7 @@ int Page::tagging_loop()
 				}
 				else
 				{
-					if (this->debugbot.is_debugging() == true)
+					if (this->is_debugging())
 					{
 						std::cout << "The tag position was XEND / NULL and was ignored.";
 					}
@@ -1280,9 +1375,9 @@ int Page::tagging_loop()
 	// Close the file once more, prepare for final append.
 	// samefile.close();
 
-	err_ref = 0;
+	err_set(0);
 
-	if (this->debugbot.is_debugging() == true)
+	if (this->is_debugging())
 	{
 		std::cout << "tagging_loop() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -1318,9 +1413,9 @@ int Page::tag_finish()
 
 	manager.close_file(); // Make sure the file is closed.
 
-	this->err_ref = 0;
+	this->err_set(0);
 
-	if (this->debugbot.is_debugging() == true)
+	if (this->is_debugging())
 	{
 		std::cout << "tag_finish() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -1353,7 +1448,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 	manager.file_write("<head>");
 	manager.file_write("<meta charset = 'utf-8'>");
 
-	if (this->debugbot.is_debugging() == true)
+	if (this->is_debugging())
 	{
 		std::cout << std::endl;
 		std::cout << "DEBUG: " << std::endl;
@@ -1370,7 +1465,15 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 	std::cin.ignore();
 	std::getline(std::cin, this->title_header);
 
-	if (this->title_header == "")
+	if (std::cin.fail())
+	{
+		std::cout << "Sorry, this input data cannot be accepted." << std::endl;
+		std::cout << "This function will be terminated to prevent further errors." << std::endl;
+
+		this->err_set(1);
+		return this->error_detected(err_ref);
+	}
+	else if (this->title_header == "")
 	{
 		std::cout << std::endl;
 		std::cout << "There was an error and no input was detected!" << std::endl;
@@ -1379,7 +1482,7 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 		std::cout << std::endl;
 		std::cout << "The program connot successfully continue this operation. Please try again later." << std::endl;
 
-		this->err_ref = 1;
+		this->err_set(1);
 		return this->error_detected(err_ref);
 	}
 
@@ -1411,9 +1514,6 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 	std::cout << "<body>" << std::endl;
 	std::cout << std::endl;
 
-	// The file would have originally closed here, but the execution has changed.
-	// file.close();
-
 	this->page_explain(); // Shortens an explanation.
 
 	tagging_loop();
@@ -1430,13 +1530,13 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 		std::cout << "There were errors during program runtime and this process must be halted." << std::endl;
 		std::cout << std::endl;
 
-		this->err_ref = 1;
+		this->err_set(1);
 		return this->error_detected(err_ref);
 	}
 
 	this->err_ref = 0;
 
-	if (this->debugbot.is_debugging() == true)
+	if (this->is_debugging())
 	{
 		std::cout << "page_setup() returned a value of " << err_code;
 		std::cout << std::endl;
@@ -1473,4 +1573,12 @@ int Page::start_file()
 
 		return error_detected(err_ref);
 	}
+};
+
+const void Page::tag_warning()
+{
+	std::cout << std::endl;
+	std::cout << "The tag you've chosen is still not configured." << std::endl;
+	std::cout << "Please try to add a different tag instead. Thank you." << std::endl;
+	std::cout << std::endl;
 };

@@ -5,9 +5,9 @@
 // Define 64 bit system
 
 // Notify the user
-#pragma message ("64-BIT SYSTEM IDENTIFIED.")
+#pragma message ("Configured for 64-bit system.")
 #elif INTPTR_MAX == INT32_MAX
-#pragma message ("32-BIT SYSTEM IDENTIFIED.")
+#pragma message ("Configured for 32-bit system.")
 #else
 #error Unknown pointer size or missing macros!
 #endif
@@ -72,7 +72,7 @@ int main()
 					// Create a new file.
 					MyPage->start_file();
 
-					MyPage->setup();
+					MyPage->page_setup();
 
 					// Terminate the loop here no matter what
 					MyPage->is_running = false;

@@ -2,7 +2,6 @@
 #define MANAGER_HPP
 
 #include "pch.h"
-#include "LocalDebugger.hpp"
 #include <string>
 
 class Manager
@@ -10,6 +9,9 @@ class Manager
 public:
 	Manager();
 	virtual ~Manager();
+
+	// Accessors
+	const bool debugging() const { return file_debugging; };
 
 	// Variables
 	int error_state;
@@ -23,6 +25,7 @@ public:
 
 private:
 	// Variables
+	bool file_debugging;
 	bool file_access;
 	const std::string filetype{ ".html" };
 	std::string f_name;
@@ -39,7 +42,6 @@ private:
 	std::fstream file;
 
 	// Debugger
-	LocalDebugger file_debug;
 };
 
 #endif

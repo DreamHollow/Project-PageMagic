@@ -1,8 +1,8 @@
 #include "Manager.hpp"
-// extern std::string full_file;
 
 Manager::Manager()
 {
+	this->file_debugging = true;
 	this->error_state = 0;
 	this->file_access = true;
 };
@@ -22,7 +22,7 @@ Manager::~Manager()
 int Manager::file_process()
 {
 	file_init(full_file);
-	if (file_verified() == true)
+	if (file_verified())
 	{
 		return 0;
 	}
@@ -38,9 +38,12 @@ int Manager::file_process()
 
 bool Manager::file_created()
 {
-	this->full_file.clear(); // Clear the file name and prepare for file creation
+	if (!full_file.empty()) // File is NOT empty
+	{
+		full_file = ""; // First, physically empty the string
+	}
 
-	// extern std::string full_file;
+	this->full_file.clear(); // Clear the file name and prepare for file creation
 
 	// Start directory search/creation - TODO(?)
 
@@ -61,32 +64,11 @@ bool Manager::file_created()
 
 		return false;
 	}
-	//else if (f_name.find("`" || "~" || "!" || "@" || "#" || "$" || "%" || "^" || "&" || "*"))
-	//{
-	//	std::cout << "Your file cannot be saved as " << f_name << filetype << " !" << std::endl;
-	//	std::cout << "Please remove any non-alphanumeric characters from your file name. It will cause file corruption and is not allowed." << std::endl;
-	//	std::cout << std::endl;
-
-	//	this->error_state = 1;
-
-	//	return false;
-	//}
-	//else if (f_name.find("{" || "}" || "|" || "<" || ">"))
-	//{
-	//	std::cout << "Your file cannot be saved as " << f_name << filetype << " !" << std::endl;
-	//	std::cout << "Please remove any non-alphanumeric characters from your file name." << std::endl;
-	//	std::cout << "The characters you selected will cause filetype errors and are not allowed." << std::endl;
-	//	std::cout << std::endl;
-
-	//	this->error_state = 1;
-
-	//	return false;
-	//}
 
 	// String is concatenated so that the file is valid.
 	this->full_file = this->f_name + this->filetype; // "full_file".html
 
-	this->f_name = full_file;
+	this->f_name = this->full_file;
 
 	/* Not only is this the name of the file that will be created, this is the file name that will stay in memory.
 	As long as the class remains active in the user session, full_file should not change unless the user calls for it to be closed. */
@@ -153,7 +135,7 @@ int Manager::validate(std::string& local_file) // Declaration should always just
 	{
 		std::cout << local_file + " was validated successfully." << std::endl;
 
-		if (file_debug.is_debugging() == true)
+		if (debugging())
 		{
 			std::cout << "validate(std::string local_file) returned a value of 0";
 			std::cout << std::endl;
@@ -166,7 +148,7 @@ int Manager::validate(std::string& local_file) // Declaration should always just
 		std::cout << "There was a problem with validating the file name. Please double check file parameters." << std::endl;
 		std::cout << std::endl;
 
-		if (file_debug.is_debugging() == true)
+		if (debugging())
 		{
 			std::cout << "declare() returned a value of 1";
 			std::cout << std::endl;
@@ -198,6 +180,9 @@ void Manager::clear_strings()
 	std::cout << "Clearing unsaved file data..." << std::endl;
 	std::cout << std::endl;
 
+	this->f_name = "";
+	this->full_file = "";
+		
 	f_name.clear();
 	full_file.clear();
 };

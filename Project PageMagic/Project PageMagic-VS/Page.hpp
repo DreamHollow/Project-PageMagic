@@ -2,15 +2,11 @@
 #ifndef PAGE_H
 #define PAGE_H
 
-#include "LocalDebugger.hpp"
 #include "Manager.hpp"
 #include <vector>
 
 /* Most functions have an int return type to be passed down to the error functions to determine where things went wrong.
 Very serious errors return "2" and are usually memory related. */
-
-// I do not recommend doing this often, but in this case I was using full_file as a global.
-// extern std::string full_file;
 
 class Page
 {
@@ -18,8 +14,10 @@ public:
 	Page();
 	virtual ~Page();
 
-	LocalDebugger debugbot;
 	Manager manager;
+
+	// Accessors
+	const bool is_debugging() const { return page_debug; };
 	
 	// Variables
 	std::string decision;
@@ -31,8 +29,8 @@ public:
 	// Methods
 	inline std::string const get_title() { return title_header; };
 	int start_file();
-	void setup();
 	bool error_detected(int &err_ref);
+	int page_setup();
 
 private:
 	// Pointers / Memory Objects
@@ -52,7 +50,7 @@ private:
 
 	// Booleans
 	bool warning_displayed = false; // Used to prevent the program from using the error warning multiple times
-	// bool page_debug; // This tag is used all over the Page class for in-code debugging purposes. Switch to FALSE if you're not debugging.
+	bool page_debug; // This tag is used all over the Page class for in-code debugging purposes. Switch to FALSE if you're not debugging.
 	bool standard_tag = true;
 	bool ignore_tag = false;
 	bool main_tag = false;
@@ -105,11 +103,11 @@ private:
 	void init_settings();
 	void const show_error();
 	void init_tags();
+	void err_set(int error_type) { this->err_code = error_type; };
 	inline int const find_line() { return *global_point; };
 	std::string const s_state(int num) const { return this->html_tags.at(num); };
 	void title_sequence();
 	int display_all();
-	int page_setup();
 	void const page_explain();
 	int maintag_begin();
 	int subtag_begin();
@@ -120,6 +118,7 @@ private:
 	void data_cleaner();
 	int tagging_loop();
 	int tag_finish();
+	const void tag_warning();
 };
 
 #endif
