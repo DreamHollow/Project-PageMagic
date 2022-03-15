@@ -42,6 +42,7 @@ private:
 	// Variables
 	int tagger;
 	int temp;
+	bool accepted; // If the user accepts the final output
 
 	// Assign Once Only
 	int &global_ref = global_line;
@@ -60,6 +61,7 @@ private:
 
 	// Strings
 	std::string option{};
+	std::string sub_option{};
 	std::string title_header = "Untitled"; // Default title for created pages.
 	std::vector<std::string> html_tags;
 	std::vector<std::string> html_end;
@@ -109,6 +111,7 @@ private:
 	void title_sequence();
 	int display_all();
 	void const page_explain();
+	void tag_switch();
 	int maintag_begin();
 	int subtag_begin();
 	int editing_process();
@@ -117,6 +120,7 @@ private:
 	std::string const tag_fill() { return this->tag_filler; };
 	void data_cleaner();
 	int tagging_loop();
+	int subtagging_loop();
 	int tag_finish();
 	const void tag_warning();
 };

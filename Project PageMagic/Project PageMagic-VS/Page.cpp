@@ -28,6 +28,7 @@ void Page::init_settings()
 	this->page_debug = true;
 	this->temp = 0;
 	this->t_point = &temp;
+	this->accepted = false;
 
 	this->global_line = 1;
 	this->global_point = &global_line; // Do NOT try to delete these kinds of pointers. Learned the hard way.
@@ -640,6 +641,8 @@ int Page::tagging_loop()
 				this->hyperlink_process();
 				break;
 
+			// <abbr> is used to convert a long form word into it's abbreviation; best used for commonly abbreviated words
+			// Can have the element "title" tacked on
 			case ABBREVIATE:
 				this->tag_warning();
 				break;
@@ -998,6 +1001,8 @@ int Page::tagging_loop()
 				this->tag_warning();
 				break;
 
+			// Similar to Block Quote; highlights important or focused text in an HTML Document. Functions like a highlighter.
+			// You can edit the CSS associated with <mark> to change its color.
 			case MARK:
 				this->tag_warning();
 				break;
@@ -1040,6 +1045,9 @@ int Page::tagging_loop()
 				this->tag_warning();
 				break;
 
+			// <output> tag allows for two inputs to be calculated; almost never used
+			// This tag is almost exclusively used with JavaScript or other coding elements
+			// Output typically should be left EMPTY and not modified
 			case OUTPUT:
 				this->tag_warning();
 				break;
@@ -1212,7 +1220,7 @@ int Page::tagging_loop()
 				this->tag_warning();
 				break;
 
-			// Creates a time object for HTML page
+			// Creates a time object for HTML page; used much less in modern HTML
 			case TIME:
 				this->standard_tag = true;
 
@@ -1386,6 +1394,38 @@ int Page::tagging_loop()
 	return this->error_detected(err_ref);
 };
 
+int Page::subtagging_loop()
+{
+	while (this->sub_option != "no")
+	{
+		std::cout << "Would you like to add a tag? Tags can be used inside of other tags as long as they don't conflict with each other." << std::endl;
+		std::cout << "If you select yes, the list of available tags will be displayed for use." << std::endl;
+		std::cout << std::endl;
+		std::cout << "Your Choice: ";
+		std::cin.ignore();
+		std::getline(std::cin, this->sub_option);
+
+		if (this->sub_option == "yes")
+		{
+			// Display all tags - TODO
+		}
+		else if (this->sub_option == "no")
+		{
+			break;
+		}
+	};
+
+	err_set(0);
+
+	if (this->is_debugging())
+	{
+		std::cout << "subtagging_loop() returned a value of " << err_code;
+		std::cout << std::endl;
+	}
+
+	return this->error_detected(err_ref);
+};
+
 int Page::tag_finish()
 {
 	std::cout << "All done with tagging! Finishing document cleanup..." << std::endl;
@@ -1394,16 +1434,16 @@ int Page::tag_finish()
 	std::cout << std::endl;
 	std::cout << "</body>" << std::endl;
 
-	manager.file_write(""); // Write nothing and append a newline
-	manager.file_write("</body>");
+	this->manager.file_write(""); // Write nothing and append a newline
+	this->manager.file_write("</body>");
 
 	// This runs when the program is finished tagging.
 	std::cout << "Writing HTML end tag..." << std::endl;
 	std::cout << std::endl;
 	std::cout << "</html>" << std::endl;
 
-	manager.file_write("");
-	manager.file_write("</html>");
+	this->manager.file_write("");
+	this->manager.file_write("</html>");
 
 	global_ref += 2; // Writing the end tags counts as more lines
 
@@ -1411,7 +1451,7 @@ int Page::tag_finish()
 	std::cout << "Lines wrapped up at " << find_line() << ".";
 	std::cout << std::endl;
 
-	manager.close_file(); // Make sure the file is closed.
+	this->manager.close_file(); // Make sure the file is closed.
 
 	this->err_set(0);
 
@@ -1427,13 +1467,13 @@ int Page::tag_finish()
 // It was too difficult to set up private functions within this one so it's all lumped in together.
 int Page::page_setup() // Tags the beginning of an HTML document with proper heading.
 {
-	manager.file_process(); // Start the file editing process
+	this->manager.file_process();
 
-	if (manager.error_state != 0)
+	if (this->manager.error_state != 0)
 	{
 		std::cout << "Page Setup was cancelled due to an error." << std::endl;
 
-		err_ref = manager.error_state;
+		err_ref = this->manager.error_state;
 		return this->error_detected(err_ref);
 	}
 
@@ -1443,10 +1483,10 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	// File should be written with standard head tags. This is automatically configured for HTML5 in English.
 	// Lines are ACTUALLY written here but displayed earlier for reasons of convenience.
-	manager.file_write("<!DOCTYPE html>");
-	manager.file_write("<html lang = 'en'>");
-	manager.file_write("<head>");
-	manager.file_write("<meta charset = 'utf-8'>");
+	this->manager.file_write("<!DOCTYPE html>");
+	this->manager.file_write("<html lang = 'en'>");
+	this->manager.file_write("<head>");
+	this->manager.file_write("<meta charset = 'utf-8'>");
 
 	if (this->is_debugging())
 	{
@@ -1490,10 +1530,10 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	std::cout << "Your output was recorded as " << this->get_title() << std::endl;
 
-	manager.file_write("<title>");
-	manager.file_write(this->title_header);
-	manager.file_write("</title>");
-	global_ref += 3; // Because of the new file writing system additional lines are added.
+	this->manager.file_write("<title>");
+	this->manager.file_write(this->title_header);
+	this->manager.file_write("</title>");
+	this->global_ref += 3; // Because of the new file writing system additional lines are added.
 
 	system("pause"); // Pause to allow the user to read what's happening.
 
@@ -1508,21 +1548,21 @@ int Page::page_setup() // Tags the beginning of an HTML document with proper hea
 
 	std::cout << "The <head> tag of your HTML document has already been created. Creating a <body> tag..." << std::endl;
 
-	manager.file_write("<body>");
-	global_ref += 1;
+	this->manager.file_write("<body>");
+	this->global_ref += 1;
 
 	std::cout << "<body>" << std::endl;
 	std::cout << std::endl;
 
 	this->page_explain(); // Shortens an explanation.
 
-	tagging_loop();
+	this->tagging_loop();
 
 	// All of this is just finalization and finishing touches to the document.
 
 	if (err_ref == 0)
 	{
-		tag_finish();
+		this->tag_finish();
 	}
 	else
 	{

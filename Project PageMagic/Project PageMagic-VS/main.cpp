@@ -47,7 +47,7 @@ int main()
 		int prompt{};
 		// Create a new standard HTML5 webpage.
 		std::cout << "Would you like to create a new webpage or edit an old one?" << std::endl;
-		std::cout << std::endl; // Create a line break for design sake.
+		std::cout << std::endl;
 		std::cout << "1. Create one." << std::endl;
 		std::cout << "2. View a previous HTML document (Web Page)." << std::endl;
 		std::cout << "3. End program." << std::endl;
@@ -136,6 +136,8 @@ int main()
 	// The program had a clean exit and all user activities have stopped.
 	if(app_exit == true)
 	{
+		std::cout << std::endl;
+		std::cout << "Program resources cleared." << std::endl;
 		std::cout << std::endl;
 		std::cout << "Program exit success." << std::endl;
 		std::cout << "Thank you for using PageMagic!";
