@@ -37,16 +37,13 @@ private:
 	// std::unique_ptr<Page> MyPage; // Not sure if this is needed here...
 	int* global_point = nullptr;
 	int* tag_pointer = nullptr;
-	int* t_point = nullptr;
 
 	// Variables
 	int tagger;
-	int temp;
 	bool accepted; // If the user accepts the final output
 
 	// Assign Once Only
 	int &global_ref = global_line;
-	int &t_ref = temp;
 	int &global_err = err_code;
 
 	// Booleans
@@ -111,7 +108,6 @@ private:
 	void title_sequence();
 	int display_all();
 	void const page_explain();
-	void tag_switch();
 	int maintag_begin();
 	int subtag_begin();
 	int editing_process();

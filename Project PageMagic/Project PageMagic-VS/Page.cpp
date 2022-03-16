@@ -26,8 +26,6 @@ Page::~Page()
 void Page::init_settings()
 {
 	this->page_debug = true;
-	this->temp = 0;
-	this->t_point = &temp;
 	this->accepted = false;
 
 	this->global_line = 1;
@@ -287,25 +285,7 @@ void Page::init_tags()
 // This can't be const because it does modify some data
 int Page::display_all()
 {
-	if (this->t_point == nullptr || t_point == NULL) // The function should end abruptly if the pointers malfunction
-	{
-		std::cout << "Error, no memory could be allocated to this pointer!";
-		std::cout << "The tag display function encountered some problems and must be terminated." << std::endl;
-		std::cout << std::endl;
-
-		// Don't delete the pointer, just return an error. Deleting raw pointers is bad.
-
-		this->err_set(2); // Elevated Error
-
-		if (this->is_debugging())
-		{
-			std::cout << "display_all() returned a value of " << err_code;
-			std::cout << std::endl;
-		}
-
-		// This is an elevated failure because there was a memory interruption
-		return this->error_detected(err_ref);
-	}
+	int temp = 0; // This only needs to be used here
 	
 	std::cout << "To add a tag to your HTML file, you must enter a number." << std::endl;
 	std::cout << "The number displayed on the left is the number you will have to enter to use a tag," << std::endl;
@@ -316,9 +296,9 @@ int Page::display_all()
 
 	for (auto i = html_tags.begin(); i != html_tags.end(); i++)
 	{
-		std::cout << this->html_tags.at(*t_point) << " is assigned to number " << *t_point << std::endl; // The tag and pointer should match one to one.
+		std::cout << this->html_tags.at(temp) << " is assigned to number " << temp << std::endl; // The tag and pointer should match one to one.
 
-		t_ref += 1; // This increases "temp" which increases the value of t_point also, so it iterates
+		temp += 1; // This increases "temp" which increases the value of t_point also, so it iterates
 	}
 
 	this->err_set(0);
@@ -407,7 +387,7 @@ int Page::editing_process()
 // Don't be fooled by the name, this is just an elaborate function for modifying the META tag.
 int Page::meta_process()
 {
-	std::cout << "This my require additional editing." << std::endl;
+	std::cout << "This may require additional editing." << std::endl;
 	std::cout << "Meta tags usually require something tacked on to the tag itself." << std::endl;
 	std::cout << std::endl;
 	std::cout << "What would you like to add to this tag?" << std::endl;
@@ -522,12 +502,6 @@ void Page::title_sequence()
 	std::cout << "<meta charset = 'utf-8'>" << std::endl;
 	std::cout << std::endl;
 };
-
-//// This public function allows all other functions to be executed privately and makes things easier to follow
-//void Page::setup()
-//{
-//	this->page_setup();
-//};
 
 bool Page::error_detected(int &err_ref)
 {
@@ -774,7 +748,7 @@ int Page::tagging_loop()
 			case DELETED:
 				this->standard_tag = true;
 
-				std::cout << "This tag will strike through web page text, similar to <s> but meant to emphasize rewritten statements." << std::endl;
+				std::cout << "This tag will strike through web page text, similar to <s> [strikeout] but meant to emphasize rewritten statements." << std::endl;
 				std::cout << "In terms of functionality, this tag and the <s> strike tag are virtually identical." << std::endl;
 				std::cout << std::endl;
 
