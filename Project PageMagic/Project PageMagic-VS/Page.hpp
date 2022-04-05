@@ -103,7 +103,7 @@ private:
 	void const show_error();
 	void init_tags();
 	void err_set(int error_type) { this->err_code = error_type; };
-	inline int const find_line() { return *global_point; };
+	inline int const find_line() const { return *global_point; };
 	std::string const s_state(int num) const { return this->html_tags.at(num); };
 	void title_sequence();
 	int display_all();
