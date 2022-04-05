@@ -1,6 +1,11 @@
 # PageMagic
 (Experimental) Web Page Generator
 
+UPDATE 4/5/2022:
+This program is undergoing some dramatic changes. The master branch of this program is likely going to be completely different within the coming months.
+If you want to preserve earlier versions of this program, download them now. Otherwise they will be permanently lost once the new code is deployed.
+Thank you.
+
 This is an experimental open-source HTML formatting program.
 
 PageMagic is a console-based program which means that you won't see the actual output until after the HTML file is written to your system.
